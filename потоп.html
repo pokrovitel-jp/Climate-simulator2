@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flood Map Simulation</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    #map { height: 100%; width: 100%; }
+    #sliderContainer {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      font-family: sans-serif;
+      z-index: 1000;
+    }
+    #waterLevel { width: 300px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="sliderContainer">
+    Water level: <span id="levelText">0</span> meters
+    <input type="range" id="waterLevel" min="0" max="100" value="0" step="1">
+  </div>
+
+  <script>
+    let map;
+    let floodOverlay;
+    let currentWaterLevel = 0;
+    let elevationService;
+    let lastRequestId = 0;
+
+    function initMap() {
+      // Initialize the map
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40, lng: 70 },
+        zoom: 4,
+        mapTypeId: "terrain",
+        streetViewControl: false,
+        mapTypeControl: false
+      });
+
+      // Create the flood overlay
+      floodOverlay = new google.maps.OverlayView();
+      
+      floodOverlay.onAdd = function() {
+        const div = document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.pointerEvents = 'none';
+        
+        this.canvas = document.createElement('canvas');
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        div.appendChild(this.canvas);
+        
+        this.getPanes().overlayLayer.appendChild(div);
+        this.div = div;
+      };
+      
+      floodOverlay.draw = function() {
+        const overlayProjection = this.getProjection();
+        const bounds = map.getBounds();
+        const ne = overlayProjection.fromLatLngToDivPixel(bounds.getNorthEast());
+        const sw = overlayProjection.fromLatLngToDivPixel(bounds.getSouthWest());
+        
+        this.div.style.left = sw.x + 'px';
+        this.div.style.top = ne.y + 'px';
+        this.div.style.width = (ne.x - sw.x) + 'px';
+        this.div.style.height = (sw.y - ne.y) + 'px';
+        
+        this.canvas.width = ne.x - sw.x;
+        this.canvas.height = sw.y - ne.y;
+        
+        updateFloodOverlay();
+      };
+      
+      floodOverlay.setMap(map);
+      
+      // Initialize elevation service
+      elevationService = new google.maps.ElevationService();
+      
+      // Add event listeners
+      map.addListener('bounds_changed', debounce(updateFloodOverlay, 500));
+      map.addListener('zoom_changed', debounce(updateFloodOverlay, 500));
+      
+      document.getElementById("waterLevel").addEventListener("input", function(e) {
+        currentWaterLevel = parseInt(e.target.value);
+        document.getElementById("levelText").innerText = currentWaterLevel;
+        updateFloodOverlay();
+      });
+    }
+    
+    function updateFloodOverlay() {
+      if (!map || !floodOverlay || !floodOverlay.canvas) return;
+      
+      const bounds = map.getBounds();
+      if (!bounds) return;
+      
+      const canvas = floodOverlay.canvas;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const ne = bounds.getNorthEast();
+      const sw = bounds.getSouthWest();
+      
+      const zoom = map.getZoom();
+      const gridSize = zoom < 8 ? 0.5 : zoom < 10 ? 0.2 : zoom < 12 ? 0.1 : 0.05;
+      
+      const locations = [];
+      const gridPoints = [];
+      
+      for (let lat = sw.lat(); lat <= ne.lat(); lat += gridSize) {
+        for (let lng = sw.lng(); lng <= ne.lng(); lng += gridSize) {
+          locations.push(new google.maps.LatLng(lat, lng));
+          gridPoints.push({ lat, lng });
+        }
+      }
+      
+      const requestId = ++lastRequestId;
+      
+      elevationService.getElevationForLocations({
+        locations: locations
+      }, (results, status) => {
+        if (status !== 'OK' || requestId !== lastRequestId) return;
+        
+        const overlayProjection = floodOverlay.getProjection();
+        ctx.fillStyle = 'rgba(65, 105, 225, 0.6)';
+        
+        for (let i = 0; i < results.length; i++) {
+          if (results[i].elevation <= currentWaterLevel) {
+            const point = overlayProjection.fromLatLngToDivPixel(
+              new google.maps.LatLng(gridPoints[i].lat, gridPoints[i].lng)
+            );
+            
+            const size = zoom < 8 ? 10 : zoom < 10 ? 6 : zoom < 12 ? 4 : 2;
+            ctx.fillRect(
+              point.x - size/2,
+              point.y - size/2,
+              size,
+              size
+            );
+          }
+        }
+      });
+    }
+    
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          func.apply(context, args);
+        }, wait);
+      };
+    }
+  </script>
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAT4ONNU2QJLsazxrIlCqNJgbBC3anVunQ&libraries=visualization,elevation&callback=initMap">
+  </script>
+</body>
+</html>
+
+
+

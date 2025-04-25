@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Симулятор изменения климата</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1f5fe);
+      color: #2c3e50;
+      padding: 30px 15px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-buttons button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #2980b9;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .welcome-text {
+      max-width: 800px;
+      font-size: 1.2rem;
+      text-align: center;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .image-container {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto 60px;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .image-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(46, 204, 113, 0.9);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      background-color: rgba(39, 174, 96, 0.95);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    .section {
+      margin-top: 60px;
+    }
+
+    @media (max-width: 600px) {
+      .nav-buttons {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .image-button {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">Симулятор климата</div>
+    <div class="nav-buttons">
+      <button onclick="location.href='index.html'">Главная</button>
+      <button onclick="alert('Информация о проекте')">О нас</button>
+      <button onclick="alert('Здесь будут указаны источники данных')">Источники</button>
+      <button onclick="location.href='simulators.html'">Все симуляторы</button>
+    </div>
+  </header>
+
+  <h1>Симулятор последствий изменения климата</h1>
+
+  <div class="welcome-text">
+    Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов.  
+    От устойчивости сельского хозяйства до качества воздуха в городах — всё это связано с климатическими изменениями.  
+    Особенно важно понимать и отслеживать эти изменения в нашей стране — Кыргызстане.
+  </div>
+
+  <h2>Диаграмма изменения климата в Кыргызстане</h2>
+  <div class="image-container">
+    <img src="https://c4.wallpaperflare.com/wallpaper/995/412/931/field-the-sky-grass-clouds-wallpaper-preview.jpg" alt="Климат Кыргызстана">
+    <button class="image-button" onclick="location.href='зк.html'">Перейти к симулятору</button>
+  </div>
+
+  <div class="section">
+    <h2>Глобальное потепление и его последствия</h2>
+    <div class="welcome-text">
+      Глобальное потепление — это одна из самых серьёзных угроз, с которыми сталкивается человечество.  
+      Повышение температуры влияет на ледники, уровень морей, климатические катастрофы и биоразнообразие.  
+      Это проблема, которая касается не только Кыргызстана, но и всего мира.
+    </div>
+
+    <div class="image-container">
+      <img src="https://c.files.bbci.co.uk/4A21/production/_112477981_gettyimages-1180852874.jpg" alt="Глобальное потепление">
+      <button class="image-button" onclick="location.href='потепление.html'">Симулятор глобального потепления</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Повышение уровня моря</h2>
+    <div class="welcome-text">
+      Повышение уровня моря угрожает прибрежным городам, разрушает инфраструктуру и вынуждает миллионы людей покидать свои дома.  
+      Это ведёт к экономическим и гуманитарным последствиям во всём мире, особенно для островных и низменных государств.
+    </div>
+
+    <div class="image-container">
+      <img src="https://www.ferra.ru/imgs/2022/02/16/13/5241952/bf71506f3e432578df4520147aeb85088ab7636a.jpg" alt="Уровень моря">
+      <button class="image-button" onclick="location.href='потоп.html'">Симулятор повышения уровня моря</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Выбросы углекислого газа (CO₂)</h2>
+    <div class="welcome-text">
+      Углекислый газ — один из главных парниковых газов, усиливающих эффект глобального потепления.  
+      Его концентрация в атмосфере растёт из-за деятельности человека, что приводит к изменению климата, нарушению экосистем  
+      и негативным последствиям для здоровья людей.
+    </div>
+
+    <div class="image-container">
+      <img src="https://cdn.shopify.com/s/files/1/0677/4059/8571/articles/co2_Desk_b.jpg?v=1705573944" alt="Углекислый газ">
+      <button class="image-button" onclick="location.href='co2.html'">Симулятор выбросов CO₂</button>
+    </div>
+  </div>
+
+</body>
+</html>
+
+
+

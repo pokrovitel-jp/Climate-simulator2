@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Анимация глобального потепления</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f9ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #map {
+      width: 600px;
+      height: 300px;
+      background: linear-gradient(to top, #2c3e50, #3498db);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      position: relative;
+      transition: background 1s ease;
+    }
+
+    .overlay {
+      position: absolute;
+      color: white;
+      font-size: 1.5rem;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    input[type=range] {
+      width: 600px;
+    }
+
+    .year-label {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Глобальное потепление: температура по годам</h1>
+  <div id="map">
+    <div class="overlay" id="tempText">Температура: 0.00°C</div>
+  </div>
+
+  <input type="range" min="1880" max="2020" value="1880" step="1" id="yearSlider" />
+  <div class="year-label">Год: <span id="yearLabel">1880</span></div>
+
+  <script>
+    const slider = document.getElementById('yearSlider');
+    const yearLabel = document.getElementById('yearLabel');
+    const tempText = document.getElementById('tempText');
+    const map = document.getElementById('map');
+
+    // Пример температурных отклонений (в реальности берутся из NASA или CSV)
+    const data = {
+      1880: -0.2,
+      1900: -0.1,
+      1920: 0.0,
+      1940: 0.1,
+      1960: 0.0,
+      1980: 0.2,
+      1990: 0.4,
+      2000: 0.6,
+      2010: 0.8,
+      2020: 1.0
+    };
+
+    function getTemp(year) {
+      // Найдём ближайшие два известных года
+      const years = Object.keys(data).map(Number).sort((a, b) => a - b);
+      let lower = years[0], upper = years[years.length - 1];
+      for (let i = 0; i < years.length - 1; i++) {
+        if (year >= years[i] && year <= years[i + 1]) {
+          lower = years[i];
+          upper = years[i + 1];
+          break;
+        }
+      }
+      const ratio = (year - lower) / (upper - lower);
+      const temp = data[lower] + ratio * (data[upper] - data[lower]);
+      return parseFloat(temp.toFixed(2));
+    }
+
+    function updateUI(year) {
+      yearLabel.textContent = year;
+      const temp = getTemp(parseInt(year));
+      tempText.textContent = `Температура: ${temp}°C`;
+
+      // Цвет фона в зависимости от температуры
+      const red = Math.min(255, Math.floor(100 + temp * 155));
+      const blue = 255 - Math.floor(temp * 100);
+      map.style.background = `linear-gradient(to top, rgb(${red}, 60, 60), rgb(${red}, ${blue}, ${blue}))`;
+    }
+
+    slider.addEventListener('input', () => {
+      updateUI(slider.value);
+    });
+
+    updateUI(slider.value);
+  </script>
+
+</body>
+</html>
