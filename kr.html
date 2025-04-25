@@ -2,24 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Симулятор погоды Кыргызстана</title>
-  <head>
-  <style>
-    body {
-      background-color: #f0f0f0;
-      font-family: Arial, sans-serif;
-    }
-
-    h1 {
-      color: darkblue;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-  </style>
-</head>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * {
@@ -44,7 +28,8 @@
     h1 {
       text-align: center;
       margin: 10px 0;
-      font-size: 1.5vw;
+      font-size: 24px;
+      color: darkblue;
     }
 
     .charts {
@@ -64,6 +49,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 200px;
     }
 
     canvas {
@@ -72,42 +58,74 @@
     }
 
     .sliders {
-      height: 40vh;
-      overflow-y: auto;
+      height: auto;
+      max-height: 40vh;
+      overflow-x: auto;
+      overflow-y: hidden;
       padding: 10px;
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 10px;
-      justify-content: center;
+      -webkit-overflow-scrolling: touch;
     }
 
     .slider-block {
       background: white;
-      padding: 10px;
+      padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      min-width: 250px;
-      flex: 1 1 300px;
+      min-width: 280px;
+      flex: 0 0 auto;
     }
 
     .slider-block h3 {
-      margin: 0 0 10px 0;
-      font-size: 1vw;
+      margin: 0 0 15px 0;
+      font-size: 16px;
     }
 
     .slider-container {
       display: flex;
       align-items: center;
-      margin: 5px 0;
+      margin: 10px 0;
     }
 
     .slider-container label {
-      flex: 0 0 90px;
-      font-size: 0.9vw;
+      flex: 0 0 100px;
+      font-size: 14px;
     }
 
     .slider-container input {
       flex: 1;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 768px) {
+      .charts {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+      }
+      
+      h1 {
+        font-size: 20px;
+        padding: 0 10px;
+      }
+      
+      .sliders {
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 40vh;
+      }
+      
+      .slider-block {
+        min-width: auto;
+        width: 100%;
+      }
+      
+      .slider-container label {
+        flex: 0 0 120px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -189,12 +207,26 @@
             label,
             data: [],
             borderColor: color,
-            fill: false
+            fill: false,
+            tension: 0.4
           }]
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          }
         }
       });
     };
@@ -232,9 +264,26 @@
       airChart.update();
     }
 
-    updateCharts();
+    // Инициализация при загрузке
+    window.addEventListener('load', function() {
+      updateCharts();
+      
+      // Настройка размера графиков после загрузки
+      setTimeout(() => {
+        tempChart.resize();
+        co2Chart.resize();
+        glacierChart.resize();
+        airChart.resize();
+      }, 100);
+    });
+
+    // Реакция на изменение размера окна
+    window.addEventListener('resize', function() {
+      tempChart.resize();
+      co2Chart.resize();
+      glacierChart.resize();
+      airChart.resize();
+    });
   </script>
 </body>
 </html>
-
-
