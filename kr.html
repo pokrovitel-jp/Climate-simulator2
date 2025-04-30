@@ -13,16 +13,14 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: linear-gradient(to bottom, #e0f7fa, #e0f2f1);
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100vh;
     }
 
     h1 {
@@ -33,7 +31,6 @@
     }
 
     .charts {
-      flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
@@ -46,10 +43,10 @@
       border-radius: 10px;
       padding: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      min-height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 200px;
     }
 
     canvas {
@@ -58,14 +55,11 @@
     }
 
     .sliders {
-      height: auto;
-      max-height: 40vh;
-      overflow-x: auto;
-      overflow-y: hidden;
       padding: 10px;
       display: flex;
       flex-wrap: nowrap;
       gap: 10px;
+      overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -98,30 +92,28 @@
       flex: 1;
     }
 
-    /* Мобильная адаптация */
     @media (max-width: 768px) {
       .charts {
         grid-template-columns: 1fr;
         grid-template-rows: repeat(4, 1fr);
       }
-      
+
       h1 {
         font-size: 20px;
         padding: 0 10px;
       }
-      
+
       .sliders {
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
-        max-height: 40vh;
       }
-      
+
       .slider-block {
         min-width: auto;
         width: 100%;
       }
-      
+
       .slider-container label {
         flex: 0 0 120px;
         font-size: 14px;
@@ -264,11 +256,8 @@
       airChart.update();
     }
 
-    // Инициализация при загрузке
     window.addEventListener('load', function() {
       updateCharts();
-      
-      // Настройка размера графиков после загрузки
       setTimeout(() => {
         tempChart.resize();
         co2Chart.resize();
@@ -277,7 +266,6 @@
       }, 100);
     });
 
-    // Реакция на изменение размера окна
     window.addEventListener('resize', function() {
       tempChart.resize();
       co2Chart.resize();
