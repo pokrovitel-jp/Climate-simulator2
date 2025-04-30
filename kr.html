@@ -14,19 +14,28 @@
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #e0f7fa, #e0f2f1);
+      height: 100%;
+      background: linear-gradient(270deg, #e0f7fa, #e0f2f1, #d1f5f0);
+      background-size: 600% 600%;
+      animation: gradientBG 20s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     h1 {
       text-align: center;
-      margin: 10px 0;
-      font-size: 24px;
+      margin: 10px 0 20px 0;
+      font-size: 26px;
       color: darkblue;
     }
 
@@ -34,8 +43,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 10px;
-      padding: 10px;
+      gap: 15px;
     }
 
     .chart-wrapper {
@@ -43,10 +51,7 @@
       border-radius: 10px;
       padding: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: 300px;
     }
 
     canvas {
@@ -55,18 +60,19 @@
     }
 
     .sliders {
-      padding: 10px;
+      margin-top: 30px;
       display: flex;
       flex-wrap: nowrap;
-      gap: 10px;
+      gap: 15px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      padding-bottom: 20px;
     }
 
     .slider-block {
       background: white;
       padding: 15px;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       min-width: 280px;
       flex: 0 0 auto;
@@ -74,7 +80,7 @@
 
     .slider-block h3 {
       margin: 0 0 15px 0;
-      font-size: 16px;
+      font-size: 18px;
     }
 
     .slider-container {
@@ -98,25 +104,15 @@
         grid-template-rows: repeat(4, 1fr);
       }
 
-      h1 {
-        font-size: 20px;
-        padding: 0 10px;
-      }
-
       .sliders {
         flex-direction: column;
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: visible;
       }
 
       .slider-block {
-        min-width: auto;
         width: 100%;
-      }
-
-      .slider-container label {
-        flex: 0 0 120px;
-        font-size: 14px;
+        min-width: auto;
       }
     }
   </style>
@@ -256,7 +252,7 @@
       airChart.update();
     }
 
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
       updateCharts();
       setTimeout(() => {
         tempChart.resize();
@@ -266,7 +262,7 @@
       }, 100);
     });
 
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
       tempChart.resize();
       co2Chart.resize();
       glacierChart.resize();
