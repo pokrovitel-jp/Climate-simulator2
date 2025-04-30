@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Climate Change Simulator</title>
+    <title>Climate Change r</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -159,8 +159,8 @@
         <div class="subtitle">Наблюдайте за глобальным изменением температуры с 1880 по 2022 год (данные NASA)</div>
         
         <div class="image-container">
-            <img id="temperatureImage" src="D:\img\gt_1884_720x360.jpg" alt="Global Temperature Map" 
-                 style="content: url('D:\img\gt_1890_720x360.jpg')">
+            <img id="temperatureImage" src="img\gt_1884_720x360.jpg" alt="Global Temperature Map" 
+                 style="content: url('img\gt_1890_720x360.jpg')">
         </div>
         
         <div class="slider-container">
@@ -235,14 +235,14 @@
             let imgPath;
             
             if (year < 1987) {
-                imgPath = 'D:\\\\img\\\\gt_' + year + '_720x360.jpg';
+                imgPath = 'img\\\\gt_' + year + '_720x360.jpg';
             } 
             else if (year >= 2000) {
                 const shortYear = String(year).slice(2);
-                imgPath = 'D:\\\\img2\\\\gt_' + year + '_720x360.jpg';
+                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
             }
             else {
-                imgPath = 'D:\\\\img2\\\\gt_' + year + '_720x360.jpg';
+                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
             }
             
             document.getElementById('temperatureImage').style.content = 'url(\'' + imgPath + '\')';
