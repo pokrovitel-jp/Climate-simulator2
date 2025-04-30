@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Симулятор погоды Кыргызстана</title>
+  <title>Симулятор климата Кыргызстана</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * {
@@ -13,30 +13,16 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
-      height: 100%;
-      background: linear-gradient(270deg, #e0f7fa, #e0f2f1, #d1f5f0);
-      background-size: 600% 600%;
-      animation: gradientBG 20s ease infinite;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #cfefff, #e0f2f1);
+      background-attachment: fixed;
     }
 
     h1 {
       text-align: center;
-      margin: 10px 0 20px 0;
+      padding: 20px 10px 10px;
       font-size: 26px;
-      color: darkblue;
+      color: #003366;
     }
 
     .charts {
@@ -44,14 +30,18 @@
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
       gap: 15px;
+      padding: 10px 15px;
     }
 
     .chart-wrapper {
-      background: white;
+      background: #ffffffcc;
       border-radius: 10px;
       padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      height: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     canvas {
@@ -60,37 +50,34 @@
     }
 
     .sliders {
-      margin-top: 30px;
+      padding: 20px 15px;
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 15px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 20px;
     }
 
     .slider-block {
-      background: white;
+      background: #ffffffcc;
       padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      min-width: 280px;
-      flex: 0 0 auto;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      flex: 1 1 300px;
     }
 
     .slider-block h3 {
-      margin: 0 0 15px 0;
+      margin: 0 0 10px;
       font-size: 18px;
+      color: #00695c;
     }
 
     .slider-container {
       display: flex;
       align-items: center;
-      margin: 10px 0;
+      margin: 8px 0;
     }
 
     .slider-container label {
-      flex: 0 0 100px;
+      flex: 0 0 110px;
       font-size: 14px;
     }
 
@@ -106,106 +93,94 @@
 
       .sliders {
         flex-direction: column;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
-
-      .slider-block {
-        width: 100%;
-        min-width: auto;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Симулятор изменения климата в Кыргызстане</h1>
+  <h1>Симулятор изменения климата в Кыргызстане</h1>
 
-    <div class="charts">
-      <div class="chart-wrapper"><canvas id="tempChart"></canvas></div>
-      <div class="chart-wrapper"><canvas id="co2Chart"></canvas></div>
-      <div class="chart-wrapper"><canvas id="glacierChart"></canvas></div>
-      <div class="chart-wrapper"><canvas id="airChart"></canvas></div>
+  <div class="charts">
+    <div class="chart-wrapper"><canvas id="tempChart"></canvas></div>
+    <div class="chart-wrapper"><canvas id="co2Chart"></canvas></div>
+    <div class="chart-wrapper"><canvas id="glacierChart"></canvas></div>
+    <div class="chart-wrapper"><canvas id="airChart"></canvas></div>
+  </div>
+
+  <div class="sliders">
+    <div class="slider-block">
+      <h3>Климат</h3>
+      <div class="slider-container">
+        <label>Темп. (°C)</label>
+        <input type="range" min="-5" max="10" value="0" id="temp" step="0.1">
+      </div>
+      <div class="slider-container">
+        <label>Осадки</label>
+        <input type="range" min="100" max="1000" value="400" id="rain">
+      </div>
+      <div class="slider-container">
+        <label>Влажность</label>
+        <input type="range" min="10" max="90" value="50" id="humidity">
+      </div>
     </div>
 
-    <div class="sliders">
-      <div class="slider-block">
-        <h3>Климат</h3>
-        <div class="slider-container">
-          <label>Темп. (°C)</label>
-          <input type="range" min="-5" max="10" value="0" id="temp" step="0.1">
-        </div>
-        <div class="slider-container">
-          <label>Осадки</label>
-          <input type="range" min="100" max="1000" value="400" id="rain">
-        </div>
-        <div class="slider-container">
-          <label>Влажность</label>
-          <input type="range" min="10" max="90" value="50" id="humidity">
-        </div>
+    <div class="slider-block">
+      <h3>Человеческий фактор</h3>
+      <div class="slider-container">
+        <label>CO₂</label>
+        <input type="range" min="0" max="100" value="50" id="co2">
       </div>
-
-      <div class="slider-block">
-        <h3>Человеческий фактор</h3>
-        <div class="slider-container">
-          <label>CO₂</label>
-          <input type="range" min="0" max="100" value="50" id="co2">
-        </div>
-        <div class="slider-container">
-          <label>Урбанизация</label>
-          <input type="range" min="0" max="100" value="40" id="urban">
-        </div>
-        <div class="slider-container">
-          <label>Лесистость</label>
-          <input type="range" min="0" max="100" value="30" id="forest">
-        </div>
+      <div class="slider-container">
+        <label>Урбанизация</label>
+        <input type="range" min="0" max="100" value="40" id="urban">
       </div>
+      <div class="slider-container">
+        <label>Лесистость</label>
+        <input type="range" min="0" max="100" value="30" id="forest">
+      </div>
+    </div>
 
-      <div class="slider-block">
-        <h3>Доп. факторы</h3>
-        <div class="slider-container">
-          <label>Транспорт</label>
-          <input type="range" min="0" max="100" value="50" id="transport">
-        </div>
-        <div class="slider-container">
-          <label>Промышлен.</label>
-          <input type="range" min="0" max="100" value="50" id="industry">
-        </div>
-        <div class="slider-container">
-          <label>Зелень</label>
-          <input type="range" min="0" max="100" value="40" id="green">
-        </div>
-        <div class="slider-container">
-          <label>Уголь</label>
-          <input type="range" min="0" max="100" value="60" id="coal">
-        </div>
+    <div class="slider-block">
+      <h3>Доп. факторы</h3>
+      <div class="slider-container">
+        <label>Транспорт</label>
+        <input type="range" min="0" max="100" value="50" id="transport">
+      </div>
+      <div class="slider-container">
+        <label>Промышлен.</label>
+        <input type="range" min="0" max="100" value="50" id="industry">
+      </div>
+      <div class="slider-container">
+        <label>Зелень</label>
+        <input type="range" min="0" max="100" value="40" id="green">
+      </div>
+      <div class="slider-container">
+        <label>Уголь</label>
+        <input type="range" min="0" max="100" value="60" id="coal">
       </div>
     </div>
   </div>
 
   <script>
-    const labels = Array.from({ length: 41 }, (_, i) => 2020 + i * 2);
-
+    const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
     const createChart = (ctx, label, color) => {
       return new Chart(ctx, {
         type: 'line',
         data: {
-          labels,
+          labels: years,
           datasets: [{
             label,
-            data: [],
+            data: Array(years.length).fill(0),
             borderColor: color,
             fill: false,
-            tension: 0.4
+            tension: 0.3
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: {
-              position: 'top',
-            }
+            legend: { position: 'top' }
           },
           scales: {
             x: {
@@ -219,31 +194,40 @@
       });
     };
 
-    const tempChart = createChart(document.getElementById('tempChart').getContext('2d'), 'Температура (°C)', 'red');
-    const co2Chart = createChart(document.getElementById('co2Chart').getContext('2d'), 'Выбросы CO₂', 'gray');
-    const glacierChart = createChart(document.getElementById('glacierChart').getContext('2d'), 'Ледники (% от 2020)', 'blue');
-    const airChart = createChart(document.getElementById('airChart').getContext('2d'), 'Качество воздуха (PM2.5)', 'green');
+    const tempChart = createChart(document.getElementById('tempChart').getContext('2d'), 'Температура (°C)', 'crimson');
+    const co2Chart = createChart(document.getElementById('co2Chart').getContext('2d'), 'Выбросы CO₂', '#555');
+    const glacierChart = createChart(document.getElementById('glacierChart').getContext('2d'), 'Ледники (% от 2020)', '#0077be');
+    const airChart = createChart(document.getElementById('airChart').getContext('2d'), 'Качество воздуха (PM2.5)', 'darkgreen');
 
     const sliders = document.querySelectorAll('input[type="range"]');
     sliders.forEach(slider => slider.addEventListener('input', updateCharts));
 
     function updateCharts() {
-      const temp = parseFloat(document.getElementById('temp').value);
-      const co2 = parseFloat(document.getElementById('co2').value);
-      const forest = parseFloat(document.getElementById('forest').value);
-      const rain = parseFloat(document.getElementById('rain').value);
-      const humidity = parseFloat(document.getElementById('humidity').value);
-      const urban = parseFloat(document.getElementById('urban').value);
-      const transport = parseFloat(document.getElementById('transport').value);
-      const industry = parseFloat(document.getElementById('industry').value);
-      const green = parseFloat(document.getElementById('green').value);
-      const coal = parseFloat(document.getElementById('coal').value);
+      const temp = +document.getElementById('temp').value;
+      const co2 = +document.getElementById('co2').value;
+      const forest = +document.getElementById('forest').value;
+      const rain = +document.getElementById('rain').value;
+      const humidity = +document.getElementById('humidity').value;
+      const urban = +document.getElementById('urban').value;
+      const transport = +document.getElementById('transport').value;
+      const industry = +document.getElementById('industry').value;
+      const green = +document.getElementById('green').value;
+      const coal = +document.getElementById('coal').value;
 
-      tempChart.data.datasets[0].data = labels.map((_, i) => temp + i * 0.15 + co2 * 0.01);
-      co2Chart.data.datasets[0].data = labels.map((_, i) => co2 + industry * 0.5 + i * 0.3 - green * 0.2);
-      glacierChart.data.datasets[0].data = labels.map((_, i) => Math.max(0, 100 - i * 1.5 - co2 * 0.2));
-      airChart.data.datasets[0].data = labels.map((_, i) =>
-        30 + transport * 0.3 + industry * 0.4 + coal * 0.5 - forest * 0.3 - green * 0.4
+      tempChart.data.datasets[0].data = years.map((year, i) =>
+        temp + Math.log(i + 1) * 0.5 + co2 * 0.01 - forest * 0.005
+      );
+
+      co2Chart.data.datasets[0].data = years.map((_, i) =>
+        co2 + industry * 0.3 + urban * 0.2 + i * 0.5 - green * 0.4
+      );
+
+      glacierChart.data.datasets[0].data = years.map((_, i) =>
+        Math.max(0, 100 - i * (0.8 + temp * 0.1) - co2 * 0.2 + forest * 0.1)
+      );
+
+      airChart.data.datasets[0].data = years.map((_, i) =>
+        30 + transport * 0.25 + industry * 0.3 + coal * 0.4 - forest * 0.3 - green * 0.4
       );
 
       tempChart.update();
@@ -252,22 +236,11 @@
       airChart.update();
     }
 
-    window.addEventListener('load', function () {
-      updateCharts();
-      setTimeout(() => {
-        tempChart.resize();
-        co2Chart.resize();
-        glacierChart.resize();
-        airChart.resize();
-      }, 100);
-    });
+    window.addEventListener('load', updateCharts);
+  </script>
+</body>
+</html>
 
-    window.addEventListener('resize', function () {
-      tempChart.resize();
-      co2Chart.resize();
-      glacierChart.resize();
-      airChart.resize();
-    });
   </script>
 </body>
 </html>
