@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Симулятор уровня CO₂</title>
+    <title>Climate Change r</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -53,7 +53,7 @@
             padding: 20px;
         }
         
-        #co2Image {
+        #temperatureImage {
             max-width: 100%;
             max-height: 500px;
             border-radius: 8px;
@@ -66,7 +66,7 @@
             margin: 30px 0;
         }
         
-        .date-display {
+        .year-display {
             font-size: 28px;
             font-weight: bold;
             color: #4fc3f7;
@@ -77,14 +77,14 @@
             align-items: center;
         }
         
-        .co2-level {
+        .temp-change {
             font-size: 16px;
             color: #b3e5fc;
             display: flex;
             gap: 20px;
         }
         
-        .co2-level span {
+        .temp-change span {
             background: rgba(0, 60, 120, 0.3);
             padding: 5px 10px;
             border-radius: 5px;
@@ -139,13 +139,13 @@
         }
         
         @media (max-width: 768px) {
-            .date-display {
+            .year-display {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
             
-            .co2-level {
+            .temp-change {
                 flex-direction: column;
                 gap: 5px;
                 align-items: flex-start;
@@ -155,109 +155,123 @@
 </head>
 <body>
     <div class="container">
-        <h1>Симулятор уровня CO₂</h1>
-        <div class="subtitle">Наблюдайте за глобальными изменениями концентрации CO₂ с сентября 2002 по ноябрь 2022 года (данные NASA)</div>
+        <h1>Симулятор глобального потепления</h1>
+        <div class="subtitle">Наблюдайте за глобальным изменением температуры с 1880 по 2022 год (данные NASA)</div>
         
         <div class="image-container">
-            <img id="co2Image" src="img3\\co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂">
+            <img id="temperatureImage" src="img\gt_1884_720x360.jpg" alt="Global Temperature Map" 
+                 style="content: url('img\gt_1890_720x360.jpg')">
         </div>
         
         <div class="slider-container">
-            <div class="date-display">
-                <div>Дата: <span id="dateValue">Сентябрь 2002</span></div>
-                <div class="co2-level">
-                    <span id="co2Value">Уровень CO₂: 370 ppm</span>
-                    <span id="changeFromStart">Δ с 2002 года: 0 ppm</span>
+            <div class="year-display">
+                <div>Year: <span id="yearValue">1880</span></div>
+                <div class="temp-change">
+                    <span id="changeFromPrev">Δ от прошлого года: 0.00°C</span>
+                    <span id="changeFrom1890">Δ с 1880 года: 0.00°C</span>
                 </div>
             </div>
             
             <input 
                 type="range" 
-                id="dateSlider"
-                min="1" 
-                max="243" 
-                value="1" 
+                id="yearSlider"
+                min="1890" 
+                max="2022" 
+                value="1890" 
                 step="1"
-                oninput="updateDate(this.value)">
+                oninput="updateYear(this.value)">
             
             <div class="year-labels">
-                <span>Сентябрь 2002</span>
-                <span>Ноябрь 2022</span>
+                <span>1890</span>
+                <span>2022</span>
             </div>
         </div>
         
         <div class="info-panel">
-            <p>Этот симулятор показывает данные NASA о глобальной концентрации углекислого газа (CO₂) в атмосфере. Цвета представляют концентрацию CO₂ в частях на миллион (ppm). Данные: NASA AIRS Project.</p>
+            <p>Этот симулятор показывает данные NASA о глобальных температурных аномалиях. Цвета представляют отклонения температуры от среднего значения за XX век (1901-2000). Данные: NASA GISS Surface Temperature Analysis (GISTEMP).</p>
         </div>
     </div>
 
     <script>
-        // Генерация данных с сентября 2002 по ноябрь 2022 (243 месяца)
-        function generateDateData() {
-            const dateData = [];
-            const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-                          'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        // Реальные данные NASA GISS о глобальных температурных аномалиях (°C)
+        // Источник: https://data.giss.nasa.gov/gistemp/
+        // Значения относительно базового периода 1951-1980
+        const nasaTempAnomalies = {
+           
+            1890: -0.37, 1891: -0.26, 1892: -0.30, 1893: -0.36, 1894: -0.34,
+            1895: -0.26, 1896: -0.16, 1897: -0.13, 1898: -0.31, 1899: -0.21,
+            1900: -0.10, 1901: -0.16, 1902: -0.29, 1903: -0.37, 1904: -0.47,
+            1905: -0.28, 1906: -0.25, 1907: -0.39, 1908: -0.45, 1909: -0.47,
+            1910: -0.44, 1911: -0.45, 1912: -0.38, 1913: -0.36, 1914: -0.18,
+            1915: -0.12, 1916: -0.36, 1917: -0.47, 1918: -0.31, 1919: -0.28,
+            1920: -0.28, 1921: -0.20, 1922: -0.28, 1923: -0.26, 1924: -0.28,
+            1925: -0.23, 1926: -0.11, 1927: -0.22, 1928: -0.21, 1929: -0.37,
+            1930: -0.16, 1931: -0.11, 1932: -0.17, 1933: -0.31, 1934: -0.13,
+            1935: -0.21, 1936: -0.16, 1937: -0.03, 1938: -0.01, 1939: -0.03,
+            1940: 0.08, 1941: 0.11, 1942: 0.06, 1943: 0.05, 1944: 0.18,
+            1945: 0.07, 1946: -0.07, 1947: -0.04, 1948: -0.10, 1949: -0.11,
+            1950: -0.18, 1951: -0.07, 1952: 0.01, 1953: 0.08, 1954: -0.14,
+            1955: -0.15, 1956: -0.20, 1957: 0.05, 1958: 0.06, 1959: 0.03,
+            1960: -0.03, 1961: 0.06, 1962: 0.03, 1963: 0.05, 1964: -0.21,
+            1965: -0.12, 1966: -0.07, 1967: -0.03, 1968: -0.08, 1969: 0.05,
+            1970: 0.03, 1971: -0.09, 1972: 0.01, 1973: 0.16, 1974: -0.07,
+            1975: -0.01, 1976: -0.10, 1977: 0.18, 1978: 0.07, 1979: 0.16,
+            1980: 0.26, 1981: 0.32, 1982: 0.14, 1983: 0.31, 1984: 0.16,
+            1985: 0.12, 1986: 0.18, 1987: 0.32, 1988: 0.39, 1989: 0.27,
+            1990: 0.45, 1991: 0.42, 1992: 0.23, 1993: 0.24, 1994: 0.32,
+            1995: 0.45, 1996: 0.34, 1997: 0.48, 1998: 0.63, 1999: 0.42,
+            2000: 0.40, 2001: 0.54, 2002: 0.63, 2003: 0.62, 2004: 0.54,
+            2005: 0.68, 2006: 0.64, 2007: 0.66, 2008: 0.54, 2009: 0.66,
+            2010: 0.72, 2011: 0.61, 2012: 0.65, 2013: 0.68, 2014: 0.75,
+            2015: 0.90, 2016: 1.02, 2017: 0.92, 2018: 0.85, 2019: 0.98,
+            2020: 1.02, 2021: 0.85, 2022: 0.89
+        };
+        
+        const baseYear = 1890;
+        let previousYear = 1890;
+        
+        function updateYear(year) {
+            year = parseInt(year);
+            let imgPath;
             
-            let index = 0;
-            const startYear = 2002;
-            const endYear = 2022;
-            const startCO2 = 370;
-            const endCO2 = 417;
-            const co2Step = (endCO2 - startCO2) / 242;
-            
-            for (let year = startYear; year <= endYear; year++) {
-                const startMonth = year === 2002 ? 8 : 0; // Начинаем с сентября (8) для 2002 года
-                const endMonth = year === 2022 ? 10 : 11; // Заканчиваем ноябрем (10) для 2022 года
-                
-                for (let monthIdx = startMonth; monthIdx <= endMonth; monthIdx++) {
-                    index++;
-                    const imgNum = String(index).padStart(4, '0');
-                    
-                    // Определяем путь к изображению
-                    let imgPath;
-                    if (index <= 100) {
-                        imgPath = `img3\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    } else if (index <= 200) {
-                        imgPath = `img4\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    } else {
-                        imgPath = `img5\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    }
-                    
-                    // Расчет уровня CO₂ (можно заменить на реальные данные)
-                    const co2 = Math.round(startCO2 + (co2Step * (index - 1)) * 10) / 10;
-                    
-                    dateData.push({
-                        year: year,
-                        month: months[monthIdx],
-                        co2: co2,
-                        imgPath: imgPath,
-                        index: index
-                    });
-                }
+            if (year < 1987) {
+                imgPath = 'img\\\\gt_' + year + '_720x360.jpg';
+            } 
+            else if (year >= 2000) {
+                const shortYear = String(year).slice(2);
+                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
+            }
+            else {
+                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
             }
             
-            return dateData;
-        }
-        
-        const dateData = generateDateData();
-        const startCO2 = dateData[0].co2;
-        
-        function updateDate(index) {
-            index = parseInt(index);
-            const data = dateData.find(item => item.index === index) || dateData[0];
+            document.getElementById('temperatureImage').style.content = 'url(\'' + imgPath + '\')';
+            document.getElementById('yearValue').textContent = year;
             
-            // Обновляем изображение
-            document.getElementById('co2Image').src = data.imgPath;
+            // Получаем температурные аномалии
+            const currentTemp = nasaTempAnomalies[year];
+            const prevTemp = nasaTempAnomalies[year - 1] || nasaTempAnomalies[year]; // Если нет данных для предыдущего года
+            const baseTemp = nasaTempAnomalies[baseYear];
             
-            // Обновляем дату и уровень CO₂
-            document.getElementById('dateValue').textContent = `${data.month} ${data.year}`;
-            document.getElementById('co2Value').textContent = `Уровень CO₂: ${data.co2} ppm`;
-            document.getElementById('changeFromStart').textContent = 
-                `Δ с 2002 года: +${(data.co2 - startCO2).toFixed(1)} ppm`;
+            // Рассчитываем изменения
+            const changeFromPrev = currentTemp - prevTemp;
+            const changeFromBase = currentTemp - baseTemp;
+            
+            // Форматируем вывод
+            const formatTemp = (temp) => {
+                return (temp >= 0 ? '+' : '') + temp.toFixed(2);
+            };
+            
+            document.getElementById('changeFromPrev').textContent = 
+                `Δ от прошлого года: ${formatTemp(changeFromPrev)}°C`;
+            document.getElementById('changeFrom1890').textContent = 
+                `Δ с ${baseYear} года: ${formatTemp(changeFromBase)}°C`;
+            
+            previousYear = year;
         }
         
         // Инициализация
-        updateDate(1);
+        updateYear(1890);
     </script>
 </body>
 </html>
