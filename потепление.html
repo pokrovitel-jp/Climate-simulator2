@@ -159,7 +159,7 @@
         <div class="subtitle">Наблюдайте за глобальными изменениями концентрации CO₂ с сентября 2002 по ноябрь 2022 года (данные NASA)</div>
         
         <div class="image-container">
-            <img id="co2Image" src="D:\\img3\\co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂">
+            <img id="co2Image" src="img3\\co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂">
         </div>
         
         <div class="slider-container">
@@ -216,11 +216,11 @@
                     // Определяем путь к изображению
                     let imgPath;
                     if (index <= 100) {
-                        imgPath = `D:\\img3\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img3\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     } else if (index <= 200) {
-                        imgPath = `D:\\img4\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img4\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     } else {
-                        imgPath = `D:\\img5\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img5\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     }
                     
                     // Расчет уровня CO₂ (можно заменить на реальные данные)
