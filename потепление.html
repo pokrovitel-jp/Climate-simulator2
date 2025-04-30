@@ -1,117 +1,270 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Анимация глобального потепления</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f9ff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    #map {
-      width: 600px;
-      height: 300px;
-      background: linear-gradient(to top, #2c3e50, #3498db);
-      border-radius: 10px;
-      margin-bottom: 20px;
-      position: relative;
-      transition: background 1s ease;
-    }
-
-    .overlay {
-      position: absolute;
-      color: white;
-      font-size: 1.5rem;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 10px 16px;
-      border-radius: 8px;
-    }
-
-    input[type=range] {
-      width: 600px;
-    }
-
-    .year-label {
-      margin-top: 10px;
-      font-size: 1.2rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Temperature Timeline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .slider-container {
+            margin: 40px 0;
+            position: relative;
+        }
+        .slider {
+            width: 100%;
+            height: 40px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        .slider:focus {
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 40px;
+            background: #333;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 40px;
+            background: #333;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .slider-track {
+            position: absolute;
+            width: 100%;
+            height: 6px;
+            background-color: #ddd;
+            top: 17px;
+            z-index: -1;
+            border-radius: 3px;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .slider-labels span {
+            font-size: 14px;
+            color: #666;
+        }
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+        }
+        .year-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
+    <h1>Global Temperature Timeline</h1>
+    
+    <div class="slider-container">
+        <div class="slider-labels">
+            <span>1880</span>
+            <span>2023</span>
+        </div>
+        <div class="slider-track"></div>
+        <input type="range" min="1880" max="2023" value="2023" class="slider" id="yearSlider">
+    </div>
+    
+    <div class="year-display" id="yearDisplay">2023</div>
+    
+    <div class="image-container">
+        <img id="temperatureImage" src="https://climate.nasa.gov/system/internal_resources/details/original/2466_2023_annual_anomaly_print.jpg" alt="Global Temperature Anomaly">
+    </div>
 
-  <h1>Глобальное потепление: температура по годам</h1>
-  <div id="map">
-    <div class="overlay" id="tempText">Температура: 0.00°C</div>
-  </div>
-
-  <input type="range" min="1880" max="2020" value="1880" step="1" id="yearSlider" />
-  <div class="year-label">Год: <span id="yearLabel">1880</span></div>
-
-  <script>
-    const slider = document.getElementById('yearSlider');
-    const yearLabel = document.getElementById('yearLabel');
-    const tempText = document.getElementById('tempText');
-    const map = document.getElementById('map');
-
-    // Пример температурных отклонений (в реальности берутся из NASA или CSV)
-    const data = {
-      1880: -0.2,
-      1900: -0.1,
-      1920: 0.0,
-      1940: 0.1,
-      1960: 0.0,
-      1980: 0.2,
-      1990: 0.4,
-      2000: 0.6,
-      2010: 0.8,
-      2020: 1.0
-    };
-
-    function getTemp(year) {
-      // Найдём ближайшие два известных года
-      const years = Object.keys(data).map(Number).sort((a, b) => a - b);
-      let lower = years[0], upper = years[years.length - 1];
-      for (let i = 0; i < years.length - 1; i++) {
-        if (year >= years[i] && year <= years[i + 1]) {
-          lower = years[i];
-          upper = years[i + 1];
-          break;
-        }
-      }
-      const ratio = (year - lower) / (upper - lower);
-      const temp = data[lower] + ratio * (data[upper] - data[lower]);
-      return parseFloat(temp.toFixed(2));
-    }
-
-    function updateUI(year) {
-      yearLabel.textContent = year;
-      const temp = getTemp(parseInt(year));
-      tempText.textContent = `Температура: ${temp}°C`;
-
-      // Цвет фона в зависимости от температуры
-      const red = Math.min(255, Math.floor(100 + temp * 155));
-      const blue = 255 - Math.floor(temp * 100);
-      map.style.background = `linear-gradient(to top, rgb(${red}, 60, 60), rgb(${red}, ${blue}, ${blue}))`;
-    }
-
-    slider.addEventListener('input', () => {
-      updateUI(slider.value);
-    });
-
-    updateUI(slider.value);
-  </script>
-
+    <script>
+        const slider = document.getElementById('yearSlider');
+        const yearDisplay = document.getElementById('yearDisplay');
+        const temperatureImage = document.getElementById('temperatureImage');
+        
+        // NASA image URLs pattern
+        const imageBaseUrl = 'https://climate.nasa.gov/system/internal_resources/details/original/';
+        
+        // Map years to their specific image filenames on NASA's server
+        const yearToImage = {
+            2023: '2466_2023_annual_anomaly_print.jpg',
+            2022: '2465_2022_annual_anomaly_print.jpg',
+            2021: '2464_2021_annual_anomaly_print.jpg',
+            2020: '2463_2020_annual_anomaly_print.jpg',
+            2019: '2462_2019_annual_anomaly_print.jpg',
+            2018: '2461_2018_annual_anomaly_print.jpg',
+            2017: '2460_2017_annual_anomaly_print.jpg',
+            2016: '2459_2016_annual_anomaly_print.jpg',
+            2015: '2458_2015_annual_anomaly_print.jpg',
+            2014: '2457_2014_annual_anomaly_print.jpg',
+            2013: '2456_2013_annual_anomaly_print.jpg',
+            2012: '2455_2012_annual_anomaly_print.jpg',
+            2011: '2454_2011_annual_anomaly_print.jpg',
+            2010: '2453_2010_annual_anomaly_print.jpg',
+            2009: '2452_2009_annual_anomaly_print.jpg',
+            2008: '2451_2008_annual_anomaly_print.jpg',
+            2007: '2450_2007_annual_anomaly_print.jpg',
+            2006: '2449_2006_annual_anomaly_print.jpg',
+            2005: '2448_2005_annual_anomaly_print.jpg',
+            2004: '2447_2004_annual_anomaly_print.jpg',
+            2003: '2446_2003_annual_anomaly_print.jpg',
+            2002: '2445_2002_annual_anomaly_print.jpg',
+            2001: '2444_2001_annual_anomaly_print.jpg',
+            2000: '2443_2000_annual_anomaly_print.jpg',
+            1999: '2442_1999_annual_anomaly_print.jpg',
+            1998: '2441_1998_annual_anomaly_print.jpg',
+            1997: '2440_1997_annual_anomaly_print.jpg',
+            1996: '2439_1996_annual_anomaly_print.jpg',
+            1995: '2438_1995_annual_anomaly_print.jpg',
+            1994: '2437_1994_annual_anomaly_print.jpg',
+            1993: '2436_1993_annual_anomaly_print.jpg',
+            1992: '2435_1992_annual_anomaly_print.jpg',
+            1991: '2434_1991_annual_anomaly_print.jpg',
+            1990: '2433_1990_annual_anomaly_print.jpg',
+            1989: '2432_1989_annual_anomaly_print.jpg',
+            1988: '2431_1988_annual_anomaly_print.jpg',
+            1987: '2430_1987_annual_anomaly_print.jpg',
+            1986: '2429_1986_annual_anomaly_print.jpg',
+            1985: '2428_1985_annual_anomaly_print.jpg',
+            1984: '2427_1984_annual_anomaly_print.jpg',
+            1983: '2426_1983_annual_anomaly_print.jpg',
+            1982: '2425_1982_annual_anomaly_print.jpg',
+            1981: '2424_1981_annual_anomaly_print.jpg',
+            1980: '2423_1980_annual_anomaly_print.jpg',
+            1979: '2422_1979_annual_anomaly_print.jpg',
+            1978: '2421_1978_annual_anomaly_print.jpg',
+            1977: '2420_1977_annual_anomaly_print.jpg',
+            1976: '2419_1976_annual_anomaly_print.jpg',
+            1975: '2418_1975_annual_anomaly_print.jpg',
+            1974: '2417_1974_annual_anomaly_print.jpg',
+            1973: '2416_1973_annual_anomaly_print.jpg',
+            1972: '2415_1972_annual_anomaly_print.jpg',
+            1971: '2414_1971_annual_anomaly_print.jpg',
+            1970: '2413_1970_annual_anomaly_print.jpg',
+            1969: '2412_1969_annual_anomaly_print.jpg',
+            1968: '2411_1968_annual_anomaly_print.jpg',
+            1967: '2410_1967_annual_anomaly_print.jpg',
+            1966: '2409_1966_annual_anomaly_print.jpg',
+            1965: '2408_1965_annual_anomaly_print.jpg',
+            1964: '2407_1964_annual_anomaly_print.jpg',
+            1963: '2406_1963_annual_anomaly_print.jpg',
+            1962: '2405_1962_annual_anomaly_print.jpg',
+            1961: '2404_1961_annual_anomaly_print.jpg',
+            1960: '2403_1960_annual_anomaly_print.jpg',
+            1959: '2402_1959_annual_anomaly_print.jpg',
+            1958: '2401_1958_annual_anomaly_print.jpg',
+            1957: '2400_1957_annual_anomaly_print.jpg',
+            1956: '2399_1956_annual_anomaly_print.jpg',
+            1955: '2398_1955_annual_anomaly_print.jpg',
+            1954: '2397_1954_annual_anomaly_print.jpg',
+            1953: '2396_1953_annual_anomaly_print.jpg',
+            1952: '2395_1952_annual_anomaly_print.jpg',
+            1951: '2394_1951_annual_anomaly_print.jpg',
+            1950: '2393_1950_annual_anomaly_print.jpg',
+            1949: '2392_1949_annual_anomaly_print.jpg',
+            1948: '2391_1948_annual_anomaly_print.jpg',
+            1947: '2390_1947_annual_anomaly_print.jpg',
+            1946: '2389_1946_annual_anomaly_print.jpg',
+            1945: '2388_1945_annual_anomaly_print.jpg',
+            1944: '2387_1944_annual_anomaly_print.jpg',
+            1943: '2386_1943_annual_anomaly_print.jpg',
+            1942: '2385_1942_annual_anomaly_print.jpg',
+            1941: '2384_1941_annual_anomaly_print.jpg',
+            1940: '2383_1940_annual_anomaly_print.jpg',
+            1939: '2382_1939_annual_anomaly_print.jpg',
+            1938: '2381_1938_annual_anomaly_print.jpg',
+            1937: '2380_1937_annual_anomaly_print.jpg',
+            1936: '2379_1936_annual_anomaly_print.jpg',
+            1935: '2378_1935_annual_anomaly_print.jpg',
+            1934: '2377_1934_annual_anomaly_print.jpg',
+            1933: '2376_1933_annual_anomaly_print.jpg',
+            1932: '2375_1932_annual_anomaly_print.jpg',
+            1931: '2374_1931_annual_anomaly_print.jpg',
+            1930: '2373_1930_annual_anomaly_print.jpg',
+            1929: '2372_1929_annual_anomaly_print.jpg',
+            1928: '2371_1928_annual_anomaly_print.jpg',
+            1927: '2370_1927_annual_anomaly_print.jpg',
+            1926: '2369_1926_annual_anomaly_print.jpg',
+            1925: '2368_1925_annual_anomaly_print.jpg',
+            1924: '2367_1924_annual_anomaly_print.jpg',
+            1923: '2366_1923_annual_anomaly_print.jpg',
+            1922: '2365_1922_annual_anomaly_print.jpg',
+            1921: '2364_1921_annual_anomaly_print.jpg',
+            1920: '2363_1920_annual_anomaly_print.jpg',
+            1919: '2362_1919_annual_anomaly_print.jpg',
+            1918: '2361_1918_annual_anomaly_print.jpg',
+            1917: '2360_1917_annual_anomaly_print.jpg',
+            1916: '2359_1916_annual_anomaly_print.jpg',
+            1915: '2358_1915_annual_anomaly_print.jpg',
+            1914: '2357_1914_annual_anomaly_print.jpg',
+            1913: '2356_1913_annual_anomaly_print.jpg',
+            1912: '2355_1912_annual_anomaly_print.jpg',
+            1911: '2354_1911_annual_anomaly_print.jpg',
+            1910: '2353_1910_annual_anomaly_print.jpg',
+            1909: '2352_1909_annual_anomaly_print.jpg',
+            1908: '2351_1908_annual_anomaly_print.jpg',
+            1907: '2350_1907_annual_anomaly_print.jpg',
+            1906: '2349_1906_annual_anomaly_print.jpg',
+            1905: '2348_1905_annual_anomaly_print.jpg',
+            1904: '2347_1904_annual_anomaly_print.jpg',
+            1903: '2346_1903_annual_anomaly_print.jpg',
+            1902: '2345_1902_annual_anomaly_print.jpg',
+            1901: '2344_1901_annual_anomaly_print.jpg',
+            1900: '2343_1900_annual_anomaly_print.jpg',
+            1899: '2342_1899_annual_anomaly_print.jpg',
+            1898: '2341_1898_annual_anomaly_print.jpg',
+            1897: '2340_1897_annual_anomaly_print.jpg',
+            1896: '2339_1896_annual_anomaly_print.jpg',
+            1895: '2338_1895_annual_anomaly_print.jpg',
+            1894: '2337_1894_annual_anomaly_print.jpg',
+            1893: '2336_1893_annual_anomaly_print.jpg',
+            1892: '2335_1892_annual_anomaly_print.jpg',
+            1891: '2334_1891_annual_anomaly_print.jpg',
+            1890: '2333_1890_annual_anomaly_print.jpg',
+            1889: '2332_1889_annual_anomaly_print.jpg',
+            1888: '2331_1888_annual_anomaly_print.jpg',
+            1887: '2330_1887_annual_anomaly_print.jpg',
+            1886: '2329_1886_annual_anomaly_print.jpg',
+            1885: '2328_1885_annual_anomaly_print.jpg',
+            1884: '2327_1884_annual_anomaly_print.jpg',
+            1883: '2326_1883_annual_anomaly_print.jpg',
+            1882: '2325_1882_annual_anomaly_print.jpg',
+            1881: '2324_1881_annual_anomaly_print.jpg',
+            1880: '2323_1880_annual_anomaly_print.jpg'
+        };
+        
+        slider.addEventListener('input', function() {
+            const year = this.value;
+            yearDisplay.textContent = year;
+            
+            // Check if we have an image for this year
+            if (yearToImage[year]) {
+                temperatureImage.src = imageBaseUrl + yearToImage[year];
+                temperatureImage.alt = `Global Temperature Anomaly ${year}`;
+            } else {
+                // Fallback if image not found (shouldn't happen as we have all years)
+                temperatureImage.src = 'https://climate.nasa.gov/system/internal_resources/details/original/2466_2023_annual_anomaly_print.jpg';
+                temperatureImage.alt = 'Global Temperature Anomaly';
+            }
+        });
+    </script>
 </body>
 </html>
