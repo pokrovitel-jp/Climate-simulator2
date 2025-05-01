@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация подъема уровня моря</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #001a33, #003366);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 30px auto;
+            padding: 30px;
+            background: rgba(0, 20, 40, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            color: #b3e5fc;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .region-selector {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .region-btn {
+            padding: 8px 15px;
+            background: rgba(0, 60, 120, 0.3);
+            color: #b3e5fc;
+            border: 1px solid #2196f3;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .region-btn:hover {
+            background: rgba(33, 150, 243, 0.3);
+        }
+        
+        .region-btn.active {
+            background: #2196f3;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .image-slider-container {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .image-container {
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px 10px 0 0;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .level-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+        
+        .level-image.active {
+            display: block;
+        }
+        
+        .slider-container {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0 0 10px 10px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .slider-wrapper {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        
+        .level-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4fc3f7;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .level-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #b3e5fc;
+            font-size: 14px;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #0d47a1, #2196f3);
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+        }
+        
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform .1s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .info-panel {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 60, 120, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            font-weight: bold;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .level-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .region-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Визуализация подъема уровня моря</h1>
+        <div class="subtitle">Наблюдайте изменения береговых линий при разном уровне подъема океана (0-6 метров)</div>
+        
+        <div class="region-selector">
+            <button class="region-btn active" onclick="showRegion('amazon')">Амазонка</button>
+            <button class="region-btn" onclick="showRegion('asia')">Азия</button>
+            <button class="region-btn" onclick="showRegion('europe')">Европа</button>
+            <button class="region-btn" onclick="showRegion('US')">США</button>
+        </div>
+        
+        <div class="image-slider-container">
+            <div class="image-container">
+                <!-- Сообщение об ошибке -->
+                <div class="error-message" id="errorMessage">
+                    Изображение не найдено. Проверьте путь: <span id="errorPath"></span>
+                </div>
+                
+                <!-- Амазонка -->
+                <img id="amazon-0" class="level-image active" src="img5/seaLevel6_amazon_0.jpg" alt="Амазонка - уровень 0м" onerror="imageError(this)">
+                <img id="amazon-1" class="level-image" src="img5/seaLevel6_amazon_1.jpeg" alt="Амазонка - уровень 1м" onerror="imageError(this)">
+                <img id="amazon-2" class="level-image" src="img5/seaLevel6_amazon_2.jpeg" alt="Амазонка - уровень 2м" onerror="imageError(this)">
+                <img id="amazon-3" class="level-image" src="img5/seaLevel6_amazon_3.jpeg" alt="Амазонка - уровень 3м" onerror="imageError(this)">
+                <img id="amazon-4" class="level-image" src="img5/seaLevel6_amazon_4.jpeg" alt="Амазонка - уровень 4м" onerror="imageError(this)">
+                <img id="amazon-5" class="level-image" src="img5/seaLevel6_amazon_5.jpeg" alt="Амазонка - уровень 5м" onerror="imageError(this)">
+                <img id="amazon-6" class="level-image" src="img5/seaLevel6_amazon_6.jpeg" alt="Амазонка - уровень 6м" onerror="imageError(this)">
+                
+                <!-- Азия -->
+                <img id="asia-0" class="level-image" src="img5/seaLevel6_asia_0.jpeg" alt="Азия - уровень 0м" onerror="imageError(this)">
+                <img id="asia-1" class="level-image" src="img5/seaLevel6_asia_1.jpeg" alt="Азия - уровень 1м" onerror="imageError(this)">
+                <img id="asia-2" class="level-image" src="img5/seaLevel6_asia_2.jpeg" alt="Азия - уровень 2м" onerror="imageError(this)">
+                <img id="asia-3" class="level-image" src="img5/seaLevel6_asia_3.jpeg" alt="Азия - уровень 3м" onerror="imageError(this)">
+                <img id="asia-4" class="level-image" src="img5/seaLevel6_asia_4.jpeg" alt="Азия - уровень 4м" onerror="imageError(this)">
+                <img id="asia-5" class="level-image" src="img5/seaLevel6_asia_5.jpeg" alt="Азия - уровень 5м" onerror="imageError(this)">
+                <img id="asia-6" class="level-image" src="img5/seaLevel6_asia_6.jpeg" alt="Азия - уровень 6м" onerror="imageError(this)">
+                
+                <!-- Европа -->
+                <img id="europe-0" class="level-image" src="img5/seaLevel6_europe_0.jpeg" alt="Европа - уровень 0м" onerror="imageError(this)">
+                <img id="europe-1" class="level-image" src="img5/seaLevel6_europe_1.jpeg" alt="Европа - уровень 1м" onerror="imageError(this)">
+                <img id="europe-2" class="level-image" src="img5/seaLevel6_europe_2.jpeg" alt="Европа - уровень 2м" onerror="imageError(this)">
+                <img id="europe-3" class="level-image" src="img5/seaLevel6_europe_3.jpeg" alt="Европа - уровень 3м" onerror="imageError(this)">
+                <img id="europe-4" class="level-image" src="img5/seaLevel6_europe_4.jpeg" alt="Европа - уровень 4м" onerror="imageError(this)">
+                <img id="europe-5" class="level-image" src="img5/seaLevel6_europe_5.jpeg" alt="Европа - уровень 5м" onerror="imageError(this)">
+                <img id="europe-6" class="level-image" src="img5/seaLevel6_europe_6.jpeg" alt="Европа - уровень 6м" onerror="imageError(this)">
+                
+                <!-- США -->
+                <img id="US-0" class="level-image" src="img5/seaLevel6_US_0.jpeg" alt="США - уровень 0м" onerror="imageError(this)">
+                <img id="US-1" class="level-image" src="img5/seaLevel6_US_1.jpeg" alt="США - уровень 1м" onerror="imageError(this)">
+                <img id="US-2" class="level-image" src="img5/seaLevel6_US_2.jpeg" alt="США - уровень 2м" onerror="imageError(this)">
+                <img id="US-3" class="level-image" src="img5/seaLevel6_US_3.jpeg" alt="США - уровень 3м" onerror="imageError(this)">
+                <img id="US-4" class="level-image" src="img5/seaLevel6_US_4.jpeg" alt="США - уровень 4м" onerror="imageError(this)">
+                <img id="US-5" class="level-image" src="img5/seaLevel6_US_5.jpeg" alt="США - уровень 5м" onerror="imageError(this)">
+                <img id="US-6" class="level-image" src="img5/seaLevel6_US_6.jpeg" alt="США - уровень 6м" onerror="imageError(this)">
+            </div>
+            
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <div class="level-display">
+                        <div>Уровень подъема: <span id="levelValue">0</span> метров</div>
+                        <div>Прогнозируемый год: <span id="projectedYear">Текущий</span></div>
+                    </div>
+                    
+                    <input 
+                        type="range" 
+                        id="levelSlider"
+                        min="0" 
+                        max="6" 
+                        value="0" 
+                        step="1"
+                        oninput="updateLevel(this.value)">
+                    
+                    <div class="level-labels">
+                        <span>0м (Текущий)</span>
+                        <span>6м</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <p>Эта визуализация показывает потенциальные изменения береговых линий при разном уровне подъема океана от 0 до 6 метров. Каждый метр соответствует увеличению воздействия климатических изменений на прибрежные зоны.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentRegion = 'amazon';
+        let currentLevel = 0;
+        
+        // Прогнозируемые годы для каждого уровня
+        const levelYears = {
+            0: "Текущий",
+            1: "2030-2050",
+            2: "2050-2070",
+            3: "2070-2090",
+            4: "2090-2100",
+            5: "2100+",
+            6: "2200+"
+        };
+        
+        // Обработчик ошибок загрузки изображений
+        function imageError(img) {
+            document.getElementById('errorPath').textContent = img.src;
+            document.getElementById('errorMessage').style.display = 'block';
+            img.style.display = 'none';
+        }
+        
+        // Функция для смены региона
+        function showRegion(region) {
+            currentRegion = region;
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Сбрасываем ползунок к 0
+            document.getElementById('levelSlider').value = 0;
+            currentLevel = 0;
+            
+            // Обновляем отображение уровня
+            document.getElementById('levelValue').textContent = '0';
+            document.getElementById('projectedYear').textContent = levelYears[0];
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(region.toLowerCase())) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Скрываем все изображения
+            document.querySelectorAll('.level-image').forEach(img => {
+                img.classList.remove('active');
+            });
+            
+            // Показываем изображение для уровня 0 нового региона
+            const activeImage = document.getElementById(`${currentRegion}-0`);
+            if (activeImage) {
+                activeImage.classList.add('active');
+                if (activeImage.complete && activeImage.naturalWidth === 0) {
+                    imageError(activeImage);
+                }
+            }
+        }
+        
+        // Функция для обновления уровня
+        function updateLevel(level) {
+            level = parseInt(level);
+            currentLevel = level;
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Скрываем все изображения
+            document.querySelectorAll('.level-image').forEach(img => {
+                img.classList.remove('active');
+            });
+            
+            // Показываем нужное изображение
+            const activeImage = document.getElementById(`${currentRegion}-${level}`);
+            if (activeImage) {
+                activeImage.classList.add('active');
+                // Проверяем, загрузилось ли изображение
+                if (activeImage.complete && activeImage.naturalWidth === 0) {
+                    imageError(activeImage);
+                }
+            }
+            
+            // Обновляем отображаемый уровень и год
+            document.getElementById('levelValue').textContent = level;
+            document.getElementById('projectedYear').textContent = levelYears[level];
+        }
+        
+        // Инициализация - проверяем загрузку первого изображения
+        window.onload = function() {
+            const firstImage = document.getElementById('amazon-0');
+            if (firstImage.complete && firstImage.naturalWidth === 0) {
+                imageError(firstImage);
+            }
+        };
+    </script>
+</body>
+</html>
