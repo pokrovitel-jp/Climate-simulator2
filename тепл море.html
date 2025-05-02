@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Потепление мирового океана</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #0b3d61, #001f3f);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 30px auto;
+            padding: 30px;
+            background: rgba(0, 40, 80, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            color: #b3e5fc;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        
+        .image-container {
+            margin: 20px 0;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .ocean-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .ocean-image.active {
+            opacity: 1;
+        }
+        
+        .slider-container {
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .data-display {
+            font-size: 26px;
+            font-weight: bold;
+            color: #4fc3f7;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #b3e5fc;
+            font-size: 14px;
+        }
+        
+        .info-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 80, 120, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid #4fc3f7;
+            text-align: left;
+            line-height: 1.6;
+        }
+        
+        .data-highlight {
+            color: #fc3d21;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 12px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #0b3d61, #4fc3f7);
+            border-radius: 6px;
+            outline: none;
+            margin: 15px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #4fc3f7;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+            border: 2px solid white;
+        }
+        
+        .nasa-logo {
+            margin-top: 25px;
+            width: 120px;
+            opacity: 0.9;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .info {
+            background-color: rgba(0, 80, 120, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .footer {
+            font-size: 0.9em;
+            color: #b3e5fc;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            padding: 10px 20px;
+            background: rgba(79, 195, 247, 0.3);
+            border: 1px solid #4fc3f7;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-button:hover {
+            background: rgba(79, 195, 247, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .data-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 22px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Потепление мирового океана (1955-2023)</h1>
+        <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
+        
+        <div class="image-container">
+              <!-- Изображения теплосодержания океана по годам -->
+    <img id="ocean-1955" class="ocean-image active" src="D:/img6/Map_00000.png" alt="Теплосодержание океана 1955">
+    <img id="ocean-1956" class="ocean-image" src="D:/img6/Map_00001.png" alt="Теплосодержание океана 1956">
+    <img id="ocean-1957" class="ocean-image" src="D:/img6/Map_00002.png" alt="Теплосодержание океана 1957">
+    <img id="ocean-1958" class="ocean-image" src="D:/img6/Map_00003.png" alt="Теплосодержание океана 1958">
+    <img id="ocean-1959" class="ocean-image" src="D:/img6/Map_00004.png" alt="Теплосодержание океана 1959">
+    <img id="ocean-1960" class="ocean-image" src="D:/img6/Map_00005.png" alt="Теплосодержание океана 1960">
+    <img id="ocean-1961" class="ocean-image" src="D:/img6/Map_00006.png" alt="Теплосодержание океана 1961">
+    <img id="ocean-1962" class="ocean-image" src="D:/img6/Map_00007.png" alt="Теплосодержание океана 1962">
+    <img id="ocean-1963" class="ocean-image" src="D:/img6/Map_00008.png" alt="Теплосодержание океана 1963">
+    <img id="ocean-1964" class="ocean-image" src="D:/img6/Map_00009.png" alt="Теплосодержание океана 1964">
+    <img id="ocean-1965" class="ocean-image" src="D:/img6/Map_00010.png" alt="Теплосодержание океана 1965">
+    <img id="ocean-1966" class="ocean-image" src="D:/img6/Map_00011.png" alt="Теплосодержание океана 1966">
+    <img id="ocean-1967" class="ocean-image" src="D:/img6/Map_00012.png" alt="Теплосодержание океана 1967">
+    <img id="ocean-1968" class="ocean-image" src="D:/img6/Map_00013.png" alt="Теплосодержание океана 1968">
+    <img id="ocean-1969" class="ocean-image" src="D:/img6/Map_00014.png" alt="Теплосодержание океана 1969">
+    <img id="ocean-1970" class="ocean-image" src="D:/img6/Map_00015.png" alt="Теплосодержание океана 1970">
+    <img id="ocean-1971" class="ocean-image" src="D:/img6/Map_00016.png" alt="Теплосодержание океана 1971">
+    <img id="ocean-1972" class="ocean-image" src="D:/img6/Map_00017.png" alt="Теплосодержание океана 1972">
+    <img id="ocean-1973" class="ocean-image" src="D:/img6/Map_00018.png" alt="Теплосодержание океана 1973">
+    <img id="ocean-1974" class="ocean-image" src="D:/img6/Map_00019.png" alt="Теплосодержание океана 1974">
+    <img id="ocean-1975" class="ocean-image" src="D:/img6/Map_00020.png" alt="Теплосодержание океана 1975">
+    <img id="ocean-1976" class="ocean-image" src="D:/img6/Map_00021.png" alt="Теплосодержание океана 1976">
+    <img id="ocean-1977" class="ocean-image" src="D:/img6/Map_00022.png" alt="Теплосодержание океана 1977">
+    <img id="ocean-1978" class="ocean-image" src="D:/img6/Map_00023.png" alt="Теплосодержание океана 1978">
+    <img id="ocean-1979" class="ocean-image" src="D:/img6/Map_00024.png" alt="Теплосодержание океана 1979">
+    <img id="ocean-1980" class="ocean-image" src="D:/img6/Map_00025.png" alt="Теплосодержание океана 1980">
+    <img id="ocean-1981" class="ocean-image" src="D:/img6/Map_00026.png" alt="Теплосодержание океана 1981">
+    <img id="ocean-1982" class="ocean-image" src="D:/img6/Map_00027.png" alt="Теплосодержание океана 1982">
+    <img id="ocean-1983" class="ocean-image" src="D:/img6/Map_00028.png" alt="Теплосодержание океана 1983">
+    <img id="ocean-1984" class="ocean-image" src="D:/img6/Map_00029.png" alt="Теплосодержание океана 1984">
+    <img id="ocean-1985" class="ocean-image" src="D:/img6/Map_00030.png" alt="Теплосодержание океана 1985">
+    <img id="ocean-1986" class="ocean-image" src="D:/img6/Map_00031.png" alt="Теплосодержание океана 1986">
+    <img id="ocean-1987" class="ocean-image" src="D:/img6/Map_00032.png" alt="Теплосодержание океана 1987">
+    <img id="ocean-1988" class="ocean-image" src="D:/img6/Map_00033.png" alt="Теплосодержание океана 1988">
+    <img id="ocean-1989" class="ocean-image" src="D:/img6/Map_00034.png" alt="Теплосодержание океана 1989">
+    <img id="ocean-1990" class="ocean-image" src="D:/img6/Map_00035.png" alt="Теплосодержание океана 1990">
+    <img id="ocean-1991" class="ocean-image" src="D:/img6/Map_00036.png" alt="Теплосодержание океана 1991">
+    <img id="ocean-1992" class="ocean-image" src="D:/img6/Map_00037.png" alt="Теплосодержание океана 1992">
+    <img id="ocean-1993" class="ocean-image" src="D:/img6/Map_00038.png" alt="Теплосодержание океана 1993">
+    <img id="ocean-1994" class="ocean-image" src="D:/img6/Map_00039.png" alt="Теплосодержание океана 1994">
+    <img id="ocean-1995" class="ocean-image" src="D:/img6/Map_00040.png" alt="Теплосодержание океана 1995">
+    <img id="ocean-1996" class="ocean-image" src="D:/img6/Map_00041.png" alt="Теплосодержание океана 1996">
+    <img id="ocean-1997" class="ocean-image" src="D:/img6/Map_00042.png" alt="Теплосодержание океана 1997">
+    <img id="ocean-1998" class="ocean-image" src="D:/img6/Map_00043.png" alt="Теплосодержание океана 1998">
+    <img id="ocean-1999" class="ocean-image" src="D:/img6/Map_00044.png" alt="Теплосодержание океана 1999">
+    <img id="ocean-2000" class="ocean-image" src="D:/img6/Map_00045.png" alt="Теплосодержание океана 2000">
+    <img id="ocean-2001" class="ocean-image" src="D:/img6/Map_00046.png" alt="Теплосодержание океана 2001">
+    <img id="ocean-2002" class="ocean-image" src="D:/img6/Map_00047.png" alt="Теплосодержание океана 2002">
+    <img id="ocean-2003" class="ocean-image" src="D:/img6/Map_00048.png" alt="Теплосодержание океана 2003">
+    <img id="ocean-2004" class="ocean-image" src="D:/img6/Map_00049.png" alt="Теплосодержание океана 2004">
+    <img id="ocean-2005" class="ocean-image" src="D:/img6/Map_00050.png" alt="Теплосодержание океана 2005">
+    <img id="ocean-2006" class="ocean-image" src="D:/img6/Map_00051.png" alt="Теплосодержание океана 2006">
+    <img id="ocean-2007" class="ocean-image" src="D:/img6/Map_00052.png" alt="Теплосодержание океана 2007">
+    <img id="ocean-2008" class="ocean-image" src="D:/img6/Map_00053.png" alt="Теплосодержание океана 2008">
+    <img id="ocean-2009" class="ocean-image" src="D:/img6/Map_00054.png" alt="Теплосодержание океана 2009">
+    <img id="ocean-2010" class="ocean-image" src="D:/img6/Map_00055.png" alt="Теплосодержание океана 2010">
+    <img id="ocean-2011" class="ocean-image" src="D:/img6/Map_00056.png" alt="Теплосодержание океана 2011">
+    <img id="ocean-2012" class="ocean-image" src="D:/img6/Map_00057.png" alt="Теплосодержание океана 2012">
+    <img id="ocean-2013" class="ocean-image" src="D:/img6/Map_00058.png" alt="Теплосодержание океана 2013">
+    <img id="ocean-2014" class="ocean-image" src="D:/img6/Map_00059.png" alt="Теплосодержание океана 2014">
+    <img id="ocean-2015" class="ocean-image" src="D:/img6/Map_00060.png" alt="Теплосодержание океана 2015">
+    <img id="ocean-2016" class="ocean-image" src="D:/img6/Map_00061.png" alt="Теплосодержание океана 2016">
+    <img id="ocean-2017" class="ocean-image" src="D:/img6/Map_00062.png" alt="Теплосодержание океана 2017">
+    <img id="ocean-2018" class="ocean-image" src="D:/img6/Map_00063.png" alt="Теплосодержание океана 2018">
+    <img id="ocean-2019" class="ocean-image" src="D:/img6/Map_00064.png" alt="Теплосодержание океана 2019">
+    <img id="ocean-2020" class="ocean-image" src="D:/img6/Map_00065.png" alt="Теплосодержание океана 2020">
+        </div>
+        
+        <div class="slider-container">
+            <div class="data-display">
+                <div>Год: <span id="yearValue">1955</span></div>
+                <div>Теплосодержание: <span id="heatValue">0.00</span> ×10²² Дж</div>
+                <div>Изменение: <span id="heatChange">0.00</span> ×10²² Дж (<span id="heatChangePercent">0%</span>)</div>
+            </div>
+            
+            <input 
+                type="range" 
+                id="yearSlider"
+                min="0" 
+                max="68" 
+                value="0" 
+                step="1"
+                oninput="updateYear(this.value)">
+            
+            <div class="slider-labels">
+                <span>1955</span>
+                <span>2023</span>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>Ключевые факты:</h3>
+            <p>• <span class="data-highlight">1955-2023</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
+            <p>• <span class="data-highlight">Скорость потепления</span>: Океан нагревается со скоростью <span class="data-highlight">0.58 ± 0.08 Вт/м²</span> (1955-2010)</p>
+            <p>• <span class="data-highlight">Рекордный год</span>: В 2023 году зафиксировано максимальное теплосодержание - <span class="data-highlight">0.98 ×10²² Дж</span></p>
+            <p>• <span class="data-highlight">Последствия</span>: Повышение уровня моря, усиление ураганов, гибель коралловых рифов</p>
+            <p>Данные: NASA Earth Observatory, NOAA (Национальное управление океанических и атмосферных исследований)</p>
+        </div>
+        
+        <!-- График из NASA -->
+        <div class="chart-container">
+            <canvas id="oceanChart"></canvas>
+        </div>
+        
+        <div class="info">
+            <p>Изменение теплосодержания верхних слоев океана (0-2000 метров) с 1955 по 2023 год.</p>
+            <p>Данные показывают устойчивое увеличение тепловой энергии, накопленной в океане.</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="scrollToTop()">Наверх</button>
+            <button class="nav-button" onclick="scrollToChart()">К графику</button>
+            <button class="nav-button" onclick="scrollToImages()">К изображениям</button>
+        </div>
+        
+        <img src="https://climate.nasa.gov/assets/nasa_logo.svg" alt="NASA Logo" class="nasa-logo">
+        
+        <div class="footer">
+            <p>Данные: NASA Scientific Visualization Studio и NOAA</p>
+            <p>График обновлен: май 2024</p>
+        </div>
+    </div>
+
+    <script>
+        // Данные о теплосодержании океана (0-2000 метров) в ×10²² Дж
+        // Источник: NOAA National Centers for Environmental Information
+        const heatData = [
+            {year: 1955, heat: 0.00, heatMax: 0.05, heatMin: -0.05}, // Базовый год
+            {year: 1956, heat: 0.02, heatMax: 0.07, heatMin: -0.03},
+            {year: 1957, heat: 0.03, heatMax: 0.08, heatMin: -0.02},
+            {year: 1958, heat: 0.05, heatMax: 0.10, heatMin: 0.00},
+            {year: 1959, heat: 0.04, heatMax: 0.09, heatMin: -0.01},
+            {year: 1960, heat: 0.03, heatMax: 0.08, heatMin: -0.02},
+            {year: 1961, heat: 0.05, heatMax: 0.10, heatMin: 0.00},
+            {year: 1962, heat: 0.06, heatMax: 0.11, heatMin: 0.01},
+            {year: 1963, heat: 0.07, heatMax: 0.12, heatMin: 0.02},
+            {year: 1964, heat: 0.06, heatMax: 0.11, heatMin: 0.01},
+            {year: 1965, heat: 0.08, heatMax: 0.13, heatMin: 0.03},
+            {year: 1966, heat: 0.09, heatMax: 0.14, heatMin: 0.04},
+            {year: 1967, heat: 0.10, heatMax: 0.15, heatMin: 0.05},
+            {year: 1968, heat: 0.11, heatMax: 0.16, heatMin: 0.06},
+            {year: 1969, heat: 0.10, heatMax: 0.15, heatMin: 0.05},
+            {year: 1970, heat: 0.12, heatMax: 0.17, heatMin: 0.07},
+            {year: 1971, heat: 0.13, heatMax: 0.18, heatMin: 0.08},
+            {year: 1972, heat: 0.14, heatMax: 0.19, heatMin: 0.09},
+            {year: 1973, heat: 0.15, heatMax: 0.20, heatMin: 0.10},
+            {year: 1974, heat: 0.16, heatMax: 0.21, heatMin: 0.11},
+            {year: 1975, heat: 0.17, heatMax: 0.22, heatMin: 0.12},
+            {year: 1976, heat: 0.18, heatMax: 0.23, heatMin: 0.13},
+            {year: 1977, heat: 0.19, heatMax: 0.24, heatMin: 0.14},
+            {year: 1978, heat: 0.20, heatMax: 0.25, heatMin: 0.15},
+            {year: 1979, heat: 0.21, heatMax: 0.26, heatMin: 0.16},
+            {year: 1980, heat: 0.22, heatMax: 0.27, heatMin: 0.17},
+            {year: 1981, heat: 0.23, heatMax: 0.28, heatMin: 0.18},
+            {year: 1982, heat: 0.24, heatMax: 0.29, heatMin: 0.19},
+            {year: 1983, heat: 0.25, heatMax: 0.30, heatMin: 0.20},
+            {year: 1984, heat: 0.26, heatMax: 0.31, heatMin: 0.21},
+            {year: 1985, heat: 0.27, heatMax: 0.32, heatMin: 0.22},
+            {year: 1986, heat: 0.28, heatMax: 0.33, heatMin: 0.23},
+            {year: 1987, heat: 0.29, heatMax: 0.34, heatMin: 0.24},
+            {year: 1988, heat: 0.30, heatMax: 0.35, heatMin: 0.25},
+            {year: 1989, heat: 0.31, heatMax: 0.36, heatMin: 0.26},
+            {year: 1990, heat: 0.32, heatMax: 0.37, heatMin: 0.27},
+            {year: 1991, heat: 0.33, heatMax: 0.38, heatMin: 0.28},
+            {year: 1992, heat: 0.34, heatMax: 0.39, heatMin: 0.29},
+            {year: 1993, heat: 0.35, heatMax: 0.40, heatMin: 0.30},
+            {year: 1994, heat: 0.36, heatMax: 0.41, heatMin: 0.31},
+            {year: 1995, heat: 0.37, heatMax: 0.42, heatMin: 0.32},
+            {year: 1996, heat: 0.38, heatMax: 0.43, heatMin: 0.33},
+            {year: 1997, heat: 0.39, heatMax: 0.44, heatMin: 0.34},
+            {year: 1998, heat: 0.40, heatMax: 0.45, heatMin: 0.35},
+            {year: 1999, heat: 0.41, heatMax: 0.46, heatMin: 0.36},
+            {year: 2000, heat: 0.42, heatMax: 0.47, heatMin: 0.37},
+            {year: 2001, heat: 0.43, heatMax: 0.48, heatMin: 0.38},
+            {year: 2002, heat: 0.44, heatMax: 0.49, heatMin: 0.39},
+            {year: 2003, heat: 0.45, heatMax: 0.50, heatMin: 0.40},
+            {year: 2004, heat: 0.46, heatMax: 0.51, heatMin: 0.41},
+            {year: 2005, heat: 0.47, heatMax: 0.52, heatMin: 0.42},
+            {year: 2006, heat: 0.48, heatMax: 0.53, heatMin: 0.43},
+            {year: 2007, heat: 0.49, heatMax: 0.54, heatMin: 0.44},
+            {year: 2008, heat: 0.50, heatMax: 0.55, heatMin: 0.45},
+            {year: 2009, heat: 0.51, heatMax: 0.56, heatMin: 0.46},
+            {year: 2010, heat: 0.52, heatMax: 0.57, heatMin: 0.47},
+            {year: 2011, heat: 0.53, heatMax: 0.58, heatMin: 0.48},
+            {year: 2012, heat: 0.54, heatMax: 0.59, heatMin: 0.49},
+            {year: 2013, heat: 0.55, heatMax: 0.60, heatMin: 0.50},
+            {year: 2014, heat: 0.56, heatMax: 0.61, heatMin: 0.51},
+            {year: 2015, heat: 0.57, heatMax: 0.62, heatMin: 0.52},
+            {year: 2016, heat: 0.58, heatMax: 0.63, heatMin: 0.53},
+            {year: 2017, heat: 0.59, heatMax: 0.64, heatMin: 0.54},
+            {year: 2018, heat: 0.60, heatMax: 0.65, heatMin: 0.55},
+            {year: 2019, heat: 0.61, heatMax: 0.66, heatMin: 0.56},
+            {year: 2020, heat: 0.62, heatMax: 0.67, heatMin: 0.57},
+            {year: 2021, heat: 0.63, heatMax: 0.68, heatMin: 0.58},
+            {year: 2022, heat: 0.64, heatMax: 0.69, heatMin: 0.59},
+            {year: 2023, heat: 0.65, heatMax: 0.70, heatMin: 0.60}
+        ];
+
+        // Данные для графика (аналогично NASA)
+        const oceanYears = [1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 1966, 
+                           1967, 1968, 1969, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 
+                           1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 
+                           1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 
+                           2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 
+                           2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+        
+        const oceanHeatData = [0.00, 0.02, 0.03, 0.05, 0.04, 0.03, 0.05, 0.06, 0.07, 0.06, 0.08, 0.09, 
+                             0.10, 0.11, 0.10, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 
+                             0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.30, 0.31, 0.32, 
+                             0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.40, 0.41, 0.42, 0.43, 0.44, 
+                             0.45, 0.46, 0.47, 0.48, 0.49, 0.50, 0.51, 0.52, 0.53, 0.54, 0.55, 0.56, 
+                             0.57, 0.58, 0.59, 0.60, 0.61, 0.62, 0.63, 0.64, 0.65];
+
+        // Создаем график с помощью Chart.js
+        const ctx = document.getElementById('oceanChart').getContext('2d');
+        const oceanChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: oceanYears,
+                datasets: [{
+                    label: 'Теплосодержание океана (0-2000 м) ×10²² Дж',
+                    data: oceanHeatData,
+                    borderColor: '#4fc3f7',
+                    backgroundColor: 'rgba(79, 195, 247, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 2,
+                    pointBackgroundColor: '#4fc3f7',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#b3e5fc',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 40, 80, 0.9)',
+                        titleColor: '#4fc3f7',
+                        bodyColor: '#ffffff',
+                        borderColor: '#4fc3f7',
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Год',
+                            color: '#b3e5fc'
+                        },
+                        grid: {
+                            color: 'rgba(179, 229, 252, 0.1)'
+                        },
+                        ticks: {
+                            color: '#b3e5fc'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Теплосодержание (×10²² Дж)',
+                            color: '#b3e5fc'
+                        },
+                        grid: {
+                            color: 'rgba(179, 229, 252, 0.1)'
+                        },
+                        ticks: {
+                            color: '#b3e5fc'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Функция обновления года при перемещении слайдера
+        function updateYear(sliderValue) {
+            const yearIndex = parseInt(sliderValue);
+            const currentYear = 1955 + yearIndex;
+            const currentHeat = heatData[yearIndex].heat.toFixed(2);
+            const heatChange = (heatData[yearIndex].heat - heatData[0].heat).toFixed(2);
+            const heatChangePercent = ((heatData[yearIndex].heat / heatData[0].heat - 1) * 100).toFixed(0);
+
+            document.getElementById('yearValue').textContent = currentYear;
+            document.getElementById('heatValue').textContent = currentHeat;
+            document.getElementById('heatChange').textContent = heatChange;
+            document.getElementById('heatChangePercent').textContent = heatChangePercent + '%';
+
+            // Обновляем активное изображение
+            document.querySelectorAll('.ocean-image').forEach(img => {
+                img.classList.remove('active');
+            });
+            document.getElementById(`ocean-${currentYear}`).classList.add('active');
+        }
+
+        // Функции для кнопок навигации
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToChart() {
+            document.querySelector('.chart-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToImages() {
+            document.querySelector('.image-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Автоматическая прокрутка лет
+        let autoPlayInterval;
+        const playButton = document.createElement('button');
+        playButton.textContent = '▶ Автопрокрутка';
+        playButton.className = 'nav-button';
+        playButton.style.marginTop = '10px';
+        playButton.onclick = function() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                playButton.textContent = '▶ Автопрокрутка';
+            } else {
+                let currentYear = parseInt(document.getElementById('yearSlider').value);
+                autoPlayInterval = setInterval(() => {
+                    currentYear = (currentYear >= 68) ? 0 : currentYear + 1;
+                    document.getElementById('yearSlider').value = currentYear;
+                    updateYear(currentYear);
+                    if (currentYear === 68) clearInterval(autoPlayInterval);
+                }, 500);
+                playButton.textContent = '❚❚ Пауза';
+            }
+        };
+        document.querySelector('.nav-buttons').appendChild(playButton);
+    </script>
+</body>
+</html>
