@@ -1,214 +1,385 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Симулятор изменения климата</title>
+  <meta charset="UTF-8">
+  <title>Изменение климата</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #e1f5fe);
-      color: #2c3e50;
-      padding: 30px 15px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: white;
     }
 
-    header {
+    a {
+      text-decoration: none;
+    }
+
+    .top-bar {
+      background-color: #000;
+      padding: 12px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      border-bottom: 1px solid #333;
     }
 
-    .header-title {
-      font-size: 1.8rem;
+    .logo {
+      font-size: 24px;
       font-weight: bold;
     }
 
-    .nav-buttons {
-      display: flex;
-      gap: 12px;
-    }
-
-    .nav-buttons button {
-      background-color: #3498db;
+    .logo a {
       color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
     }
 
-    .nav-buttons button:hover {
-      background-color: #2980b9;
+    .logo a:hover {
+      color: #ccc;
     }
 
-    h1 {
-      font-size: 2.5rem;
+    .main-nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .main-nav a {
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .main-nav a:hover {
+      color: #ccc;
+    }
+
+    .submenu {
+      background: #222;
+      display: flex;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 30px;
+      border-bottom: 1px solid #333;
+    }
+
+    .submenu a {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .submenu a:hover {
+      color: #ccc;
+    }
+
+    .hero {
+      position: relative;
+      height: 650px;
+      display: flex;
+      align-items: center;
+      padding: 0 60px;
+      overflow: hidden;
+    }
+
+    .hero-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .hero-text {
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-text h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .hero-text p {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 30px 40px;
+      flex-wrap: wrap;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+    }
+
+    .stat {
       text-align: center;
+      margin: 15px;
+      min-width: 160px;
+    }
+
+    .stat .title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      color: red;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .stat .desc {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    /* Общий стиль для белых секций */
+    .white-section {
+      background-color: #ffffff;
+      color: #000;
+      padding: 80px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .text-block {
+      flex: 1 1 500px;
+      padding: 20px 40px;
+    }
+
+    .text-block h2 {
+      font-size: 42px;
       margin-bottom: 20px;
     }
 
-    .welcome-text {
-      max-width: 800px;
-      font-size: 1.2rem;
-      text-align: center;
-      margin: 0 auto 40px;
+    .text-block p {
+      font-size: 20px;
       line-height: 1.6;
     }
 
-    h2 {
-      font-size: 1.8rem;
-      text-align: center;
-      margin-bottom: 16px;
+    .video-block {
+      flex: 1 1 600px;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .image-container {
-      position: relative;
-      max-width: 1000px;
-      margin: 0 auto 60px;
-    }
-
-    .image-container img {
+    .video-block video {
       width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 700px;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     }
 
-    .image-button {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(46, 204, 113, 0.9);
-      color: white;
-      border: none;
+    .sim-button {
+      display: inline-block;
+      margin-top: 30px;
       padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      background-color: #0077cc;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: background 0.3s ease;
     }
 
-    .image-button:hover {
-      background-color: rgba(39, 174, 96, 0.95);
-      transform: translateX(-50%) scale(1.05);
+    .sim-button:hover {
+      background-color: #005fa3;
     }
 
-    .section {
-      margin-top: 60px;
-    }
-
-    @media (max-width: 600px) {
-      .nav-buttons {
+    @media (max-width: 768px) {
+      .white-section {
         flex-direction: column;
-        gap: 10px;
-        align-items: flex-end;
+        padding: 40px 20px;
       }
 
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .image-button {
-        font-size: 1rem;
-        padding: 10px 20px;
+      .text-block {
+        padding: 0 20px 40px 20px;
+        text-align: center;
       }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-title">Симулятор климата</div>
-    <div class="nav-buttons">
-      <button onclick="location.href='index.html'">Главная</button>
-      <button onclick="alert('Информация о проекте')">О нас</button>
-      <button onclick="alert('Здесь будут указаны источники данных')">Источники</button>
-      <button onclick="location.href='simulators.html'">Все симуляторы</button>
-    </div>
-  </header>
-
-  <h1>Симулятор последствий изменения климата</h1>
-
-  <div class="welcome-text">
-    Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов.  
-    От устойчивости сельского хозяйства до качества воздуха в городах — всё это связано с климатическими изменениями.  
-    Особенно важно понимать и отслеживать эти изменения в нашей стране — Кыргызстане.
+  <!-- Верхняя панель -->
+  <div class="top-bar">
+    <div class="logo"><a href="#top">Главная</a></div>
+    <nav class="main-nav">
+      <a href="#">Карта</a>
+      <a href="#">Диаграммы</a>
+      <a href="#">Источники</a>
+    </nav>
   </div>
 
-  <h2>Диаграмма изменения климата в Кыргызстане</h2>
-  <div class="image-container">
-    <img src="https://c4.wallpaperflare.com/wallpaper/995/412/931/field-the-sky-grass-clouds-wallpaper-preview.jpg" alt="Климат Кыргызстана">
-    <button class="image-button" onclick="location.href='kr.html'">Перейти к симулятору</button>
+  <!-- Подменю -->
+  <nav class="submenu">
+    <a href="#">Глобальное потепление</a>
+    <a href="#">Уровень моря</a>
+    <a href="#">Потепление океана</a>
+    <a href="#">Углекислый газ</a>
+    <a href="#glaciers">Ледяные щиты</a>
+  </nav>
+
+  <!-- Герой секция с видео-фоном -->
+  <section class="hero">
+    <video class="hero-video" autoplay muted loop>
+      <source src="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-text">
+      <h1>Изменение климата</h1>
+      <p>Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов</p>
+    </div>
+  </section>
+
+  <!-- Статистика -->
+  <section class="stats">
+    <div class="stat">
+      <div class="title">Глобальное потепление</div>
+      <div class="value">+1.2°C</div>
+      <div class="desc">с 1880 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Углекислый газ</div>
+      <div class="value">+93 ppm</div>
+      <div class="desc">с 2002 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Уровень моря</div>
+      <div class="value">+4 in</div>
+      <div class="desc">с 1993 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Потепление океана</div>
+      <div class="value">+372 ZJ</div>
+      <div class="desc">с 1955 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Ледяные щиты</div>
+      <div class="value">-403 млрд т</div>
+      <div class="desc">в год</div>
+    </div>
+  </section>
+<!-- 1. Секция: Глобальное потепление (белый фон) -->
+<section id="global-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
+  <div class="text-block">
+    <h2>Глобальное потепление</h2>
+    <p>
+      Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов. Последствия включают засухи, пожары, изменение климата и ухудшение условий жизни.
+    </p>
+    <a class="sim-button" href="потепление.html">Перейти к симулятору</a>
   </div>
-
-  <div class="section">
-    <h2>Глобальное потепление и его последствия</h2>
-    <div class="welcome-text">
-      Глобальное потепление — это одна из самых серьёзных угроз, с которыми сталкивается человечество.  
-      Повышение температуры влияет на ледники, уровень морей, климатические катастрофы и биоразнообразие.  
-      Это проблема, которая касается не только Кыргызстана, но и всего мира.
-    </div>
-
-    <div class="image-container">
-      <img src="https://c.files.bbci.co.uk/4A21/production/_112477981_gettyimages-1180852874.jpg" alt="Глобальное потепление">
-      <button class="image-button" onclick="location.href='потепление.html'">Симулятор глобального потепления</button>
-    </div>
+  <div class="video-block">
+    <video autoplay muted loop>
+      <source src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
   </div>
+</section>
 
-  <div class="section">
-    <h2>Повышение уровня моря</h2>
-    <div class="welcome-text">
-      Повышение уровня моря угрожает прибрежным городам, разрушает инфраструктуру и вынуждает миллионы людей покидать свои дома.  
-      Это ведёт к экономическим и гуманитарным последствиям во всём мире, особенно для островных и низменных государств.
-    </div>
-
-    <div class="image-container">
-      <img src="https://www.ferra.ru/imgs/2022/02/16/13/5241952/bf71506f3e432578df4520147aeb85088ab7636a.jpg" alt="Уровень моря">
-      <button class="image-button" onclick="location.href='море.html'">Симулятор повышения уровня моря</button>
-    </div>
+<!-- 2. Секция: Выбросы CO₂ (чёрный фон) -->
+<section class="white-section" style="background-color: #000; color: #fff;">
+  <div class="text-block">
+    <h2>Выбросы углекислого газа</h2>
+    <p>
+      Выбросы CO₂, вызванные деятельностью человека, усиливают парниковый эффект, способствуя глобальному потеплению. Основные источники — сжигание ископаемого топлива, промышленность и вырубка лесов.
+      Мониторинг выбросов помогает учёным и политикам разрабатывать эффективные меры по борьбе с изменением климата.
+    </p>
+    <a class="sim-button" href="co2.html">Перейти к симулятору</a>
   </div>
-
-  <div class="section">
-    <h2>Выбросы углекислого газа (CO₂)</h2>
-    <div class="welcome-text">
-      Углекислый газ — один из главных парниковых газов, усиливающих эффект глобального потепления.  
-      Его концентрация в атмосфере растёт из-за деятельности человека, что приводит к изменению климата, нарушению экосистем  
-      и негативным последствиям для здоровья людей.
-    </div>
-
-    <div class="image-container">
-      <img src="https://cdn.shopify.com/s/files/1/0677/4059/8571/articles/co2_Desk_b.jpg?v=1705573944" alt="Углекислый газ">
-      <button class="image-button" onclick="location.href='co2.html'">Симулятор выбросов CO₂</button>
-    </div>
+  <div class="video-block">
+    <video autoplay muted loop>
+      <source src="https://cdn.pixabay.com/video/2024/01/19/197283-904592622_large.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
   </div>
+</section>
 
-  <div class="section">
-    <h2>Карта мира и климатические риски</h2>
-    <div class="welcome-text">
-      Карта мира — это мощный инструмент визуализации последствий изменения климата по регионам.  
-      С её помощью можно увидеть, как глобальное потепление, повышение уровня океанов и другие процессы  
-      влияют на разные части планеты. Это помогает понять масштабы проблемы и принимать меры на глобальном уровне.
-    </div>
 
-    <div class="image-container">
-      <img src="https://images.wallpaperscraft.ru/image/single/planeta_zemlia_kosmos_123222_1920x1080.jpg" alt="Карта мира и климат">
-      <button class="image-button" onclick="location.href='потоп.html'">Перейти к карте мира</button>
-    </div>
+<!-- Секция: Поднятие уровня моря (текст выше анимации) -->
+<section id="sea-level-rise" style="background-color: #f3f3f3; padding: 60px 20px 20px;">
+  <h2 style="text-align: center; font-size: 36px; margin-bottom: 20px; color: #000; font-family: 'Arial', sans-serif; font-weight: bold;">
+    Поднятие уровня моря
+  </h2>
+  <p style="text-align: center; font-size: 20px; max-width: 900px; margin: 0 auto; color: #000; font-family: 'Verdana', sans-serif; line-height: 1.6;">
+    Изменение климата вызывает повышение уровня моря, что угрожает прибрежным регионам. Таяние ледников, усиление штормов и наводнений - всё это последствия глобального потепления, которое ускоряет этот процесс. Это может привести к затоплению значительных территорий.
+  </p>
+</section>
+
+<!-- Секция: Видео-анимация -->
+<section id="global-warming-video" style="position: relative; background-color: #000; padding: 0; margin: 0; overflow: hidden; height: 600px;">
+  <video autoplay muted playsinline loop style="
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  ">
+    <source src="https://cdn.pixabay.com/video/2018/11/16/19368-301525727_large.mp4" type="video/mp4">
+    Ваш браузер не поддерживает видео.
+  </video>
+  <a href="потоп.html" style="
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0077cc;
+    color: white;
+    font-weight: bold;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  " onmouseover="this.style.backgroundColor='#005fa3'" onmouseout="this.style.backgroundColor='#0077cc'">
+    Перейти к симулятору
+  </a>
+</section>
+
+<!-- 3. Секция: Потепление океана (белый фон) -->
+<section id="ocean-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
+  <div class="text-block">
+    <h2>Потепление океана</h2>
+    <p>
+      Океаны поглощают большую часть тепла, вызванного глобальным потеплением. Это ведёт к повышению температуры воды, угрожая морским экосистемам, таким как коралловые рифы, и способствуя более сильным ураганам.
+    </p>
+    <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
   </div>
+  <div class="video-block">
+    <video autoplay muted loop>
+      <source src="https://cdn.pixabay.com/video/2020/01/18/31377-386628887_large.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+  </div>
+</section>
 
-</body>
-</html>
+<!-- 4. Секция: Таяние ледников (чёрный фон) -->
+<section id="glaciers" class="white-section" style="background-color: #000; color: #fff;">
+  <div class="text-block">
+    <h2>Таяние ледников</h2>
+    <p>
+      Потепление климата усиливает таяние ледников, особенно в Арктике и горных районах. Это влияет на уровень моря, разрушает экосистемы и угрожает пресноводным источникам. NASA использует спутники и инструменты для отслеживания этих изменений.
+    </p>
+    <a class="sim-button" href="лед.html">Перейти к симулятору</a>
+  </div>
+  <div class="video-block">
+    <video autoplay muted loop>
+      <source src="https://cdn.pixabay.com/video/2023/03/14/154726-808562497_large.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+  </div>
+</section>
+
+
