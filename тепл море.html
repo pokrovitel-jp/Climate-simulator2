@@ -89,6 +89,7 @@
         h1 {
             color: #4fc3f7;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .subtitle {
@@ -103,16 +104,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
             position: relative;
+            overflow: hidden;
         }
 
         .ocean-image {
             max-width: 100%;
             max-height: 500px;
             border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             transition: opacity 0.5s;
             position: absolute;
             opacity: 0;
+            object-fit: contain;
         }
 
         .ocean-image.active {
@@ -129,6 +136,7 @@
             font-weight: bold;
             color: #4fc3f7;
             margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -145,17 +153,26 @@
             background: rgba(0, 60, 120, 0.3);
             padding: 5px 10px;
             border-radius: 5px;
+            border-left: 2px solid #2196f3;
         }
 
         input[type="range"] {
+            -webkit-appearance: none;
             width: 100%;
             height: 10px;
             background: linear-gradient(90deg, #0d47a1, #2196f3);
             border-radius: 5px;
             outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
         }
 
         input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
             appearance: none;
             width: 25px;
             height: 25px;
@@ -163,6 +180,11 @@
             background: #ffffff;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform .1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
         }
 
         .year-labels {
@@ -178,6 +200,7 @@
             padding: 15px;
             background: rgba(0, 60, 120, 0.3);
             border-radius: 8px;
+            border-left: 4px solid #2196f3;
         }
         
         .data-highlight {
@@ -189,19 +212,29 @@
             margin-top: 40px;
             background: #fff;
             border-radius: 12px;
+            max-width: 100%;
         }
 
-        .error-message {
-            color: #ff6b6b;
-            font-weight: bold;
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 5px;
+        @media (max-width: 768px) {
+            .year-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .temp-change {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+            }
+            
+            .image-container {
+                min-height: 300px;
+            }
+            
+            .ocean-image {
+                max-height: 400px;
+            }
         }
     </style>
 </head>
@@ -227,81 +260,77 @@
 
     <!-- Основной контейнер -->
     <div class="container">
-        <h1>Потепление мирового океана (1955-2023)</h1>
+        <h1>Потепление мирового океана (1955-2020)</h1>
         <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
 
         <div class="image-container">
             <!-- Изображения теплосодержания океана по годам -->
-            <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955" onerror="imageError(this)">
-            <img id="ocean-1956" class="ocean-image" src="img6/Map_00001.png" alt="Теплосодержание океана 1956" onerror="imageError(this)">
-            <img id="ocean-1957" class="ocean-image" src="img6/Map_00002.png" alt="Теплосодержание океана 1957" onerror="imageError(this)">
-            <img id="ocean-1958" class="ocean-image" src="img6/Map_00003.png" alt="Теплосодержание океана 1958" onerror="imageError(this)">
-            <img id="ocean-1959" class="ocean-image" src="img6/Map_00004.png" alt="Теплосодержание океана 1959" onerror="imageError(this)">
-            <img id="ocean-1960" class="ocean-image" src="img6/Map_00005.png" alt="Теплосодержание океана 1960" onerror="imageError(this)">
-            <img id="ocean-1961" class="ocean-image" src="img6/Map_00006.png" alt="Теплосодержание океана 1961" onerror="imageError(this)">
-            <img id="ocean-1962" class="ocean-image" src="img6/Map_00007.png" alt="Теплосодержание океана 1962" onerror="imageError(this)">
-            <img id="ocean-1963" class="ocean-image" src="img6/Map_00008.png" alt="Теплосодержание океана 1963" onerror="imageError(this)">
-            <img id="ocean-1964" class="ocean-image" src="img6/Map_00009.png" alt="Теплосодержание океана 1964" onerror="imageError(this)">
-            <img id="ocean-1965" class="ocean-image" src="img6/Map_00010.png" alt="Теплосодержание океана 1965" onerror="imageError(this)">
-            <img id="ocean-1966" class="ocean-image" src="img6/Map_00011.png" alt="Теплосодержание океана 1966" onerror="imageError(this)">
-            <img id="ocean-1967" class="ocean-image" src="img6/Map_00012.png" alt="Теплосодержание океана 1967" onerror="imageError(this)">
-            <img id="ocean-1968" class="ocean-image" src="img6/Map_00013.png" alt="Теплосодержание океана 1968" onerror="imageError(this)">
-            <img id="ocean-1969" class="ocean-image" src="img6/Map_00014.png" alt="Теплосодержание океана 1969" onerror="imageError(this)">
-            <img id="ocean-1970" class="ocean-image" src="img6/Map_00015.png" alt="Теплосодержание океана 1970" onerror="imageError(this)">
-            <img id="ocean-1971" class="ocean-image" src="img6/Map_00016.png" alt="Теплосодержание океана 1971" onerror="imageError(this)">
-            <img id="ocean-1972" class="ocean-image" src="img6/Map_00017.png" alt="Теплосодержание океана 1972" onerror="imageError(this)">
-            <img id="ocean-1973" class="ocean-image" src="img6/Map_00018.png" alt="Теплосодержание океана 1973" onerror="imageError(this)">
-            <img id="ocean-1974" class="ocean-image" src="img6/Map_00019.png" alt="Теплосодержание океана 1974" onerror="imageError(this)">
-            <img id="ocean-1975" class="ocean-image" src="img6/Map_00020.png" alt="Теплосодержание океана 1975" onerror="imageError(this)">
-            <img id="ocean-1976" class="ocean-image" src="img6/Map_00021.png" alt="Теплосодержание океана 1976" onerror="imageError(this)">
-            <img id="ocean-1977" class="ocean-image" src="img6/Map_00022.png" alt="Теплосодержание океана 1977" onerror="imageError(this)">
-            <img id="ocean-1978" class="ocean-image" src="img6/Map_00023.png" alt="Теплосодержание океана 1978" onerror="imageError(this)">
-            <img id="ocean-1979" class="ocean-image" src="img6/Map_00024.png" alt="Теплосодержание океана 1979" onerror="imageError(this)">
-            <img id="ocean-1980" class="ocean-image" src="img6/Map_00025.png" alt="Теплосодержание океана 1980" onerror="imageError(this)">
-            <img id="ocean-1981" class="ocean-image" src="img6/Map_00026.png" alt="Теплосодержание океана 1981" onerror="imageError(this)">
-            <img id="ocean-1982" class="ocean-image" src="img6/Map_00027.png" alt="Теплосодержание океана 1982" onerror="imageError(this)">
-            <img id="ocean-1983" class="ocean-image" src="img6/Map_00028.png" alt="Теплосодержание океана 1983" onerror="imageError(this)">
-            <img id="ocean-1984" class="ocean-image" src="img6/Map_00029.png" alt="Теплосодержание океана 1984" onerror="imageError(this)">
-            <img id="ocean-1985" class="ocean-image" src="img6/Map_00030.png" alt="Теплосодержание океана 1985" onerror="imageError(this)">
-            <img id="ocean-1986" class="ocean-image" src="img6/Map_00031.png" alt="Теплосодержание океана 1986" onerror="imageError(this)">
-            <img id="ocean-1987" class="ocean-image" src="img6/Map_00032.png" alt="Теплосодержание океана 1987" onerror="imageError(this)">
-            <img id="ocean-1988" class="ocean-image" src="img6/Map_00033.png" alt="Теплосодержание океана 1988" onerror="imageError(this)">
-            <img id="ocean-1989" class="ocean-image" src="img6/Map_00034.png" alt="Теплосодержание океана 1989" onerror="imageError(this)">
-            <img id="ocean-1990" class="ocean-image" src="img6/Map_00035.png" alt="Теплосодержание океана 1990" onerror="imageError(this)">
-            <img id="ocean-1991" class="ocean-image" src="img6/Map_00036.png" alt="Теплосодержание океана 1991" onerror="imageError(this)">
-            <img id="ocean-1992" class="ocean-image" src="img6/Map_00037.png" alt="Теплосодержание океана 1992" onerror="imageError(this)">
-            <img id="ocean-1993" class="ocean-image" src="img6/Map_00038.png" alt="Теплосодержание океана 1993" onerror="imageError(this)">
-            <img id="ocean-1994" class="ocean-image" src="img6/Map_00039.png" alt="Теплосодержание океана 1994" onerror="imageError(this)">
-            <img id="ocean-1995" class="ocean-image" src="img6/Map_00040.png" alt="Теплосодержание океана 1995" onerror="imageError(this)">
-            <img id="ocean-1996" class="ocean-image" src="img6/Map_00041.png" alt="Теплосодержание океана 1996" onerror="imageError(this)">
-            <img id="ocean-1997" class="ocean-image" src="img6/Map_00042.png" alt="Теплосодержание океана 1997" onerror="imageError(this)">
-            <img id="ocean-1998" class="ocean-image" src="img6/Map_00043.png" alt="Теплосодержание океана 1998" onerror="imageError(this)">
-            <img id="ocean-1999" class="ocean-image" src="img6/Map_00044.png" alt="Теплосодержание океана 1999" onerror="imageError(this)">
-            <img id="ocean-2000" class="ocean-image" src="img6/Map_00045.png" alt="Теплосодержание океана 2000" onerror="imageError(this)">
-            <img id="ocean-2001" class="ocean-image" src="img6/Map_00046.png" alt="Теплосодержание океана 2001" onerror="imageError(this)">
-            <img id="ocean-2002" class="ocean-image" src="img6/Map_00047.png" alt="Теплосодержание океана 2002" onerror="imageError(this)">
-            <img id="ocean-2003" class="ocean-image" src="img6/Map_00048.png" alt="Теплосодержание океана 2003" onerror="imageError(this)">
-            <img id="ocean-2004" class="ocean-image" src="img6/Map_00049.png" alt="Теплосодержание океана 2004" onerror="imageError(this)">
-            <img id="ocean-2005" class="ocean-image" src="img6/Map_00050.png" alt="Теплосодержание океана 2005" onerror="imageError(this)">
-            <img id="ocean-2006" class="ocean-image" src="img6/Map_00051.png" alt="Теплосодержание океана 2006" onerror="imageError(this)">
-            <img id="ocean-2007" class="ocean-image" src="img6/Map_00052.png" alt="Теплосодержание океана 2007" onerror="imageError(this)">
-            <img id="ocean-2008" class="ocean-image" src="img6/Map_00053.png" alt="Теплосодержание океана 2008" onerror="imageError(this)">
-            <img id="ocean-2009" class="ocean-image" src="img6/Map_00054.png" alt="Теплосодержание океана 2009" onerror="imageError(this)">
-            <img id="ocean-2010" class="ocean-image" src="img6/Map_00055.png" alt="Теплосодержание океана 2010" onerror="imageError(this)">
-            <img id="ocean-2011" class="ocean-image" src="img6/Map_00056.png" alt="Теплосодержание океана 2011" onerror="imageError(this)">
-            <img id="ocean-2012" class="ocean-image" src="img6/Map_00057.png" alt="Теплосодержание океана 2012" onerror="imageError(this)">
-            <img id="ocean-2013" class="ocean-image" src="img6/Map_00058.png" alt="Теплосодержание океана 2013" onerror="imageError(this)">
-            <img id="ocean-2014" class="ocean-image" src="img6/Map_00059.png" alt="Теплосодержание океана 2014" onerror="imageError(this)">
-            <img id="ocean-2015" class="ocean-image" src="img6/Map_00060.png" alt="Теплосодержание океана 2015" onerror="imageError(this)">
-            <img id="ocean-2016" class="ocean-image" src="img6/Map_00061.png" alt="Теплосодержание океана 2016" onerror="imageError(this)">
-            <img id="ocean-2017" class="ocean-image" src="img6/Map_00062.png" alt="Теплосодержание океана 2017" onerror="imageError(this)">
-            <img id="ocean-2018" class="ocean-image" src="img6/Map_00063.png" alt="Теплосодержание океана 2018" onerror="imageError(this)">
-            <img id="ocean-2019" class="ocean-image" src="img6/Map_00064.png" alt="Теплосодержание океана 2019" onerror="imageError(this)">
-            <img id="ocean-2020" class="ocean-image" src="img6/Map_00065.png" alt="Теплосодержание океана 2020" onerror="imageError(this)">
-            <!-- Сообщение об ошибке -->
-            <div class="error-message" id="errorMessage">
-                Изображение не найдено. Проверьте путь: <span id="errorPath"></span>
-            </div>
+            <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955">
+            <img id="ocean-1956" class="ocean-image" src="img6/Map_00001.png" alt="Теплосодержание океана 1956">
+            <img id="ocean-1957" class="ocean-image" src="img6/Map_00002.png" alt="Теплосодержание океана 1957">
+            <img id="ocean-1958" class="ocean-image" src="img6/Map_00003.png" alt="Теплосодержание океана 1958">
+            <img id="ocean-1959" class="ocean-image" src="img6/Map_00004.png" alt="Теплосодержание океана 1959">
+            <img id="ocean-1960" class="ocean-image" src="img6/Map_00005.png" alt="Теплосодержание океана 1960">
+            <img id="ocean-1961" class="ocean-image" src="img6/Map_00006.png" alt="Теплосодержание океана 1961">
+            <img id="ocean-1962" class="ocean-image" src="img6/Map_00007.png" alt="Теплосодержание океана 1962">
+            <img id="ocean-1963" class="ocean-image" src="img6/Map_00008.png" alt="Теплосодержание океана 1963">
+            <img id="ocean-1964" class="ocean-image" src="img6/Map_00009.png" alt="Теплосодержание океана 1964">
+            <img id="ocean-1965" class="ocean-image" src="img6/Map_00010.png" alt="Теплосодержание океана 1965">
+            <img id="ocean-1966" class="ocean-image" src="img6/Map_00011.png" alt="Теплосодержание океана 1966">
+            <img id="ocean-1967" class="ocean-image" src="img6/Map_00012.png" alt="Теплосодержание океана 1967">
+            <img id="ocean-1968" class="ocean-image" src="img6/Map_00013.png" alt="Теплосодержание океана 1968">
+            <img id="ocean-1969" class="ocean-image" src="img6/Map_00014.png" alt="Теплосодержание океана 1969">
+            <img id="ocean-1970" class="ocean-image" src="img6/Map_00015.png" alt="Теплосодержание океана 1970">
+            <img id="ocean-1971" class="ocean-image" src="img6/Map_00016.png" alt="Теплосодержание океана 1971">
+            <img id="ocean-1972" class="ocean-image" src="img6/Map_00017.png" alt="Теплосодержание океана 1972">
+            <img id="ocean-1973" class="ocean-image" src="img6/Map_00018.png" alt="Теплосодержание океана 1973">
+            <img id="ocean-1974" class="ocean-image" src="img6/Map_00019.png" alt="Теплосодержание океана 1974">
+            <img id="ocean-1975" class="ocean-image" src="img6/Map_00020.png" alt="Теплосодержание океана 1975">
+            <img id="ocean-1976" class="ocean-image" src="img6/Map_00021.png" alt="Теплосодержание океана 1976">
+            <img id="ocean-1977" class="ocean-image" src="img6/Map_00022.png" alt="Теплосодержание океана 1977">
+            <img id="ocean-1978" class="ocean-image" src="img6/Map_00023.png" alt="Теплосодержание океана 1978">
+            <img id="ocean-1979" class="ocean-image" src="img6/Map_00024.png" alt="Теплосодержание океана 1979">
+            <img id="ocean-1980" class="ocean-image" src="img6/Map_00025.png" alt="Теплосодержание океана 1980">
+            <img id="ocean-1981" class="ocean-image" src="img6/Map_00026.png" alt="Теплосодержание океана 1981">
+            <img id="ocean-1982" class="ocean-image" src="img6/Map_00027.png" alt="Теплосодержание океана 1982">
+            <img id="ocean-1983" class="ocean-image" src="img6/Map_00028.png" alt="Теплосодержание океана 1983">
+            <img id="ocean-1984" class="ocean-image" src="img6/Map_00029.png" alt="Теплосодержание океана 1984">
+            <img id="ocean-1985" class="ocean-image" src="img6/Map_00030.png" alt="Теплосодержание океана 1985">
+            <img id="ocean-1986" class="ocean-image" src="img6/Map_00031.png" alt="Теплосодержание океана 1986">
+            <img id="ocean-1987" class="ocean-image" src="img6/Map_00032.png" alt="Теплосодержание океана 1987">
+            <img id="ocean-1988" class="ocean-image" src="img6/Map_00033.png" alt="Теплосодержание океана 1988">
+            <img id="ocean-1989" class="ocean-image" src="img6/Map_00034.png" alt="Теплосодержание океана 1989">
+            <img id="ocean-1990" class="ocean-image" src="img6/Map_00035.png" alt="Теплосодержание океана 1990">
+            <img id="ocean-1991" class="ocean-image" src="img6/Map_00036.png" alt="Теплосодержание океана 1991">
+            <img id="ocean-1992" class="ocean-image" src="img6/Map_00037.png" alt="Теплосодержание океана 1992">
+            <img id="ocean-1993" class="ocean-image" src="img6/Map_00038.png" alt="Теплосодержание океана 1993">
+            <img id="ocean-1994" class="ocean-image" src="img6/Map_00039.png" alt="Теплосодержание океана 1994">
+            <img id="ocean-1995" class="ocean-image" src="img6/Map_00040.png" alt="Теплосодержание океана 1995">
+            <img id="ocean-1996" class="ocean-image" src="img6/Map_00041.png" alt="Теплосодержание океана 1996">
+            <img id="ocean-1997" class="ocean-image" src="img6/Map_00042.png" alt="Теплосодержание океана 1997">
+            <img id="ocean-1998" class="ocean-image" src="img6/Map_00043.png" alt="Теплосодержание океана 1998">
+            <img id="ocean-1999" class="ocean-image" src="img6/Map_00044.png" alt="Теплосодержание океана 1999">
+            <img id="ocean-2000" class="ocean-image" src="img6/Map_00045.png" alt="Теплосодержание океана 2000">
+            <img id="ocean-2001" class="ocean-image" src="img6/Map_00046.png" alt="Теплосодержание океана 2001">
+            <img id="ocean-2002" class="ocean-image" src="img6/Map_00047.png" alt="Теплосодержание океана 2002">
+            <img id="ocean-2003" class="ocean-image" src="img6/Map_00048.png" alt="Теплосодержание океана 2003">
+            <img id="ocean-2004" class="ocean-image" src="img6/Map_00049.png" alt="Теплосодержание океана 2004">
+            <img id="ocean-2005" class="ocean-image" src="img6/Map_00050.png" alt="Теплосодержание океана 2005">
+            <img id="ocean-2006" class="ocean-image" src="img6/Map_00051.png" alt="Теплосодержание океана 2006">
+            <img id="ocean-2007" class="ocean-image" src="img6/Map_00052.png" alt="Теплосодержание океана 2007">
+            <img id="ocean-2008" class="ocean-image" src="img6/Map_00053.png" alt="Теплосодержание океана 2008">
+            <img id="ocean-2009" class="ocean-image" src="img6/Map_00054.png" alt="Теплосодержание океана 2009">
+            <img id="ocean-2010" class="ocean-image" src="img6/Map_00055.png" alt="Теплосодержание океана 2010">
+            <img id="ocean-2011" class="ocean-image" src="img6/Map_00056.png" alt="Теплосодержание океана 2011">
+            <img id="ocean-2012" class="ocean-image" src="img6/Map_00057.png" alt="Теплосодержание океана 2012">
+            <img id="ocean-2013" class="ocean-image" src="img6/Map_00058.png" alt="Теплосодержание океана 2013">
+            <img id="ocean-2014" class="ocean-image" src="img6/Map_00059.png" alt="Теплосодержание океана 2014">
+            <img id="ocean-2015" class="ocean-image" src="img6/Map_00060.png" alt="Теплосодержание океана 2015">
+            <img id="ocean-2016" class="ocean-image" src="img6/Map_00061.png" alt="Теплосодержание океана 2016">
+            <img id="ocean-2017" class="ocean-image" src="img6/Map_00062.png" alt="Теплосодержание океана 2017">
+            <img id="ocean-2018" class="ocean-image" src="img6/Map_00063.png" alt="Теплосодержание океана 2018">
+            <img id="ocean-2019" class="ocean-image" src="img6/Map_00064.png" alt="Теплосодержание океана 2019">
+            <img id="ocean-2020" class="ocean-image" src="img6/Map_00065.png" alt="Теплосодержание океана 2020">
         </div>
 
         <div class="slider-container">
@@ -309,13 +338,13 @@
                 <div>Год: <span id="yearValue">1955</span></div>
                 <div class="temp-change">
                     <span id="heatValue">Теплосодержание: 0.00 ×10²² Дж</span>
-                    <span id="heatChange">Изменение: 0.00 ×10²² Дж (0%)</span>
+                    <span id="heatChange">Изменение: +0.00 ×10²² Дж (0%)</span>
                 </div>
             </div>
 
-            <input type="range" id="yearSlider" min="0" max="68" value="0" step="1" oninput="updateYear(this.value)">
+            <input type="range" id="yearSlider" min="0" max="65" value="0" step="1" oninput="updateYear(this.value)">
             <div class="year-labels">
-                <span>1955</span><span>2023</span>
+                <span>1955</span><span>2020</span>
             </div>
         </div>
 
@@ -325,9 +354,9 @@
         <!-- Блок ключевых фактов -->
         <div class="info-panel">
             <h3>Ключевые факты о потеплении океана:</h3>
-            <p>• <span class="data-highlight">1955-2023</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
+            <p>• <span class="data-highlight">1955-2020</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
             <p>• <span class="data-highlight">Скорость потепления</span>: Океан нагревается со скоростью <span class="data-highlight">0.58 ± 0.08 Вт/м²</span> (1955-2010)</p>
-            <p>• <span class="data-highlight">Рекордный год</span>: В 2023 году зафиксировано максимальное теплосодержание - <span class="data-highlight">0.98 ×10²² Дж</span></p>
+            <p>• <span class="data-highlight">Рекордный год</span>: В 2020 году зафиксировано теплосодержание - <span class="data-highlight">0.62 ×10²² Дж</span></p>
             <p>• <span class="data-highlight">Последствия</span>: Повышение уровня моря, усиление ураганов, гибель коралловых рифов</p>
             <p>Данные: NASA Earth Observatory, NOAA (Национальное управление океанических и атмосферных исследований)</p>
         </div>
@@ -357,16 +386,8 @@
             {year: 2009, heat: 0.51}, {year: 2010, heat: 0.52}, {year: 2011, heat: 0.53},
             {year: 2012, heat: 0.54}, {year: 2013, heat: 0.55}, {year: 2014, heat: 0.56},
             {year: 2015, heat: 0.57}, {year: 2016, heat: 0.58}, {year: 2017, heat: 0.59},
-            {year: 2018, heat: 0.60}, {year: 2019, heat: 0.61}, {year: 2020, heat: 0.62},
-            {year: 2021, heat: 0.63}, {year: 2022, heat: 0.64}, {year: 2023, heat: 0.65}
+            {year: 2018, heat: 0.60}, {year: 2019, heat: 0.61}, {year: 2020, heat: 0.62}
         ];
-
-        // Обработчик ошибок загрузки изображений
-        function imageError(img) {
-            document.getElementById('errorPath').textContent = img.src;
-            document.getElementById('errorMessage').style.display = 'block';
-            img.style.display = 'none';
-        }
 
         // Функция для обновления года
         function updateYear(index) {
@@ -381,9 +402,6 @@
             const activeImage = document.getElementById(`ocean-${data.year}`);
             if (activeImage) {
                 activeImage.classList.add('active');
-                if (activeImage.complete && activeImage.naturalWidth === 0) {
-                    imageError(activeImage);
-                }
             }
 
             // Обновляем данные
@@ -392,7 +410,7 @@
             const heatChangePercent = ((data.heat / baseData.heat - 1) * 100).toFixed(0);
             
             document.getElementById('heatValue').textContent = `Теплосодержание: ${data.heat.toFixed(2)} ×10²² Дж`;
-            document.getElementById('heatChange').textContent = `Изменение: ${heatChange} ×10²² Дж (${heatChangePercent}%)`;
+            document.getElementById('heatChange').textContent = `Изменение: +${heatChange} ×10²² Дж (${heatChangePercent}%)`;
         }
 
         // Инициализация графика
@@ -417,8 +435,11 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Изменение теплосодержания океана (1955-2023)',
-                        color: '#222'
+                        text: 'Изменение теплосодержания океана (1955-2020)',
+                        color: '#222',
+                        font: {
+                            size: 16
+                        }
                     },
                     legend: {
                         labels: {
