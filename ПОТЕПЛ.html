@@ -6,7 +6,6 @@
   <title>Climate Change Simulator</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* === СТИЛИ === */
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -19,11 +18,7 @@
       align-items: center;
       text-align: center;
     }
-
-    a {
-      text-decoration: none;
-    }
-
+    a { text-decoration: none; }
     .top-bar {
       background-color: #000;
       padding: 12px 40px;
@@ -34,27 +29,10 @@
       width: 100%;
       box-sizing: border-box;
     }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .logo a {
-      color: white;
-    }
-
-    .main-nav {
-      display: flex;
-      gap: 30px;
-    }
-
-    .main-nav a {
-      font-size: 16px;
-      color: white;
-      font-weight: bold;
-    }
-
+    .logo { font-size: 24px; font-weight: bold; }
+    .logo a { color: white; }
+    .main-nav { display: flex; gap: 30px; }
+    .main-nav a { font-size: 16px; color: white; font-weight: bold; }
     .submenu {
       background: #222;
       display: flex;
@@ -64,13 +42,7 @@
       border-bottom: 1px solid #333;
       width: 100%;
     }
-
-    .submenu a {
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-    }
-
+    .submenu a { font-size: 16px; font-weight: bold; color: white; }
     .container {
       max-width: 900px;
       width: 90%;
@@ -82,38 +54,42 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    h1 {
-      color: #4fc3f7;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      color: #b3e5fc;
-      margin-bottom: 30px;
-      font-size: 1.1em;
-    }
-
+    h1 { color: #4fc3f7; margin-bottom: 10px; }
+    .subtitle { color: #b3e5fc; margin-bottom: 30px; font-size: 1.1em; }
     .image-container {
       margin: 20px 0;
       min-height: 400px;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
-
     #temperatureImage {
       max-width: 100%;
       max-height: 500px;
       border-radius: 8px;
-      transition: opacity 0.5s;
+      transition: opacity 0.3s ease;
     }
-
-    .slider-container {
+    .loading {
+      position: absolute;
+      color: #b3e5fc;
+      font-size: 18px;
+    }
+    .preload-progress {
       width: 100%;
-      margin: 30px 0;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      margin-top: 10px;
+      border-radius: 2px;
+      overflow: hidden;
     }
-
+    .preload-progress-bar {
+      height: 100%;
+      background: #4fc3f7;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .slider-container { width: 100%; margin: 30px 0; }
     .year-display {
       font-size: 28px;
       font-weight: bold;
@@ -123,20 +99,17 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .temp-change {
       font-size: 16px;
       color: #b3e5fc;
       display: flex;
       gap: 20px;
     }
-
     .temp-change span {
       background: rgba(0, 60, 120, 0.3);
       padding: 5px 10px;
       border-radius: 5px;
     }
-
     input[type="range"] {
       width: 100%;
       height: 10px;
@@ -144,7 +117,6 @@
       border-radius: 5px;
       outline: none;
     }
-
     input[type="range"]::-webkit-slider-thumb {
       appearance: none;
       width: 25px;
@@ -154,7 +126,6 @@
       cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
-
     .year-labels {
       display: flex;
       justify-content: space-between;
@@ -162,29 +133,28 @@
       color: #b3e5fc;
       font-size: 14px;
     }
-
     .info-panel {
       margin-top: 30px;
       padding: 15px;
       background: rgba(0, 60, 120, 0.3);
       border-radius: 8px;
     }
-    
     .data-highlight {
       color: #fc3d21;
       font-weight: bold;
     }
-
     canvas {
       margin-top: 40px;
       background: #fff;
       border-radius: 12px;
     }
+    @media (max-width: 768px) {
+      .year-display { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .temp-change { flex-direction: column; gap: 5px; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
-
-  <!-- Верхняя панель -->
   <div class="top-bar">
     <div class="logo"><a href="index.html">Главная</a></div>
     <nav class="main-nav">
@@ -194,7 +164,6 @@
     </nav>
   </div>
 
-  <!-- Подменю -->
   <nav class="submenu">
     <a href="ПОТЕПЛ.html">Глобальное потепление</a>
     <a href="море.html">Уровень моря</a>
@@ -203,13 +172,18 @@
     <a href="лед.html">Ледяные щиты</a>
   </nav>
 
-  <!-- Контейнер -->
   <div class="container">
     <h1>Симулятор глобального потепления</h1>
     <div class="subtitle">Наблюдайте за изменением температуры с 1890 по 2022 год (данные NASA)</div>
 
     <div class="image-container">
-      <img id="temperatureImage" src="img/gt_1890_720x360.jpg" alt="Global Temperature Map">
+      <div class="loading" id="loadingIndicator">
+        Оптимизированная загрузка...
+        <div class="preload-progress">
+          <div class="preload-progress-bar" id="preloadProgressBar"></div>
+        </div>
+      </div>
+      <img id="temperatureImage" src="img/gt_1890_720x360.jpg" alt="Global Temperature Map" style="opacity: 0;">
     </div>
 
     <div class="slider-container">
@@ -221,7 +195,7 @@
         </div>
       </div>
 
-      <input type="range" id="yearSlider" min="1890" max="2022" value="1890" step="1" oninput="updateYear(this.value)">
+      <input type="range" id="yearSlider" min="1890" max="2022" value="1890" step="1" oninput="updateYear(this.value)" disabled>
       <div class="year-labels">
         <span>1890</span><span>2022</span>
       </div>
@@ -240,6 +214,15 @@
   </div>
 
   <script>
+    // 1. Конфигурация загрузки
+    const CONFIG = {
+      INITIAL_BATCH_SIZE: 10,      // Первые изображения для немедленной загрузки
+      PARALLEL_LOAD_LIMIT: 6,      // Максимальное количество параллельных загрузок
+      LOAD_BATCH_SIZE: 15,         // Размер пакетов для последующей загрузки
+      PRIORITY_RANGE: 5            // Приоритетная загрузка вокруг текущего положения
+    };
+
+    // 2. Данные о температуре
     const nasaTempAnomalies = {
       1890: -0.37, 1891: -0.26, 1892: -0.30, 1893: -0.36, 1894: -0.34,
       1895: -0.26, 1896: -0.16, 1897: -0.13, 1898: -0.31, 1899: -0.21,
@@ -270,57 +253,224 @@
       2020: 1.02, 2021: 0.85, 2022: 0.89
     };
 
-    const baseYear = 1890;
+    // 3. Состояние приложения
+    const state = {
+      imageCache: {},
+      currentYear: 1890,
+      loadingQueue: [],
+      activeLoads: 0,
+      totalLoaded: 0,
+      isReady: false
+    };
+
+    // 4. Элементы DOM
+    const dom = {
+      image: document.getElementById('temperatureImage'),
+      slider: document.getElementById('yearSlider'),
+      yearValue: document.getElementById('yearValue'),
+      changeFromPrev: document.getElementById('changeFromPrev'),
+      changeFrom1890: document.getElementById('changeFrom1890'),
+      loadingIndicator: document.getElementById('loadingIndicator'),
+      progressBar: document.getElementById('preloadProgressBar')
+    };
+
+    // 5. Основные функции
+    function initialize() {
+      // Предзагрузка в оптимальной последовательности
+      preloadInitialImages();
+      
+      // Инициализация графика
+      initChart();
+      
+      // Показать первое изображение
+      loadFirstImage();
+    }
+
+    function preloadInitialImages() {
+      // 1. Загружаем первые изображения немедленно
+      const years = Object.keys(nasaTempAnomalies).map(Number);
+      const initialYears = years.slice(0, CONFIG.INITIAL_BATCH_SIZE);
+      loadBatch(initialYears);
+      
+      // 2. Загружаем остальные изображения стратегически
+      const remainingYears = years.slice(CONFIG.INITIAL_BATCH_SIZE);
+      
+      // Разбиваем на пакеты с задержкой между ними
+      for (let i = 0; i < remainingYears.length; i += CONFIG.LOAD_BATCH_SIZE) {
+        setTimeout(() => {
+          const batch = remainingYears.slice(i, i + CONFIG.LOAD_BATCH_SIZE);
+          addToLoadingQueue(batch);
+        }, i * 30);
+      }
+    }
+
+    function loadBatch(years) {
+      years.forEach(year => {
+        if (state.imageCache[year]) return;
+        
+        const img = new Image();
+        img.onload = img.onerror = () => {
+          state.totalLoaded++;
+          state.activeLoads--;
+          state.imageCache[year] = img;
+          updateProgress();
+          processLoadingQueue();
+        };
+        
+        state.activeLoads++;
+        img.src = getImagePath(year);
+      });
+    }
+
+    function addToLoadingQueue(years) {
+      state.loadingQueue.push(...years);
+      processLoadingQueue();
+    }
+
+    function processLoadingQueue() {
+      while (state.loadingQueue.length > 0 && state.activeLoads < CONFIG.PARALLEL_LOAD_LIMIT) {
+        const year = state.loadingQueue.shift();
+        if (!state.imageCache[year]) {
+          const img = new Image();
+          img.onload = img.onerror = () => {
+            state.totalLoaded++;
+            state.activeLoads--;
+            state.imageCache[year] = img;
+            updateProgress();
+            processLoadingQueue();
+          };
+          state.activeLoads++;
+          img.src = getImagePath(year);
+        }
+      }
+    }
+
+    function updateProgress() {
+      const totalYears = Object.keys(nasaTempAnomalies).length;
+      const percent = Math.round((state.totalLoaded / totalYears) * 100);
+      dom.progressBar.style.width = `${percent}%`;
+      dom.loadingIndicator.textContent = `Загружено: ${state.totalLoaded}/${totalYears}`;
+      
+      if (state.totalLoaded >= CONFIG.INITIAL_BATCH_SIZE && !state.isReady) {
+        state.isReady = true;
+        dom.slider.disabled = false;
+        dom.loadingIndicator.style.opacity = '0';
+        setTimeout(() => {
+          dom.loadingIndicator.style.display = 'none';
+        }, 500);
+      }
+    }
+
+    function loadFirstImage() {
+      const img = new Image();
+      img.onload = () => {
+        dom.image.src = img.src;
+        dom.image.style.opacity = '1';
+        state.imageCache[1890] = img;
+      };
+      img.src = getImagePath(1890);
+    }
 
     function updateYear(year) {
       year = parseInt(year);
-      const image = document.getElementById('temperatureImage');
-      const imgPath = (year < 1987) ? `img/gt_${year}_720x360.jpg` : `img2/gt_${year}_720x360.jpg`;
-      image.src = imgPath;
-
-      document.getElementById('yearValue').textContent = year;
+      state.currentYear = year;
+      
+      // Обновляем текст
+      dom.yearValue.textContent = year;
       const current = nasaTempAnomalies[year];
       const previous = nasaTempAnomalies[year - 1] ?? current;
       const changePrev = current - previous;
-      const changeBase = current - nasaTempAnomalies[baseYear];
-
-      document.getElementById('changeFromPrev').textContent = `Δ от прошлого года: ${changePrev >= 0 ? '+' : ''}${changePrev.toFixed(2)}°C`;
-      document.getElementById('changeFrom1890').textContent = `Δ с ${baseYear} года: ${changeBase >= 0 ? '+' : ''}${changeBase.toFixed(2)}°C`;
+      const changeBase = current - nasaTempAnomalies[1890];
+      
+      dom.changeFromPrev.textContent = `Δ от прошлого года: ${changePrev >= 0 ? '+' : ''}${changePrev.toFixed(2)}°C`;
+      dom.changeFrom1890.textContent = `Δ с 1890 года: ${changeBase >= 0 ? '+' : ''}${changeBase.toFixed(2)}°C`;
+      
+      // Загружаем изображение с приоритетом
+      loadImageWithPriority(year);
+      
+      // Предзагружаем соседние изображения
+      preloadAdjacentYears(year);
     }
 
-    updateYear(baseYear);
-
-    // Создание диаграммы
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    const years = Object.keys(nasaTempAnomalies).map(y => +y);
-    const values = Object.values(nasaTempAnomalies);
-
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: years,
-        datasets: [{
-          label: 'Аномалия температуры (°C)',
-          data: values,
-          borderColor: '#4fc3f7',
-          backgroundColor: 'rgba(79, 195, 247, 0.2)',
-          borderWidth: 2,
-          tension: 0.3,
-          pointRadius: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            ticks: { color: '#222' }
-          },
-          y: {
-            ticks: { color: '#222' }
+    function loadImageWithPriority(year) {
+      if (state.imageCache[year]) {
+        // Если изображение в кэше - показываем сразу
+        dom.image.style.opacity = '0';
+        setTimeout(() => {
+          dom.image.src = state.imageCache[year].src;
+          dom.image.style.opacity = '1';
+        }, 50);
+      } else {
+        // Если нет - загружаем с высоким приоритетом
+        const img = new Image();
+        img.onload = () => {
+          state.imageCache[year] = img;
+          if (state.currentYear === year) {
+            dom.image.style.opacity = '0';
+            setTimeout(() => {
+              dom.image.src = img.src;
+              dom.image.style.opacity = '1';
+            }, 50);
           }
+        };
+        img.src = getImagePath(year);
+      }
+    }
+
+    function preloadAdjacentYears(currentYear) {
+      const start = Math.max(1890, currentYear - CONFIG.PRIORITY_RANGE);
+      const end = Math.min(2022, currentYear + CONFIG.PRIORITY_RANGE);
+      
+      for (let year = start; year <= end; year++) {
+        if (!state.imageCache[year] && !isImageLoading(year)) {
+          const img = new Image();
+          img.src = getImagePath(year);
+          img.onload = img.onerror = () => {
+            state.imageCache[year] = img;
+          };
         }
       }
-    });
+    }
+
+    function isImageLoading(year) {
+      return false; // Упрощенная проверка
+    }
+
+    function getImagePath(year) {
+      return year < 1987 ? `img/gt_${year}_720x360.jpg` : `img2/gt_${year}_720x360.jpg`;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('temperatureChart').getContext('2d');
+      const years = Object.keys(nasaTempAnomalies).map(Number);
+      const values = Object.values(nasaTempAnomalies);
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: years,
+          datasets: [{
+            label: 'Аномалия температуры (°C)',
+            data: values,
+            borderColor: '#4fc3f7',
+            backgroundColor: 'rgba(79, 195, 247, 0.2)',
+            borderWidth: 2,
+            tension: 0.3,
+            pointRadius: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { ticks: { color: '#222' } },
+            y: { ticks: { color: '#222' } }
+          }
+        }
+      });
+    }
+
+    // Инициализация при загрузке страницы
+    window.addEventListener('DOMContentLoaded', initialize);
   </script>
 </body>
 </html>
