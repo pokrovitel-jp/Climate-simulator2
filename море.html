@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Визуализация подъема уровня моря</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* === ОБЩИЕ СТИЛИ === */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -17,7 +19,61 @@
             align-items: center;
             text-align: center;
         }
-        
+
+        a {
+            text-decoration: none;
+        }
+
+        /* === ВЕРХНЯЯ ПАНЕЛЬ === */
+        .top-bar {
+            background-color: #000;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: white;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .main-nav a {
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* === ПОДМЕНЮ === */
+        .submenu {
+            background: #222;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            gap: 30px;
+            border-bottom: 1px solid #333;
+            width: 100%;
+        }
+
+        .submenu a {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* === ОСНОВНОЙ КОНТЕНТ === */
         .container {
             max-width: 900px;
             width: 90%;
@@ -29,19 +85,19 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         h1 {
             color: #4fc3f7;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
+
         .subtitle {
             color: #b3e5fc;
             margin-bottom: 30px;
             font-size: 1.1em;
         }
-        
+
         .region-selector {
             margin: 20px 0;
             display: flex;
@@ -49,7 +105,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .region-btn {
             padding: 8px 15px;
             background: rgba(0, 60, 120, 0.3);
@@ -59,24 +115,24 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .region-btn:hover {
             background: rgba(33, 150, 243, 0.3);
         }
-        
+
         .region-btn.active {
             background: #2196f3;
             color: white;
             font-weight: bold;
         }
-        
+
         .image-slider-container {
             margin: 20px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        
+
         .image-container {
             width: 100%;
             min-height: 400px;
@@ -88,7 +144,7 @@
             padding: 20px;
             position: relative;
         }
-        
+
         .level-image {
             max-width: 100%;
             max-height: 500px;
@@ -96,11 +152,11 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             display: none;
         }
-        
+
         .level-image.active {
             display: block;
         }
-        
+
         .slider-container {
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
@@ -108,13 +164,13 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        
+
         .slider-wrapper {
             width: 100%;
             max-width: 720px;
             margin: 0 auto;
         }
-        
+
         .level-display {
             font-size: 28px;
             font-weight: bold;
@@ -125,7 +181,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .level-labels {
             display: flex;
             justify-content: space-between;
@@ -133,7 +189,7 @@
             color: #b3e5fc;
             font-size: 14px;
         }
-        
+
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -144,11 +200,11 @@
             opacity: 0.9;
             transition: opacity .2s;
         }
-        
+
         input[type="range"]:hover {
             opacity: 1;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -160,11 +216,11 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: transform .1s;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.1);
         }
-        
+
         .info-panel {
             margin-top: 30px;
             padding: 15px;
@@ -173,6 +229,11 @@
             border-left: 4px solid #2196f3;
         }
         
+        .data-highlight {
+            color: #fc3d21;
+            font-weight: bold;
+        }
+
         .error-message {
             color: #ff6b6b;
             font-weight: bold;
@@ -186,13 +247,19 @@
             border-radius: 5px;
         }
         
+        canvas {
+            margin-top: 40px;
+            background: #fff;
+            border-radius: 12px;
+        }
+
         @media (max-width: 768px) {
             .level-display {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
-            
+
             .region-selector {
                 flex-direction: column;
                 align-items: center;
@@ -201,6 +268,26 @@
     </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="logo"><a href="index.html">Главная</a></div>
+        <nav class="main-nav">
+            <a href="primer.html">Карта</a>
+            <a href="primer.html">Диаграммы</a>
+            <a href="primer.html">Источники</a>
+        </nav>
+    </div>
+
+    <!-- Подменю -->
+    <nav class="submenu">
+        <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+        <a href="море.html">Уровень моря</a>
+        <a href="тепл море.html">Потепление океана</a>
+        <a href="co2.html">Углекислый газ</a>
+        <a href="лед.html">Ледяные щиты</a>
+    </nav>
+
+    <!-- Основной контейнер -->
     <div class="container">
         <h1>Визуализация подъема уровня моря</h1>
         <div class="subtitle">Наблюдайте изменения береговых линий при разном уровне подъема океана (0-6 метров)</div>
@@ -280,8 +367,18 @@
             </div>
         </div>
         
+        <!-- График уровня моря -->
+        <canvas id="seaLevelChart" width="800" height="300"></canvas>
+        
+        <!-- Блок ключевых фактов -->
         <div class="info-panel">
-            <p>Эта визуализация показывает потенциальные изменения береговых линий при разном уровне подъема океана от 0 до 6 метров. Каждый метр соответствует увеличению воздействия климатических изменений на прибрежные зоны.</p>
+            <h3>Ключевые факты о подъеме уровня моря:</h3>
+            <p>• <span class="data-highlight">Скорость подъема</span>: Уровень моря растет на <span class="data-highlight">3.4 мм/год</span> (1993-2023)</p>
+            <p>• <span class="data-highlight">Общий подъем</span>: С 1900 года уровень моря поднялся на <span class="data-highlight">20-23 см</span></p>
+            <p>• <span class="data-highlight">Прогноз к 2100 году</span>: Подъем на <span class="data-highlight">0.3-1.1 метра</span> в зависимости от сценария выбросов</p>
+            <p>• <span class="data-highlight">Основные причины</span>: Термальное расширение воды (50%) и таяние ледников (40%)</p>
+            <p>• <span class="data-highlight">Последствия</span>: К 2050 году до 300 млн человек могут пострадать от наводнений</p>
+            <p>Данные: NASA Sea Level Change, IPCC, NOAA</p>
         </div>
     </div>
 
@@ -375,6 +472,72 @@
             if (firstImage.complete && firstImage.naturalWidth === 0) {
                 imageError(firstImage);
             }
+            
+            // Данные для графика уровня моря (примерные данные NASA)
+            const seaLevelData = [
+                {year: 1993, level: 0}, {year: 1995, level: 10}, 
+                {year: 2000, level: 25}, {year: 2005, level: 35},
+                {year: 2010, level: 45}, {year: 2015, level: 65},
+                {year: 2020, level: 85}, {year: 2023, level: 100}
+            ];
+            
+            // Создание графика уровня моря
+            const ctx = document.getElementById('seaLevelChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: seaLevelData.map(item => item.year),
+                    datasets: [{
+                        label: 'Изменение уровня моря (мм) с 1993 года',
+                        data: seaLevelData.map(item => item.level),
+                        borderColor: '#4fc3f7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Глобальный подъем уровня моря (1993-2023)',
+                            color: '#222',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#222'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Год',
+                                color: '#222'
+                            },
+                            ticks: {
+                                color: '#222'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Изменение уровня (мм)',
+                                color: '#222'
+                            },
+                            ticks: {
+                                color: '#222'
+                            }
+                        }
+                    }
+                }
+            });
         };
     </script>
 </body>
