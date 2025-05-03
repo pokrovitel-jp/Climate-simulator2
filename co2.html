@@ -107,6 +107,7 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             padding: 20px;
+            position: relative;
         }
 
         #co2Image {
@@ -114,7 +115,13 @@
             max-height: 500px;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.5s;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading {
+            position: absolute;
+            color: #b3e5fc;
+            font-size: 18px;
         }
 
         .slider-container {
@@ -246,7 +253,8 @@
         <div class="subtitle">Наблюдайте за глобальными изменениями концентрации CO₂ с сентября 2002 по ноябрь 2022 года (данные NASA)</div>
         
         <div class="image-container">
-            <img id="co2Image" src="img3\\co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂">
+            <div class="loading" id="loadingIndicator">Загрузка изображений...</div>
+            <img id="co2Image" src="img3/co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂" style="opacity: 0;">
         </div>
         
         <div class="slider-container">
@@ -265,7 +273,8 @@
                 max="243" 
                 value="1" 
                 step="1"
-                oninput="updateDate(this.value)">
+                oninput="updateDate(this.value)"
+                disabled>
             
             <div class="year-labels">
                 <span>Сентябрь 2002</span>
@@ -313,11 +322,11 @@
                     // Определяем путь к изображению
                     let imgPath;
                     if (index <= 100) {
-                        imgPath = `img3\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img3/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     } else if (index <= 200) {
-                        imgPath = `img4\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img4/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     } else {
-                        imgPath = `img5\\co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
+                        imgPath = `img5/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
                     }
                     
                     // Расчет уровня CO₂ (можно заменить на реальные данные)
@@ -338,92 +347,181 @@
         
         const dateData = generateDateData();
         const startCO2 = dateData[0].co2;
+        const imageCache = {};
+        let isPreloading = false;
+        let currentImageIndex = 1;
+        
+        // Функция для предзагрузки изображений
+        function preloadImages() {
+            if (isPreloading) return;
+            
+            isPreloading = true;
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const totalImages = dateData.length;
+            let loadedCount = 0;
+            
+            loadingIndicator.textContent = `Загрузка изображений: 0/${totalImages}`;
+            
+            dateData.forEach(data => {
+                const img = new Image();
+                img.src = data.imgPath;
+                
+                img.onload = () => {
+                    imageCache[data.index] = img;
+                    loadedCount++;
+                    loadingIndicator.textContent = `Загрузка изображений: ${loadedCount}/${totalImages}`;
+                    
+                    // Когда все изображения загружены
+                    if (loadedCount === totalImages) {
+                        loadingIndicator.style.display = 'none';
+                        document.getElementById('co2Image').style.opacity = '1';
+                        document.getElementById('dateSlider').disabled = false;
+                        
+                        // Показать первое изображение
+                        updateDate(1);
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.error('Ошибка загрузки изображения:', data.imgPath);
+                    loadedCount++;
+                    if (loadedCount === totalImages) {
+                        loadingIndicator.style.display = 'none';
+                        document.getElementById('co2Image').style.opacity = '1';
+                        document.getElementById('dateSlider').disabled = false;
+                        updateDate(1);
+                    }
+                };
+            });
+        }
         
         function updateDate(index) {
             index = parseInt(index);
+            currentImageIndex = index;
             const data = dateData.find(item => item.index === index) || dateData[0];
-            
-            // Обновляем изображение
-            document.getElementById('co2Image').src = data.imgPath;
             
             // Обновляем дату и уровень CO₂
             document.getElementById('dateValue').textContent = `${data.month} ${data.year}`;
             document.getElementById('co2Value').textContent = `Уровень CO₂: ${data.co2} ppm`;
             document.getElementById('changeFromStart').textContent = 
                 `Δ с 2002 года: +${(data.co2 - startCO2).toFixed(1)} ppm`;
+            
+            // Если изображение уже в кэше
+            if (imageCache[index]) {
+                const imgElement = document.getElementById('co2Image');
+                imgElement.style.opacity = '0';
+                
+                setTimeout(() => {
+                    imgElement.src = imageCache[index].src;
+                    imgElement.style.opacity = '1';
+                }, 50);
+            } else {
+                // Если изображение еще не загружено (например, при быстром переключении)
+                const img = new Image();
+                img.src = data.imgPath;
+                
+                img.onload = () => {
+                    imageCache[index] = img;
+                    if (currentImageIndex === index) { // Проверяем, что ползунок не переместился дальше
+                        const imgElement = document.getElementById('co2Image');
+                        imgElement.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            imgElement.src = img.src;
+                            imgElement.style.opacity = '1';
+                        }, 50);
+                    }
+                };
+            }
         }
         
-        // Инициализация
-        updateDate(1);
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            // Начать предзагрузку изображений
+            preloadImages();
+            
+            // Показать первое изображение сразу
+            const firstImg = new Image();
+            firstImg.src = dateData[0].imgPath;
+            firstImg.onload = function() {
+                document.getElementById('co2Image').src = this.src;
+                document.getElementById('co2Image').style.opacity = '1';
+            };
+            
+            // Инициализация графика
+            initChart();
+        };
         
         // Данные для графика CO₂ (примерные данные по годам)
-        const co2HistoricalData = [
-            {year: 1958, co2: 315}, {year: 1965, co2: 320}, {year: 1970, co2: 325},
-            {year: 1975, co2: 331}, {year: 1980, co2: 338}, {year: 1985, co2: 345},
-            {year: 1990, co2: 354}, {year: 1995, co2: 360}, {year: 2000, co2: 369},
-            {year: 2005, co2: 379}, {year: 2010, co2: 389}, {year: 2015, co2: 400},
-            {year: 2020, co2: 412}, {year: 2023, co2: 419}
-        ];
-        
-        // Создание графика
-        const ctx = document.getElementById('co2Chart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: co2HistoricalData.map(item => item.year),
-                datasets: [{
-                    label: 'Концентрация CO₂ (ppm)',
-                    data: co2HistoricalData.map(item => item.co2),
-                    borderColor: '#4fc3f7',
-                    backgroundColor: 'rgba(79, 195, 247, 0.2)',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Глобальная концентрация CO₂ в атмосфере (1958-2023)',
-                        color: '#222',
-                        font: {
-                            size: 16
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            color: '#222'
-                        }
-                    }
+        function initChart() {
+            const co2HistoricalData = [
+                {year: 1958, co2: 315}, {year: 1965, co2: 320}, {year: 1970, co2: 325},
+                {year: 1975, co2: 331}, {year: 1980, co2: 338}, {year: 1985, co2: 345},
+                {year: 1990, co2: 354}, {year: 1995, co2: 360}, {year: 2000, co2: 369},
+                {year: 2005, co2: 379}, {year: 2010, co2: 389}, {year: 2015, co2: 400},
+                {year: 2020, co2: 412}, {year: 2023, co2: 419}
+            ];
+            
+            // Создание графика
+            const ctx = document.getElementById('co2Chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: co2HistoricalData.map(item => item.year),
+                    datasets: [{
+                        label: 'Концентрация CO₂ (ppm)',
+                        data: co2HistoricalData.map(item => item.co2),
+                        borderColor: '#4fc3f7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    }]
                 },
-                scales: {
-                    x: {
+                options: {
+                    responsive: true,
+                    plugins: {
                         title: {
                             display: true,
-                            text: 'Год',
-                            color: '#222'
+                            text: 'Глобальная концентрация CO₂ в атмосфере (1958-2023)',
+                            color: '#222',
+                            font: {
+                                size: 16
+                            }
                         },
-                        ticks: {
-                            color: '#222'
+                        legend: {
+                            labels: {
+                                color: '#222'
+                            }
                         }
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Концентрация CO₂ (ppm)',
-                            color: '#222'
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Год',
+                                color: '#222'
+                            },
+                            ticks: {
+                                color: '#222'
+                            }
                         },
-                        min: 300,
-                        max: 450,
-                        ticks: {
-                            color: '#222'
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Концентрация CO₂ (ppm)',
+                                color: '#222'
+                            },
+                            min: 300,
+                            max: 450,
+                            ticks: {
+                                color: '#222'
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     </script>
 </body>
 </html>
