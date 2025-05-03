@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Climate Change</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -19,64 +19,50 @@
     }
 
     .top-bar {
-      background-color: #000;
-      padding: 12px 40px;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #333;
-      width: 100%;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
-    .logo {
-      font-size: 24px;
+    .top-bar .logo a {
+      color: #4fc3f7;
       font-weight: bold;
-    }
-
-    .logo a {
-      color: white;
       text-decoration: none;
-    }
-
-    .logo a:hover {
-      color: #ccc;
-    }
-
-    .main-nav {
-      display: flex;
-      gap: 30px;
+      font-size: 1.2em;
     }
 
     .main-nav a {
-      font-size: 16px;
-      color: white;
-      font-weight: bold;
+      margin-left: 20px;
+      color: #b3e5fc;
       text-decoration: none;
+      font-size: 0.95em;
     }
 
     .main-nav a:hover {
-      color: #ccc;
+      text-decoration: underline;
     }
 
     .submenu {
-      background: #222;
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 100%;
+      padding: 10px;
       display: flex;
       justify-content: center;
-      padding: 12px 0;
-      gap: 30px;
-      border-bottom: 1px solid #333;
-      width: 100%;
+      gap: 20px;
     }
 
     .submenu a {
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
+      color: #b3e5fc;
       text-decoration: none;
+      font-size: 0.9em;
     }
 
     .submenu a:hover {
-      color: #ccc;
+      text-decoration: underline;
     }
 
     .container {
@@ -215,7 +201,6 @@
   </style>
 </head>
 <body>
-
   <!-- Верхняя панель -->
   <div class="top-bar">
     <div class="logo"><a href="index.html">Главная</a></div>
@@ -235,130 +220,101 @@
     <a href="лед.html">Ледяные щиты</a>
   </nav>
 
-  <!-- Основной блок -->
   <div class="container">
-    <h1>Изменение климата</h1>
-    <p class="subtitle">Наглядная визуализация повышения температуры по годам</p>
+    <h1>Симулятор глобального потепления</h1>
+    <div class="subtitle">Наблюдайте за глобальным изменением температуры с 1880 по 2022 год (данные NASA)</div>
 
     <div class="image-container">
-      <img id="temperatureImage" src="images/1979.png" alt="Температура по годам">
-    </div>
-        <h1>Симулятор глобального потепления</h1>
-        <div class="subtitle">Наблюдайте за глобальным изменением температуры с 1880 по 2022 год (данные NASA)</div>
-        
-        <div class="image-container">
-            <img id="temperatureImage" src="img\gt_1884_720x360.jpg" alt="Global Temperature Map" 
-                 style="content: url('img\gt_1890_720x360.jpg')">
-        </div>
-        
-        <div class="slider-container">
-            <div class="year-display">
-                <div>Year: <span id="yearValue">1880</span></div>
-                <div class="temp-change">
-                    <span id="changeFromPrev">Δ от прошлого года: 0.00°C</span>
-                    <span id="changeFrom1890">Δ с 1880 года: 0.00°C</span>
-                </div>
-            </div>
-            
-            <input 
-                type="range" 
-                id="yearSlider"
-                min="1890" 
-                max="2022" 
-                value="1890" 
-                step="1"
-                oninput="updateYear(this.value)">
-            
-            <div class="year-labels">
-                <span>1890</span>
-                <span>2022</span>
-            </div>
-        </div>
-        
-        <div class="info-panel">
-            <p>Этот симулятор показывает данные NASA о глобальных температурных аномалиях. Цвета представляют отклонения температуры от среднего значения за XX век (1901-2000). Данные: NASA GISS Surface Temperature Analysis (GISTEMP).</p>
-        </div>
+      <img id="temperatureImage" src="img/gt_1890_720x360.jpg" alt="Global Temperature Map" />
     </div>
 
-    <script>
-        // Реальные данные NASA GISS о глобальных температурных аномалиях (°C)
-        // Источник: https://data.giss.nasa.gov/gistemp/
-        // Значения относительно базового периода 1951-1980
-        const nasaTempAnomalies = {
-           
-            1890: -0.37, 1891: -0.26, 1892: -0.30, 1893: -0.36, 1894: -0.34,
-            1895: -0.26, 1896: -0.16, 1897: -0.13, 1898: -0.31, 1899: -0.21,
-            1900: -0.10, 1901: -0.16, 1902: -0.29, 1903: -0.37, 1904: -0.47,
-            1905: -0.28, 1906: -0.25, 1907: -0.39, 1908: -0.45, 1909: -0.47,
-            1910: -0.44, 1911: -0.45, 1912: -0.38, 1913: -0.36, 1914: -0.18,
-            1915: -0.12, 1916: -0.36, 1917: -0.47, 1918: -0.31, 1919: -0.28,
-            1920: -0.28, 1921: -0.20, 1922: -0.28, 1923: -0.26, 1924: -0.28,
-            1925: -0.23, 1926: -0.11, 1927: -0.22, 1928: -0.21, 1929: -0.37,
-            1930: -0.16, 1931: -0.11, 1932: -0.17, 1933: -0.31, 1934: -0.13,
-            1935: -0.21, 1936: -0.16, 1937: -0.03, 1938: -0.01, 1939: -0.03,
-            1940: 0.08, 1941: 0.11, 1942: 0.06, 1943: 0.05, 1944: 0.18,
-            1945: 0.07, 1946: -0.07, 1947: -0.04, 1948: -0.10, 1949: -0.11,
-            1950: -0.18, 1951: -0.07, 1952: 0.01, 1953: 0.08, 1954: -0.14,
-            1955: -0.15, 1956: -0.20, 1957: 0.05, 1958: 0.06, 1959: 0.03,
-            1960: -0.03, 1961: 0.06, 1962: 0.03, 1963: 0.05, 1964: -0.21,
-            1965: -0.12, 1966: -0.07, 1967: -0.03, 1968: -0.08, 1969: 0.05,
-            1970: 0.03, 1971: -0.09, 1972: 0.01, 1973: 0.16, 1974: -0.07,
-            1975: -0.01, 1976: -0.10, 1977: 0.18, 1978: 0.07, 1979: 0.16,
-            1980: 0.26, 1981: 0.32, 1982: 0.14, 1983: 0.31, 1984: 0.16,
-            1985: 0.12, 1986: 0.18, 1987: 0.32, 1988: 0.39, 1989: 0.27,
-            1990: 0.45, 1991: 0.42, 1992: 0.23, 1993: 0.24, 1994: 0.32,
-            1995: 0.45, 1996: 0.34, 1997: 0.48, 1998: 0.63, 1999: 0.42,
-            2000: 0.40, 2001: 0.54, 2002: 0.63, 2003: 0.62, 2004: 0.54,
-            2005: 0.68, 2006: 0.64, 2007: 0.66, 2008: 0.54, 2009: 0.66,
-            2010: 0.72, 2011: 0.61, 2012: 0.65, 2013: 0.68, 2014: 0.75,
-            2015: 0.90, 2016: 1.02, 2017: 0.92, 2018: 0.85, 2019: 0.98,
-            2020: 1.02, 2021: 0.85, 2022: 0.89
-        };
-        
-        const baseYear = 1890;
-        let previousYear = 1890;
-        
-        function updateYear(year) {
-            year = parseInt(year);
-            let imgPath;
-            
-            if (year < 1987) {
-                imgPath = 'img\\\\gt_' + year + '_720x360.jpg';
-            } 
-            else if (year >= 2000) {
-                const shortYear = String(year).slice(2);
-                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
-            }
-            else {
-                imgPath = 'img2\\\\gt_' + year + '_720x360.jpg';
-            }
-            
-            document.getElementById('temperatureImage').style.content = 'url(\'' + imgPath + '\')';
-            document.getElementById('yearValue').textContent = year;
-            
-            // Получаем температурные аномалии
-            const currentTemp = nasaTempAnomalies[year];
-            const prevTemp = nasaTempAnomalies[year - 1] || nasaTempAnomalies[year]; // Если нет данных для предыдущего года
-            const baseTemp = nasaTempAnomalies[baseYear];
-            
-            // Рассчитываем изменения
-            const changeFromPrev = currentTemp - prevTemp;
-            const changeFromBase = currentTemp - baseTemp;
-            
-            // Форматируем вывод
-            const formatTemp = (temp) => {
-                return (temp >= 0 ? '+' : '') + temp.toFixed(2);
-            };
-            
-            document.getElementById('changeFromPrev').textContent = 
-                `Δ от прошлого года: ${formatTemp(changeFromPrev)}°C`;
-            document.getElementById('changeFrom1890').textContent = 
-                `Δ с ${baseYear} года: ${formatTemp(changeFromBase)}°C`;
-            
-            previousYear = year;
-        }
-        
-        // Инициализация
-        updateYear(1890);
-    </script>
+    <div class="slider-container">
+      <div class="year-display">
+        <div>Year: <span id="yearValue">1890</span></div>
+        <div class="temp-change">
+          <span id="changeFromPrev">Δ от прошлого года: 0.00°C</span>
+          <span id="changeFrom1890">Δ с 1890 года: 0.00°C</span>
+        </div>
+      </div>
+
+      <input 
+        type="range" 
+        id="yearSlider"
+        min="1890" 
+        max="2022" 
+        value="1890" 
+        step="1"
+        oninput="updateYear(this.value)">
+
+      <div class="year-labels">
+        <span>1890</span>
+        <span>2022</span>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <p>Этот симулятор показывает данные NASA о глобальных температурных аномалиях. Цвета представляют отклонения температуры от среднего значения за XX век (1901-2000). Данные: NASA GISS Surface Temperature Analysis (GISTEMP).</p>
+    </div>
+  </div>
+
+  <script>
+    const nasaTempAnomalies = {
+      1890: -0.37, 1891: -0.26, 1892: -0.30, 1893: -0.36, 1894: -0.34,
+      1895: -0.26, 1896: -0.16, 1897: -0.13, 1898: -0.31, 1899: -0.21,
+      1900: -0.10, 1901: -0.16, 1902: -0.29, 1903: -0.37, 1904: -0.47,
+      1905: -0.28, 1906: -0.25, 1907: -0.39, 1908: -0.45, 1909: -0.47,
+      1910: -0.44, 1911: -0.45, 1912: -0.38, 1913: -0.36, 1914: -0.18,
+      1915: -0.12, 1916: -0.36, 1917: -0.47, 1918: -0.31, 1919: -0.28,
+      1920: -0.28, 1921: -0.20, 1922: -0.28, 1923: -0.26, 1924: -0.28,
+      1925: -0.23, 1926: -0.11, 1927: -0.22, 1928: -0.21, 1929: -0.37,
+      1930: -0.16, 1931: -0.11, 1932: -0.17, 1933: -0.31, 1934: -0.13,
+      1935: -0.21, 1936: -0.16, 1937: -0.03, 1938: -0.01, 1939: -0.03,
+      1940: 0.08, 1941: 0.11, 1942: 0.06, 1943: 0.05, 1944: 0.18,
+      1945: 0.07, 1946: -0.07, 1947: -0.04, 1948: -0.10, 1949: -0.11,
+      1950: -0.18, 1951: -0.07, 1952: 0.01, 1953: 0.08, 1954: -0.14,
+      1955: -0.15, 1956: -0.20, 1957: 0.05, 1958: 0.06, 1959: 0.03,
+      1960: -0.03, 1961: 0.06, 1962: 0.03, 1963: 0.05, 1964: -0.21,
+      1965: -0.12, 1966: -0.07, 1967: -0.03, 1968: -0.08, 1969: 0.05,
+      1970: 0.03, 1971: -0.09, 1972: 0.01, 1973: 0.16, 1974: -0.07,
+      1975: -0.01, 1976: -0.10, 1977: 0.18, 1978: 0.07, 1979: 0.16,
+      1980: 0.26, 1981: 0.32, 1982: 0.14, 1983: 0.31, 1984: 0.16,
+      1985: 0.12, 1986: 0.18, 1987: 0.32, 1988: 0.39, 1989: 0.27,
+      1990: 0.45, 1991: 0.42, 1992: 0.23, 1993: 0.24, 1994: 0.32,
+      1995: 0.45, 1996: 0.34, 1997: 0.48, 1998: 0.63, 1999: 0.42,
+      2000: 0.40, 2001: 0.54, 2002: 0.63, 2003: 0.62, 2004: 0.54,
+      2005: 0.68, 2006: 0.64, 2007: 0.66, 2008: 0.54, 2009: 0.66,
+      2010: 0.72, 2011: 0.61, 2012: 0.65, 2013: 0.68, 2014: 0.75,
+      2015: 0.90, 2016: 1.02, 2017: 0.92, 2018: 0.85, 2019: 0.98,
+      2020: 1.02, 2021: 0.85, 2022: 0.89
+    };
+
+    const baseYear = 1890;
+
+    function updateYear(year) {
+      year = parseInt(year);
+      let imgPath = (year < 1987) 
+        ? `img/gt_${year}_720x360.jpg` 
+        : `img2/gt_${year}_720x360.jpg`;
+
+      document.getElementById('temperatureImage').src = imgPath;
+      document.getElementById('yearValue').textContent = year;
+
+      const currentTemp = nasaTempAnomalies[year];
+      const prevTemp = nasaTempAnomalies[year - 1] || currentTemp;
+      const baseTemp = nasaTempAnomalies[baseYear];
+
+      const changeFromPrev = currentTemp - prevTemp;
+      const changeFromBase = currentTemp - baseTemp;
+
+      const formatTemp = temp => (temp >= 0 ? '+' : '') + temp.toFixed(2);
+
+      document.getElementById('changeFromPrev').textContent = 
+        `Δ от прошлого года: ${formatTemp(changeFromPrev)}°C`;
+      document.getElementById('changeFrom1890').textContent = 
+        `Δ с ${baseYear} года: ${formatTemp(changeFromBase)}°C`;
+    }
+
+    updateYear(1890);
+  </script>
 </body>
+</html>
