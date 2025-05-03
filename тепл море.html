@@ -328,6 +328,7 @@
         // Кэш для загруженных изображений
         const imageCache = {};
         const imageContainer = document.querySelector('.image-container');
+        let currentLoading = null;
         
         // Получение пути к изображению по году
         function getImagePath(year) {
@@ -344,31 +345,49 @@
         }
 
         // Загрузка и отображение изображения
-        function loadAndShowImage(year) {
+        async function loadAndShowImage(year) {
             const imgId = `ocean-${year}`;
             
-            // Если изображение уже в кэше
+            // Если изображение уже загружено
             if (imageCache[imgId]) {
                 showImage(imgId);
                 return;
             }
             
+            // Отменяем предыдущую загрузку, если она еще не завершена
+            if (currentLoading) {
+                currentLoading.onload = null;
+                currentLoading.onerror = null;
+            }
+            
             // Создаем новое изображение
             const img = new Image();
+            currentLoading = img;
+            
+            // Показываем спиннер или плейсхолдер
+            imageContainer.innerHTML = '<div class="loading-spinner">Загрузка...</div>';
+            
+            // Загружаем изображение
             img.src = getImagePath(year);
             img.alt = `Теплосодержание океана ${year}`;
             img.className = 'ocean-image';
             img.id = imgId;
-            img.loading = 'lazy';
+            img.loading = 'eager'; // Принудительная быстрая загрузка
             
+            // Обработка успешной загрузки
             img.onload = function() {
                 imageCache[imgId] = img;
+                imageContainer.innerHTML = '';
                 imageContainer.appendChild(img);
                 showImage(imgId);
+                currentLoading = null;
             };
             
+            // Обработка ошибки загрузки
             img.onerror = function() {
                 console.error('Не удалось загрузить изображение:', img.src);
+                imageContainer.innerHTML = '<div class="error-message">Изображение не загружено</div>';
+                currentLoading = null;
             };
         }
         
@@ -420,7 +439,7 @@
                 if (!imageCache[imgId] && !document.getElementById(imgId)) {
                     const img = new Image();
                     img.src = getImagePath(year);
-                    img.loading = 'lazy';
+                    img.loading = 'eager'; // Принудительная быстрая загрузка
                     imageCache[imgId] = img;
                 }
             }
@@ -490,10 +509,10 @@
         
         // Предзагрузка первых нескольких изображений после загрузки страницы
         window.addEventListener('load', () => {
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const img = new Image();
                 img.src = getImagePath(heatData[i].year);
-                img.loading = 'lazy';
+                img.loading = 'eager';
                 imageCache[`ocean-${heatData[i].year}`] = img;
             }
         });
