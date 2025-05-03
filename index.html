@@ -44,9 +44,118 @@
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
     .content {
-      display: none; /* Скрываем контент до загрузки первого видео */
+      display: none;
     }
-    /* Остальные стили будут загружены после основного контента */
+    /* Остальные стили */
+    .top-bar {
+      background-color: #000;
+      padding: 12px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .logo a {
+      color: white;
+    }
+    .main-nav {
+      display: flex;
+      gap: 30px;
+    }
+    .main-nav a {
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+    }
+    .submenu {
+      background: #222;
+      display: flex;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 30px;
+      border-bottom: 1px solid #333;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 30px 40px;
+      flex-wrap: wrap;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+    }
+    .stat {
+      text-align: center;
+      margin: 15px;
+      min-width: 160px;
+    }
+    .stat .title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .stat .value {
+      font-size: 28px;
+      color: red;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .stat .desc {
+      font-size: 13px;
+      color: #ccc;
+    }
+    .section {
+      background-color: #f3f3f3;
+      color: #000;
+      padding: 80px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .text-block {
+      flex: 1 1 500px;
+      padding: 20px 40px;
+    }
+    .video-block {
+      flex: 1 1 600px;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+    .video-block video {
+      width: 100%;
+      max-width: 700px;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+    .sim-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 28px;
+      background-color: #0077cc;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: background 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      .section {
+        flex-direction: column;
+        padding: 40px 20px;
+      }
+      .text-block {
+        padding: 0 20px 40px 20px;
+        text-align: center;
+      }
+    }
   </style>
   <!-- Предзагрузка первого видео -->
   <link rel="preload" href="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" as="video" type="video/mp4">
@@ -61,7 +170,7 @@
     <div class="loading-spinner" id="main-spinner"></div>
   </div>
 
-  <!-- Основной контент (изначально скрыт) -->
+  <!-- Основной контент -->
   <div id="content" class="content">
     <!-- Верхняя панель -->
     <div class="top-bar">
@@ -116,6 +225,7 @@
       <div class="text-block">
         <h2>Глобальное потепление</h2>
         <p>Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов.</p>
+        <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
       </div>
       <div class="video-block">
         <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4">
@@ -124,27 +234,44 @@
         <div class="loading-spinner"></div>
       </div>
     </section>
-
-    <!-- Остальные секции -->
-    <!-- ... -->
-
   </div>
 
-  <!-- Загрузка остальных стилей после основного контента -->
-  <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
-
   <script>
-    // 1. Управление загрузкой первого видео
+    // Состояние загрузки
+    const pageState = {
+      mainVideoLoaded: false,
+      videosLoaded: {}
+    };
+
+    // 1. Проверяем сохраненное состояние
+    if (sessionStorage.getItem('pageState')) {
+      try {
+        const savedState = JSON.parse(sessionStorage.getItem('pageState'));
+        Object.assign(pageState, savedState);
+      } catch (e) {
+        console.error('Error parsing saved state', e);
+      }
+    }
+
+    // 2. Управление загрузкой первого видео
     const mainVideo = document.getElementById('main-video');
     const mainSpinner = document.getElementById('main-spinner');
     const content = document.getElementById('content');
 
-    // 2. Показываем контент после загрузки первого видео
-    mainVideo.addEventListener('loadeddata', function() {
+    // Если главное видео уже было загружено
+    if (pageState.mainVideoLoaded) {
       content.style.display = 'block';
       mainSpinner.style.display = 'none';
       loadAdditionalResources();
-    });
+    } else {
+      mainVideo.addEventListener('loadeddata', function() {
+        pageState.mainVideoLoaded = true;
+        saveState();
+        content.style.display = 'block';
+        mainSpinner.style.display = 'none';
+        loadAdditionalResources();
+      });
+    }
 
     // 3. Функция для загрузки остальных ресурсов
     function loadAdditionalResources() {
@@ -154,15 +281,24 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const video = entry.target;
-            const sources = video.parentElement.querySelectorAll('source');
+            const videoId = video.dataset.src;
             
-            // Загружаем видео с низким приоритетом
+            // Если видео уже загружено
+            if (pageState.videosLoaded[videoId]) {
+              video.src = videoId;
+              video.parentElement.querySelector('.loading-spinner').style.display = 'none';
+              observer.unobserve(video);
+              return;
+            }
+            
+            // Загружаем видео
             if (video.dataset.src) {
               video.src = video.dataset.src;
               video.load();
               
-              // Скрываем спиннер при успешной загрузке
               video.addEventListener('loadeddata', () => {
+                pageState.videosLoaded[videoId] = true;
+                saveState();
                 video.parentElement.querySelector('.loading-spinner').style.display = 'none';
               });
             }
@@ -176,14 +312,19 @@
       });
 
       lazyVideos.forEach(video => {
-        observer.observe(video);
+        // Если видео уже загружено
+        if (pageState.videosLoaded[video.dataset.src]) {
+          video.src = video.dataset.src;
+          video.parentElement.querySelector('.loading-spinner').style.display = 'none';
+        } else {
+          observer.observe(video);
+        }
       });
 
       // Адаптация для медленных соединений
       if (navigator.connection) {
         const connection = navigator.connection;
         
-        // Если медленное соединение
         if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.saveData) {
           document.querySelectorAll('video').forEach(v => {
             v.autoplay = false;
@@ -191,8 +332,8 @@
             v.preload = 'metadata';
           });
           
-          // Загружаем видео по одному
-          const videoQueue = Array.from(document.querySelectorAll('.lazy-video'));
+          const videoQueue = Array.from(document.querySelectorAll('.lazy-video'))
+            .filter(v => !pageState.videosLoaded[v.dataset.src]);
           loadVideoSequentially(videoQueue);
         }
       }
@@ -203,30 +344,27 @@
       if (index >= videos.length) return;
       
       const video = videos[index];
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            video.src = video.dataset.src;
-            video.load();
-            
-            video.addEventListener('loadeddata', () => {
-              video.parentElement.querySelector('.loading-spinner').style.display = 'none';
-              // Загружаем следующее видео после текущего
-              setTimeout(() => loadVideoSequentially(videos, index + 1), 1000);
-            });
-            
-            observer.unobserve(video);
-          }
-        });
-      }, {threshold: 0.1});
+      const videoId = video.dataset.src;
       
-      observer.observe(video);
+      video.src = videoId;
+      video.load();
+      
+      video.addEventListener('loadeddata', () => {
+        pageState.videosLoaded[videoId] = true;
+        saveState();
+        video.parentElement.querySelector('.loading-spinner').style.display = 'none';
+        
+        // Загружаем следующее видео после небольшой задержки
+        setTimeout(() => loadVideoSequentially(videos, index + 1), 500);
+      });
     }
 
     // 5. Предзагрузка видео при наведении
     document.querySelectorAll('[data-video-preload]').forEach(el => {
       el.addEventListener('mouseenter', function() {
         const videoUrl = this.dataset.videoPreload;
+        if (pageState.videosLoaded[videoUrl]) return;
+        
         const link = document.createElement('link');
         link.rel = 'preload';
         link.as = 'video';
@@ -234,9 +372,21 @@
         document.head.appendChild(link);
       }, {once: true});
     });
+
+    // 6. Сохранение состояния
+    function saveState() {
+      try {
+        sessionStorage.setItem('pageState', JSON.stringify(pageState));
+      } catch (e) {
+        console.error('Error saving state', e);
+      }
+    }
+
+    // 7. Очистка состояния при закрытии вкладки
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.removeItem('pageState');
+    });
   </script>
-</body>
-</html>
 </body>
 </html>
   </div>
