@@ -264,9 +264,9 @@
         <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
 
         <div class="image-container">
-            <!-- Первое изображение загружается сразу -->
+            <!-- Только первое изображение загружается сразу -->
             <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955" loading="eager">
-            <!-- Остальные будут добавлены динамически -->
+            <!-- Остальные изображения будут загружаться динамически -->
         </div>
 
         <div class="slider-container">
@@ -340,9 +340,71 @@
                 num = (index).toString().padStart(5, '0');
             }
             
-            return `${folder}/Map_${num}.png`; // Формат PNG (можно изменить на .webp)
+            return `${folder}/Map_${num}.png`;
         }
 
+        // Загрузка и отображение изображения
+        function loadAndShowImage(year) {
+            const imgId = `ocean-${year}`;
+            
+            // Если изображение уже в кэше
+            if (imageCache[imgId]) {
+                showImage(imgId);
+                return;
+            }
+            
+            // Создаем новое изображение
+            const img = new Image();
+            img.src = getImagePath(year);
+            img.alt = `Теплосодержание океана ${year}`;
+            img.className = 'ocean-image';
+            img.id = imgId;
+            img.loading = 'lazy';
+            
+            img.onload = function() {
+                imageCache[imgId] = img;
+                imageContainer.appendChild(img);
+                showImage(imgId);
+            };
+            
+            img.onerror = function() {
+                console.error('Не удалось загрузить изображение:', img.src);
+            };
+        }
+        
+        // Показать конкретное изображение
+        function showImage(imgId) {
+            document.querySelectorAll('.ocean-image').forEach(img => {
+                img.classList.remove('active');
+            });
+            
+            const activeImage = imageCache[imgId] || document.getElementById(imgId);
+            if (activeImage) {
+                activeImage.classList.add('active');
+            }
+        }
+
+        // Функция для обновления года
+        function updateYear(index) {
+            index = parseInt(index);
+            const data = heatData[index];
+            const baseData = heatData[0];
+            
+            // Загружаем и показываем изображение
+            loadAndShowImage(data.year);
+
+            // Обновляем данные
+            document.getElementById('yearValue').textContent = data.year;
+            const heatChange = (data.heat - baseData.heat).toFixed(2);
+            const heatChangePercent = baseData.heat > 0 ? ((data.heat / baseData.heat - 1) * 100).toFixed(0) : '∞';
+            
+            document.getElementById('heatValue').textContent = `Теплосодержание: ${data.heat.toFixed(2)} ×10²² Дж`;
+            document.getElementById('heatChange').textContent = `Изменение: +${heatChange} ×10²² Дж (${heatChangePercent}%)`;
+            
+            // Предзагрузка соседних изображений
+            preloadAdjacentImages(index);
+        }
+        
         // Предзагрузка соседних изображений
         function preloadAdjacentImages(currentIndex) {
             const preloadRange = 3; // Сколько изображений загружать вокруг текущего
@@ -353,58 +415,15 @@
                  i++) {
                 
                 const year = heatData[i].year;
-                if (!imageCache[year]) {
+                const imgId = `ocean-${year}`;
+                
+                if (!imageCache[imgId] && !document.getElementById(imgId)) {
                     const img = new Image();
                     img.src = getImagePath(year);
-                    img.alt = `Теплосодержание океана ${year}`;
-                    img.className = 'ocean-image';
                     img.loading = 'lazy';
-                    img.id = `ocean-${year}`;
-                    
-                    imageCache[year] = img;
+                    imageCache[imgId] = img;
                 }
             }
-        }
-        
-        // Функция для обновления года
-        function updateYear(index) {
-            index = parseInt(index);
-            const data = heatData[index];
-            const baseData = heatData[0];
-            
-            // Предзагрузка соседних изображений
-            preloadAdjacentImages(index);
-            
-            // Обновляем изображение
-            document.querySelectorAll('.ocean-image').forEach(img => {
-                img.classList.remove('active');
-            });
-            
-            let activeImage = imageCache[data.year];
-            if (!activeImage) {
-                activeImage = new Image();
-                activeImage.src = getImagePath(data.year);
-                activeImage.alt = `Теплосодержание океана ${data.year}`;
-                activeImage.className = 'ocean-image';
-                activeImage.id = `ocean-${data.year}`;
-                imageCache[data.year] = activeImage;
-                imageContainer.appendChild(activeImage);
-            }
-            
-            // Если изображение еще не в DOM, добавляем его
-            if (!activeImage.parentNode) {
-                imageContainer.appendChild(activeImage);
-            }
-            
-            activeImage.classList.add('active');
-
-            // Обновляем данные
-            document.getElementById('yearValue').textContent = data.year;
-            const heatChange = (data.heat - baseData.heat).toFixed(2);
-            const heatChangePercent = baseData.heat > 0 ? ((data.heat / baseData.heat - 1) * 100).toFixed(0) : '∞';
-            
-            document.getElementById('heatValue').textContent = `Теплосодержание: ${data.heat.toFixed(2)} ×10²² Дж`;
-            document.getElementById('heatChange').textContent = `Изменение: +${heatChange} ×10²² Дж (${heatChangePercent}%)`;
         }
 
         // Инициализация графика
@@ -466,15 +485,16 @@
             }
         });
 
-        // Инициализация - загружаем первое изображение и предзагружаем следующие
+        // Инициализация
         updateYear(0);
         
-        // После загрузки страницы предзагружаем несколько следующих изображений
+        // Предзагрузка первых нескольких изображений после загрузки страницы
         window.addEventListener('load', () => {
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 3; i++) {
                 const img = new Image();
                 img.src = getImagePath(heatData[i].year);
-                imageCache[heatData[i].year] = img;
+                img.loading = 'lazy';
+                imageCache[`ocean-${heatData[i].year}`] = img;
             }
         });
     </script>
