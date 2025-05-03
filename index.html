@@ -1,535 +1,502 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Изменение климата</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    /* Стили — без изменений */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: black;
-      color: white;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Потепление мирового океана</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* === ОБЩИЕ СТИЛИ === */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #001a33, #003366);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-    a {
-      text-decoration: none;
-    }
+        a {
+            text-decoration: none;
+        }
 
-    .top-bar {
-      background-color: #000;
-      padding: 12px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-    }
+        /* === ВЕРХНЯЯ ПАНЕЛЬ === */
+        .top-bar {
+            background-color: #000;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-    .logo a {
-      color: white;
-    }
+        .logo a {
+            color: white;
+        }
 
-    .logo a:hover {
-      color: #ccc;
-    }
+        .main-nav {
+            display: flex;
+            gap: 30px;
+        }
 
-    .main-nav {
-      display: flex;
-      gap: 30px;
-    }
+        .main-nav a {
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
 
-    .main-nav a {
-      font-size: 16px;
-      color: white;
-      font-weight: bold;
-    }
+        /* === ПОДМЕНЮ === */
+        .submenu {
+            background: #222;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            gap: 30px;
+            border-bottom: 1px solid #333;
+            width: 100%;
+        }
 
-    .main-nav a:hover {
-      color: #ccc;
-    }
+        .submenu a {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
 
-    .submenu {
-      background: #222;
-      display: flex;
-      justify-content: center;
-      padding: 12px 0;
-      gap: 30px;
-      border-bottom: 1px solid #333;
-    }
+        /* === ОСНОВНОЙ КОНТЕНТ === */
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 30px auto;
+            padding: 30px;
+            background: rgba(0, 20, 40, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .submenu a {
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-    }
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
 
-    .submenu a:hover {
-      color: #ccc;
-    }
+        .subtitle {
+            color: #b3e5fc;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
 
-    .hero {
-      position: relative;
-      height: 650px;
-      display: flex;
-      align-items: center;
-      padding: 0 60px;
-      overflow: hidden;
-    }
+        .image-container {
+            margin: 20px 0;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .hero-video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-    }
+        .ocean-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: opacity 0.5s;
+            position: absolute;
+            opacity: 0;
+            object-fit: contain;
+        }
 
-    .hero-text {
-      max-width: 600px;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
+        .ocean-image.active {
+            opacity: 1;
+        }
 
-    .hero-text h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
+        .slider-container {
+            width: 100%;
+            margin: 30px 0;
+        }
 
-    .hero-text p {
-      font-size: 18px;
-      line-height: 1.5;
-    }
+        .year-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4fc3f7;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      padding: 30px 40px;
-      flex-wrap: wrap;
-      border-top: 1px solid #333;
-      border-bottom: 1px solid #333;
-    }
+        .temp-change {
+            font-size: 16px;
+            color: #b3e5fc;
+            display: flex;
+            gap: 20px;
+        }
 
-    .stat {
-      text-align: center;
-      margin: 15px;
-      min-width: 160px;
-    }
+        .temp-change span {
+            background: rgba(0, 60, 120, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border-left: 2px solid #2196f3;
+        }
 
-    .stat .title {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #0d47a1, #2196f3);
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s;
+        }
 
-    .stat .value {
-      font-size: 28px;
-      color: red;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
 
-    .stat .desc {
-      font-size: 13px;
-      color: #ccc;
-    }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform .1s;
+        }
 
-    .white-section {
-      background-color: #ffffff;
-      color: #000;
-      padding: 80px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
 
-    .text-block {
-      flex: 1 1 500px;
-      padding: 20px 40px;
-    }
+        .year-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #b3e5fc;
+            font-size: 14px;
+        }
 
-    .text-block h2 {
-      font-size: 42px;
-      margin-bottom: 20px;
-    }
+        .info-panel {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 60, 120, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .data-highlight {
+            color: #fc3d21;
+            font-weight: bold;
+        }
 
-    .text-block p {
-      font-size: 20px;
-      line-height: 1.6;
-    }
+        canvas {
+            margin-top: 40px;
+            background: #fff;
+            border-radius: 12px;
+            max-width: 100%;
+        }
 
-    .video-block {
-      flex: 1 1 600px;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
+        @media (max-width: 768px) {
+            .year-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
 
-    .video-block video {
-      width: 100%;
-      max-width: 700px;
-      height: auto;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .sim-button {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 14px 28px;
-      background-color: #0077cc;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      transition: background 0.3s ease;
-    }
-
-    .sim-button:hover {
-      background-color: #005fa3;
-    }
-
-    @media (max-width: 768px) {
-      .white-section {
-        flex-direction: column;
-        padding: 40px 20px;
-      }
-
-      .text-block {
-        padding: 0 20px 40px 20px;
-        text-align: center;
-      }
-      
-      .hero {
-        height: 500px;
-        padding: 0 20px;
-      }
-      
-      .hero-text h1 {
-        font-size: 36px;
-      }
-      
-      .hero-text p {
-        font-size: 16px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .top-bar {
-        padding: 12px 20px;
-      }
-      
-      .main-nav {
-        gap: 15px;
-      }
-      
-      .submenu {
-        flex-wrap: wrap;
-        gap: 15px;
-        padding: 8px 0;
-      }
-      
-      .stats {
-        padding: 20px 10px;
-      }
-      
-      .stat {
-        min-width: 120px;
-        margin: 10px;
-      }
-      
-      .stat .value {
-        font-size: 22px;
-      }
-    }
-    
-    /* Ленивая загрузка видео */
-    .lazy-video {
-      background-color: #000;
-    }
-    
-    .lazy-video.loaded {
-      background-color: transparent;
-    }
-  </style>
-  
-  <!-- Preload важных ресурсов -->
-  <link rel="preload" href="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" as="video" type="video/mp4">
+            .temp-change {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+            }
+            
+            .image-container {
+                min-height: 300px;
+            }
+            
+            .ocean-image {
+                max-height: 400px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="logo"><a href="index.html">Главная</a></div>
+        <nav class="main-nav">
+            <a href="primer.html">Карта</a>
+            <a href="primer.html">Диаграммы</a>
+            <a href="primer.html">Источники</a>
+        </nav>
+    </div>
 
-  <!-- Верхняя панель -->
-  <div class="top-bar">
-    <div class="logo"><a href="index.html">Главная</a></div>
-    <nav class="main-nav">
-      <a href="primer.html">Карта</a>
-      <a href="kr.html">Диаграммы</a>
-      <a href="primer.html">Источники</a>
+    <!-- Подменю -->
+    <nav class="submenu">
+        <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+        <a href="море.html">Уровень моря</a>
+        <a href="тепл море.html">Потепление океана</a>
+        <a href="co2.html">Углекислый газ</a>
+        <a href="лед.html">Ледяные щиты</a>
     </nav>
-  </div>
 
-  <!-- Подменю -->
-  <nav class="submenu">
-    <a href="ПОТЕПЛ.html">Глобальное потепление</a>
-    <a href="море.html">Уровень моря</a>
-    <a href="тепл море.html">Потепление океана</a>
-    <a href="co2.html">Углекислый газ</a>
-    <a href="лед.html">Ледяные щиты</a>
-  </nav>
+    <!-- Основной контейнер -->
+    <div class="container">
+        <h1>Потепление мирового океана (1955-2020)</h1>
+        <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
 
-  <!-- Герой секция с видео-фоном -->
-  <section class="hero">
-    <video class="hero-video lazy-video" autoplay muted loop playsinline preload="auto">
-      <source src="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" type="video/mp4">
-      <!-- Fallback для браузеров, не поддерживающих video -->
-      <img src="placeholder-hero.jpg" alt="Изменение климата" style="width:100%;height:100%;object-fit:cover;">
-    </video>
-    <div class="hero-text">
-      <h1>Изменение климата</h1>
-      <p>Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов</p>
-    </div>
-  </section>
+        <div class="image-container">
+            <!-- Только первое изображение загружается сразу -->
+            <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955" loading="eager">
+            <!-- Остальные изображения будут загружаться динамически -->
+        </div>
 
-  <!-- Статистика -->
-  <section class="stats">
-    <div class="stat">
-      <div class="title">Глобальное потепление</div>
-      <div class="value">+1.2°C</div>
-      <div class="desc">с 1880 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Углекислый газ</div>
-      <div class="value">+93 ppm</div>
-      <div class="desc">с 2002 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Уровень моря</div>
-      <div class="value">+4 M</div>
-      <div class="desc">с 1993 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Потепление океана</div>
-      <div class="value">+372 ZJ</div>
-      <div class="desc">с 1955 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Ледяные щиты</div>
-      <div class="value">-403 млрд т</div>
-      <div class="desc">в год</div>
-    </div>
-  </section>
+        <div class="slider-container">
+            <div class="year-display">
+                <div>Год: <span id="yearValue">1955</span></div>
+                <div class="temp-change">
+                    <span id="heatValue">Теплосодержание: 0.00 ×10²² Дж</span>
+                    <span id="heatChange">Изменение: +0.00 ×10²² Дж (0%)</span>
+                </div>
+            </div>
 
-  <!-- 1. Секция: Глобальное потепление (белый фон) -->
-  <section id="global-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
-    <div class="text-block">
-      <h2>Глобальное потепление</h2>
-      <p>
-        Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов. Последствия включают засухи, пожары, изменение климата и ухудшение условий жизни.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4">
-        <!-- Fallback изображение -->
-        <img src="placeholder-global-warming.jpg" alt="Глобальное потепление" style="width:100%;height:auto;border-radius:16px;">
-      </video>
-    </div>
-  </section>
+            <input type="range" id="yearSlider" min="0" max="65" value="0" step="1" oninput="updateYear(this.value)">
+            <div class="year-labels">
+                <span>1955</span><span>2020</span>
+            </div>
+        </div>
 
-  <!-- 2. Секция: Выбросы CO₂ (чёрный фон) -->
-  <section class="white-section" style="background-color: #000; color: #fff;">
-    <div class="text-block">
-      <h2>Выбросы углекислого газа</h2>
-      <p>
-        Выбросы CO₂, вызванные деятельностью человека, усиливают парниковый эффект, способствуя глобальному потеплению. Основные источники — сжигание ископаемого топлива, промышленность и вырубка лесов.
-        Мониторинг выбросов помогает учёным и политикам разрабатывать эффективные меры по борьбе с изменением климата.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2019/07/29/25608-350962918_large.mp4">
-        <img src="placeholder-co2.jpg" alt="Выбросы CO2" style="width:100%;height:auto;border-radius:16px;">
-      </video>
-    </div>
-  </section>
+        <!-- График теплосодержания океана -->
+        <canvas id="oceanChart" width="800" height="300"></canvas>
 
-  <!-- Секция: Поднятие уровня моря (текст выше анимации) -->
-  <section id="sea-level-rise" style="background-color: #f3f3f3; padding: 60px 20px 20px;">
-    <h2 style="text-align: center; font-size: 36px; margin-bottom: 20px; color: #000; font-family: 'Arial', sans-serif; font-weight: bold;">
-      Поднятие уровня моря
-    </h2>
-    <p style="text-align: center; font-size: 20px; max-width: 900px; margin: 0 auto; color: #000; font-family: 'Verdana', sans-serif; line-height: 1.6;">
-      Изменение климата вызывает повышение уровня моря, что угрожает прибрежным регионам. Таяние ледников, усиление штормов и наводнений - всё это последствия глобального потепления, которое ускоряет этот процесс. Это может привести к затоплению значительных территорий.
-    </p>
-  </section>
-
-  <!-- Секция: Видео-анимация -->
-  <section id="global-warming-video" style="position: relative; background-color: #000; padding: 0; margin: 0; overflow: hidden; height: 600px;">
-    <video class="lazy-video" autoplay muted playsinline loop preload="none" data-src="https://cdn.pixabay.com/video/2018/11/16/19368-301525727_large.mp4" style="
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    ">
-      <img src="placeholder-sea-level.jpg" alt="Уровень моря" style="width:100%;height:100%;object-fit:cover;">
-    </video>
-    <a href="simulator.html" style="
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #0077cc;
-      color: white;
-      font-weight: bold;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-size: 18px;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    " onmouseover="this.style.backgroundColor='#005fa3'" onmouseout="this.style.backgroundColor='#0077cc'">
-      Перейти к симулятору
-    </a>
-  </section>
-
-  <!-- 3. Секция: Потепление океана (белый фон) -->
-  <section id="ocean-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
-    <div class="text-block">
-      <h2>Потепление океана</h2>
-      <p>
-        Океаны поглощают большую часть тепла, вызванного глобальным потеплением. Это ведёт к повышению температуры воды, угрожая морским экосистемам, таким как коралловые рифы, и способствуя более сильным ураганам.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
+        <!-- Блок ключевых фактов -->
+        <div class="info-panel">
+            <h3>Ключевые факты о потеплении океана:</h3>
+            <p>• <span class="data-highlight">1955-2020</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
+            <p>• <span class="data-highlight">Скорость потепления</span>: Океан нагревается со скоростью <span class="data-highlight">0.58 ± 0.08 Вт/м²</span> (1955-2010)</p>
+            <p>• <span class="data-highlight">Рекордный год</span>: В 2020 году зафиксировано теплосодержание - <span class="data-highlight">0.62 ×10²² Дж</span></p>
+            <p>• <span class="data-highlight">Последствия</span>: Повышение уровня моря, усиление ураганов, гибель коралловых рифов</p>
+            <p>Данные: NASA Earth Observatory, NOAA (Национальное управление океанических и атмосферных исследований)</p>
+        </div>
     </div>
-    <div class="video-block">
-      <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2020/01/18/31377-386628887_large.mp4">
-        <img src="placeholder-ocean.jpg" alt="Потепление океана" style="width:100%;height:auto;border-radius:16px;">
-      </video>
-    </div>
-  </section>
 
-  <!-- 4. Секция: Таяние ледников (чёрный фон) -->
-  <section id="glaciers" class="white-section" style="background-color: #000; color: #fff;">
-    <div class="text-block">
-      <h2>Таяние ледников</h2>
-      <p>
-        Потепление климата усиливает таяние ледников, особенно в Арктике и горных районах. Это влияет на уровень моря, разрушает экосистемы и угрожает пресноводным источникам. NASA использует спутники и инструменты для отслеживания этих изменений.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2023/03/14/154726-808562497_large.mp4">
-        <img src="placeholder-glaciers.jpg" alt="Таяние ледников" style="width:100%;height:auto;border-radius:16px;">
-      </video>
-    </div>
-  </section>
+    <script>
+        // Данные о теплосодержании океана (0-2000 метров) в ×10²² Дж
+        const heatData = [
+            {year: 1955, heat: 0.00}, {year: 1956, heat: 0.02}, {year: 1957, heat: 0.03},
+            {year: 1958, heat: 0.05}, {year: 1959, heat: 0.04}, {year: 1960, heat: 0.03},
+            {year: 1961, heat: 0.05}, {year: 1962, heat: 0.06}, {year: 1963, heat: 0.07},
+            {year: 1964, heat: 0.06}, {year: 1965, heat: 0.08}, {year: 1966, heat: 0.09},
+            {year: 1967, heat: 0.10}, {year: 1968, heat: 0.11}, {year: 1969, heat: 0.10},
+            {year: 1970, heat: 0.12}, {year: 1971, heat: 0.13}, {year: 1972, heat: 0.14},
+            {year: 1973, heat: 0.15}, {year: 1974, heat: 0.16}, {year: 1975, heat: 0.17},
+            {year: 1976, heat: 0.18}, {year: 1977, heat: 0.19}, {year: 1978, heat: 0.20},
+            {year: 1979, heat: 0.21}, {year: 1980, heat: 0.22}, {year: 1981, heat: 0.23},
+            {year: 1982, heat: 0.24}, {year: 1983, heat: 0.25}, {year: 1984, heat: 0.26},
+            {year: 1985, heat: 0.27}, {year: 1986, heat: 0.28}, {year: 1987, heat: 0.29},
+            {year: 1988, heat: 0.30}, {year: 1989, heat: 0.31}, {year: 1990, heat: 0.32},
+            {year: 1991, heat: 0.33}, {year: 1992, heat: 0.34}, {year: 1993, heat: 0.35},
+            {year: 1994, heat: 0.36}, {year: 1995, heat: 0.37}, {year: 1996, heat: 0.38},
+            {year: 1997, heat: 0.39}, {year: 1998, heat: 0.40}, {year: 1999, heat: 0.41},
+            {year: 2000, heat: 0.42}, {year: 2001, heat: 0.43}, {year: 2002, heat: 0.44},
+            {year: 2003, heat: 0.45}, {year: 2004, heat: 0.46}, {year: 2005, heat: 0.47},
+            {year: 2006, heat: 0.48}, {year: 2007, heat: 0.49}, {year: 2008, heat: 0.50},
+            {year: 2009, heat: 0.51}, {year: 2010, heat: 0.52}, {year: 2011, heat: 0.53},
+            {year: 2012, heat: 0.54}, {year: 2013, heat: 0.55}, {year: 2014, heat: 0.56},
+            {year: 2015, heat: 0.57}, {year: 2016, heat: 0.58}, {year: 2017, heat: 0.59},
+            {year: 2018, heat: 0.60}, {year: 2019, heat: 0.61}, {year: 2020, heat: 0.62}
+        ];
 
-  <script>
-    // Оптимизированная загрузка видео с ленивой загрузкой
-    document.addEventListener('DOMContentLoaded', function() {
-      // Предзагрузка главного видео
-      const heroVideo = document.querySelector('.hero-video');
-      if (heroVideo) {
-        heroVideo.setAttribute('src', heroVideo.querySelector('source').getAttribute('src'));
-        heroVideo.load();
-      }
-      
-      // Ленивая загрузка остальных видео при появлении в viewport
-      const lazyVideos = document.querySelectorAll('.lazy-video[data-src]');
-      
-      if ('IntersectionObserver' in window) {
-        const lazyVideoObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const lazyVideo = entry.target;
-              const source = lazyVideo.querySelector('source');
-              
-              if (source) {
-                source.src = lazyVideo.getAttribute('data-src');
-                lazyVideo.load();
-                lazyVideo.classList.add('loaded');
-              }
-              
-              lazyVideoObserver.unobserve(lazyVideo);
-            }
-          });
-        }, {
-          rootMargin: '200px', // Начинаем загружать заранее
-          threshold: 0.1
-        });
+        // Кэш для загруженных изображений
+        const imageCache = {};
+        const imageContainer = document.querySelector('.image-container');
         
-        lazyVideos.forEach(lazyVideo => {
-          lazyVideoObserver.observe(lazyVideo);
-        });
-      } else {
-        // Fallback для старых браузеров
-        lazyVideos.forEach(lazyVideo => {
-          const source = lazyVideo.querySelector('source');
-          if (source) {
-            source.src = lazyVideo.getAttribute('data-src');
-            lazyVideo.load();
-            lazyVideo.classList.add('loaded');
-          }
-        });
-      }
-      
-      // Оптимизация воспроизведения видео
-      document.addEventListener('scroll', function() {
-        lazyVideos.forEach(video => {
-          const rect = video.getBoundingClientRect();
-          const isVisible = (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-          );
-          
-          if (isVisible && video.paused) {
-            video.play().catch(e => console.log('Автовоспроизведение заблокировано:', e));
-          } else if (!isVisible && !video.paused) {
-            video.pause();
-          }
-        });
-      });
-    });
-    
-    // Оптимизация для мобильных устройств
-    function handleMobileOptimization() {
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const videos = document.querySelectorAll('video');
-      
-      videos.forEach(video => {
-        if (isMobile) {
-          // На мобильных устройствах используем более низкое качество
-          const src = video.getAttribute('data-src') || video.querySelector('source')?.src;
-          if (src) {
-            const mobileSrc = src.replace('_large', '_small'); // Предполагаем, что есть версии видео разных размеров
-            video.querySelector('source').src = mobileSrc;
-            video.load();
-          }
-          
-          // Отключаем автовоспроизведение на некоторых мобильных устройствах
-          if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            video.removeAttribute('autoplay');
-            video.setAttribute('playsinline', '');
-            video.setAttribute('muted', '');
-          }
+        // Получение пути к изображению по году
+        function getImagePath(year) {
+            const index = year - 1955;
+            let folder = 'img6';
+            let num = index.toString().padStart(5, '0');
+            
+            if (year >= 2018) {
+                folder = 'img5';
+                num = (index).toString().padStart(5, '0');
+            }
+            
+            return `${folder}/Map_${num}.png`;
         }
-      });
-    }
-    
-    window.addEventListener('load', handleMobileOptimization);
-    window.addEventListener('resize', handleMobileOptimization);
-  </script>
+
+        // Загрузка и отображение изображения
+        function loadAndShowImage(year) {
+            const imgId = `ocean-${year}`;
+            
+            // Если изображение уже в кэше
+            if (imageCache[imgId]) {
+                showImage(imgId);
+                return;
+            }
+            
+            // Создаем новое изображение
+            const img = new Image();
+            img.src = getImagePath(year);
+            img.alt = `Теплосодержание океана ${year}`;
+            img.className = 'ocean-image';
+            img.id = imgId;
+            img.loading = 'lazy';
+            
+            img.onload = function() {
+                imageCache[imgId] = img;
+                imageContainer.appendChild(img);
+                showImage(imgId);
+            };
+            
+            img.onerror = function() {
+                console.error('Не удалось загрузить изображение:', img.src);
+            };
+        }
+        
+        // Показать конкретное изображение
+        function showImage(imgId) {
+            document.querySelectorAll('.ocean-image').forEach(img => {
+                img.classList.remove('active');
+            });
+            
+            const activeImage = imageCache[imgId] || document.getElementById(imgId);
+            if (activeImage) {
+                activeImage.classList.add('active');
+            }
+        }
+
+        // Функция для обновления года
+        function updateYear(index) {
+            index = parseInt(index);
+            const data = heatData[index];
+            const baseData = heatData[0];
+            
+            // Загружаем и показываем изображение
+            loadAndShowImage(data.year);
+
+            // Обновляем данные
+            document.getElementById('yearValue').textContent = data.year;
+            const heatChange = (data.heat - baseData.heat).toFixed(2);
+            const heatChangePercent = baseData.heat > 0 ? ((data.heat / baseData.heat - 1) * 100).toFixed(0) : '∞';
+            
+            document.getElementById('heatValue').textContent = `Теплосодержание: ${data.heat.toFixed(2)} ×10²² Дж`;
+            document.getElementById('heatChange').textContent = `Изменение: +${heatChange} ×10²² Дж (${heatChangePercent}%)`;
+            
+            // Предзагрузка соседних изображений
+            preloadAdjacentImages(index);
+        }
+        
+        // Предзагрузка соседних изображений
+        function preloadAdjacentImages(currentIndex) {
+            const preloadRange = 3; // Сколько изображений загружать вокруг текущего
+            const totalImages = heatData.length;
+            
+            for (let i = Math.max(0, currentIndex - preloadRange); 
+                 i <= Math.min(totalImages - 1, currentIndex + preloadRange); 
+                 i++) {
+                
+                const year = heatData[i].year;
+                const imgId = `ocean-${year}`;
+                
+                if (!imageCache[imgId] && !document.getElementById(imgId)) {
+                    const img = new Image();
+                    img.src = getImagePath(year);
+                    img.loading = 'lazy';
+                    imageCache[imgId] = img;
+                }
+            }
+        }
+
+        // Инициализация графика
+        const ctx = document.getElementById('oceanChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: heatData.map(item => item.year),
+                datasets: [{
+                    label: 'Теплосодержание океана (0-2000 м) ×10²² Дж',
+                    data: heatData.map(item => item.heat),
+                    borderColor: '#4fc3f7',
+                    backgroundColor: 'rgba(79, 195, 247, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Изменение теплосодержания океана (1955-2020)',
+                        color: '#222',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            color: '#222'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Год',
+                            color: '#222'
+                        },
+                        ticks: {
+                            color: '#222'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Теплосодержание (×10²² Дж)',
+                            color: '#222'
+                        },
+                        ticks: {
+                            color: '#222'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Инициализация
+        updateYear(0);
+        
+        // Предзагрузка первых нескольких изображений после загрузки страницы
+        window.addEventListener('load', () => {
+            for (let i = 1; i <= 3; i++) {
+                const img = new Image();
+                img.src = getImagePath(heatData[i].year);
+                img.loading = 'lazy';
+                imageCache[`ocean-${heatData[i].year}`] = img;
+            }
+        });
+    </script>
 </body>
 </html>
