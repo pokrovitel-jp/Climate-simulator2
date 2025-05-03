@@ -5,82 +5,19 @@
   <title>Изменение климата</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* Минимальные критически важные стили */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: black;
-      color: white;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    .top-bar {
       background-color: #000;
-      padding: 12px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
+      color: #fff;
     }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .logo a {
-      color: white;
-    }
-
-    .logo a:hover {
-      color: #ccc;
-    }
-
-    .main-nav {
-      display: flex;
-      gap: 30px;
-    }
-
-    .main-nav a {
-      font-size: 16px;
-      color: white;
-      font-weight: bold;
-    }
-
-    .main-nav a:hover {
-      color: #ccc;
-    }
-
-    .submenu {
-      background: #222;
-      display: flex;
-      justify-content: center;
-      padding: 12px 0;
-      gap: 30px;
-      border-bottom: 1px solid #333;
-    }
-
-    .submenu a {
-      font-size: 16px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .submenu a:hover {
-      color: #ccc;
-    }
-
-    .hero {
+    .video-container {
       position: relative;
-      height: 650px;
-      display: flex;
-      align-items: center;
-      padding: 0 60px;
+      width: 100%;
+      height: 100vh;
       overflow: hidden;
     }
-
     .hero-video {
       position: absolute;
       top: 0;
@@ -90,128 +27,6 @@
       object-fit: cover;
       z-index: -1;
     }
-
-    .hero-text {
-      max-width: 600px;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .hero-text h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-
-    .hero-text p {
-      font-size: 18px;
-      line-height: 1.5;
-    }
-
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      padding: 30px 40px;
-      flex-wrap: wrap;
-      border-top: 1px solid #333;
-      border-bottom: 1px solid #333;
-    }
-
-    .stat {
-      text-align: center;
-      margin: 15px;
-      min-width: 160px;
-    }
-
-    .stat .title {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    .stat .value {
-      font-size: 28px;
-      color: red;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .stat .desc {
-      font-size: 13px;
-      color: #ccc;
-    }
-
-    .white-section {
-      background-color: #ffffff;
-      color: #000;
-      padding: 80px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .text-block {
-      flex: 1 1 500px;
-      padding: 20px 40px;
-    }
-
-    .text-block h2 {
-      font-size: 42px;
-      margin-bottom: 20px;
-    }
-
-    .text-block p {
-      font-size: 20px;
-      line-height: 1.6;
-    }
-
-    .video-block {
-      flex: 1 1 600px;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .video-block video {
-      width: 100%;
-      max-width: 700px;
-      height: auto;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .sim-button {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 14px 28px;
-      background-color: #0077cc;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      transition: background 0.3s ease;
-    }
-
-    .sim-button:hover {
-      background-color: #005fa3;
-    }
-
-    @media (max-width: 768px) {
-      .white-section {
-        flex-direction: column;
-        padding: 40px 20px;
-      }
-
-      .text-block {
-        padding: 0 20px 40px 20px;
-        text-align: center;
-      }
-    }
-
-    /* Стили для индикатора загрузки */
     .loading-spinner {
       position: absolute;
       top: 50%;
@@ -224,197 +39,204 @@
       border-top: 4px solid #fff;
       animation: spin 1s linear infinite;
     }
-    
     @keyframes spin {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
+    .content {
+      display: none; /* Скрываем контент до загрузки первого видео */
+    }
+    /* Остальные стили будут загружены после основного контента */
   </style>
+  <!-- Предзагрузка первого видео -->
+  <link rel="preload" href="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" as="video" type="video/mp4">
 </head>
 <body>
 
-  <!-- Верхняя панель -->
-  <div class="top-bar">
-    <div class="logo"><a href="index.html">Главная</a></div>
-    <nav class="main-nav">
-      <a href="primer.html">Карта</a>
-      <a href="kr.html">Диаграммы</a>
-      <a href="primer.html">Источники</a>
-    </nav>
-  </div>
-
-  <!-- Подменю -->
-  <nav class="submenu">
-    <a href="ПОТЕПЛ.html">Глобальное потепление</a>
-    <a href="море.html">Уровень моря</a>
-    <a href="тепл море.html">Потепление океана</a>
-    <a href="co2.html">Углекислый газ</a>
-    <a href="лед.html">Ледяные щиты</a>
-  </nav>
-
-  <!-- Герой секция с видео-фоном -->
-  <section class="hero">
-    <video class="hero-video" autoplay muted loop playsinline>
+  <!-- Первое видео - загружается в приоритете -->
+  <div class="video-container">
+    <video id="main-video" class="hero-video" autoplay muted loop playsinline preload="auto">
       <source src="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" type="video/mp4">
     </video>
-    <div class="loading-spinner"></div>
-    <div class="hero-text">
-      <h1>Изменение климата</h1>
-      <p>Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов</p>
-    </div>
-  </section>
+    <div class="loading-spinner" id="main-spinner"></div>
+  </div>
 
-  <!-- Статистика -->
-  <section class="stats">
-    <div class="stat">
-      <div class="title">Глобальное потепление</div>
-      <div class="value">+1.2°C</div>
-      <div class="desc">с 1880 года</div>
+  <!-- Основной контент (изначально скрыт) -->
+  <div id="content" class="content">
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+      <div class="logo"><a href="index.html">Главная</a></div>
+      <nav class="main-nav">
+        <a href="primer.html">Карта</a>
+        <a href="kr.html">Диаграммы</a>
+        <a href="primer.html">Источники</a>
+      </nav>
     </div>
-    <div class="stat">
-      <div class="title">Углекислый газ</div>
-      <div class="value">+93 ppm</div>
-      <div class="desc">с 2002 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Уровень моря</div>
-      <div class="value">+4 M</div>
-      <div class="desc">с 1993 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Потепление океана</div>
-      <div class="value">+372 ZJ</div>
-      <div class="desc">с 1955 года</div>
-    </div>
-    <div class="stat">
-      <div class="title">Ледяные щиты</div>
-      <div class="value">-403 млрд т</div>
-      <div class="desc">в год</div>
-    </div>
-  </section>
- <!-- 3. Секция: Потепление океана (белый фон) -->
-  <section id="ocean-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
-    <div class="text-block">
-      <h2>Потепление океана</h2>
-      <p>
-        Океаны поглощают большую часть тепла, вызванного глобальным потеплением. Это ведёт к повышению температуры воды, угрожая морским экосистемам, таким как коралловые рифы, и способствуя более сильным ураганам.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video autoplay muted loop playsinline>
-        <source src="https://cdn.pixabay.com/video/2020/01/18/31377-386628887_large.mp4" type="video/mp4">
-      </video>
-      <div class="loading-spinner"></div>
-    </div>
-  </section>
-  
 
-  <!-- 2. Секция: Выбросы CO₂ (чёрный фон) -->
-  <section class="white-section" style="background-color: #000; color: #fff;">
-    <div class="text-block">
-      <h2>Выбросы углекислого газа</h2>
-      <p>
-        Выбросы CO₂, вызванные деятельностью человека, усиливают парниковый эффект, способствуя глобальному потеплению. Основные источники — сжигание ископаемого топлива, промышленность и вырубка лесов.
-        Мониторинг выбросов помогает учёным и политикам разрабатывать эффективные меры по борьбе с изменением климата.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video autoplay muted loop playsinline>
-        <source src="https://cdn.pixabay.com/video/2019/07/29/25608-350962918_large.mp4" type="video/mp4">
-      </video>
-      <div class="loading-spinner"></div>
-    </div>
-  </section>
+    <!-- Подменю -->
+    <nav class="submenu">
+      <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+      <a href="море.html">Уровень моря</a>
+      <a href="тепл море.html">Потепление океана</a>
+      <a href="co2.html">Углекислый газ</a>
+      <a href="лед.html">Ледяные щиты</a>
+    </nav>
 
-  <!-- Секция: Поднятие уровня моря (текст выше анимации) -->
-  <section id="sea-level-rise" style="background-color: #f3f3f3; padding: 60px 20px 20px;">
-    <h2 style="text-align: center; font-size: 36px; margin-bottom: 20px; color: #000; font-family: 'Arial', sans-serif; font-weight: bold;">
-      Поднятие уровня моря
-    </h2>
-    <p style="text-align: center; font-size: 20px; max-width: 900px; margin: 0 auto; color: #000; font-family: 'Verdana', sans-serif; line-height: 1.6;">
-      Изменение климата вызывает повышение уровня моря, что угрожает прибрежным регионам. Таяние ледников, усиление штормов и наводнений - всё это последствия глобального потепления, которое ускоряет этот процесс. Это может привести к затоплению значительных территорий.
-    </p>
-  </section>
+    <!-- Статистика -->
+    <section class="stats">
+      <div class="stat">
+        <div class="title">Глобальное потепление</div>
+        <div class="value">+1.2°C</div>
+        <div class="desc">с 1880 года</div>
+      </div>
+      <div class="stat">
+        <div class="title">Углекислый газ</div>
+        <div class="value">+93 ppm</div>
+        <div class="desc">с 2002 года</div>
+      </div>
+      <div class="stat">
+        <div class="title">Уровень моря</div>
+        <div class="value">+4 M</div>
+        <div class="desc">с 1993 года</div>
+      </div>
+      <div class="stat">
+        <div class="title">Потепление океана</div>
+        <div class="value">+372 ZJ</div>
+        <div class="desc">с 1955 года</div>
+      </div>
+      <div class="stat">
+        <div class="title">Ледяные щиты</div>
+        <div class="value">-403 млрд т</div>
+        <div class="desc">в год</div>
+      </div>
+    </section>
 
-  <!-- Секция: Видео-анимация -->
-  <section id="global-warming-video" style="position: relative; background-color: #000; padding: 0; margin: 0; overflow: hidden; height: 600px;">
-    <video autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
-      <source src="https://cdn.pixabay.com/video/2018/11/16/19368-301525727_large.mp4" type="video/mp4">
-    </video>
-    <div class="loading-spinner"></div>
-    <a href="simulator.html" style="
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #0077cc;
-      color: white;
-      font-weight: bold;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-size: 18px;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    " onmouseover="this.style.backgroundColor='#005fa3'" onmouseout="this.style.backgroundColor='#0077cc'">
-      Перейти к симулятору
-    </a>
-  </section>
+    <!-- Секции с видео -->
+    <section id="global-warming" class="section" data-video-preload="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4">
+      <div class="text-block">
+        <h2>Глобальное потепление</h2>
+        <p>Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов.</p>
+      </div>
+      <div class="video-block">
+        <video class="lazy-video" autoplay muted loop playsinline preload="none" data-src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4">
+          <source type="video/mp4">
+        </video>
+        <div class="loading-spinner"></div>
+      </div>
+    </section>
 
- <!-- 1. Секция: Глобальное потепление (белый фон) -->
-  <section id="global-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
-    <div class="text-block">
-      <h2>Глобальное потепление</h2>
-      <p>
-        Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов. Последствия включают засухи, пожары, изменение климата и ухудшение условий жизни.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video autoplay muted loop playsinline>
-        <source src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4" type="video/mp4">
-      </video>
-      <div class="loading-spinner"></div>
-    </div>
-  </section>
+    <!-- Остальные секции -->
+    <!-- ... -->
 
-  <!-- 4. Секция: Таяние ледников (чёрный фон) -->
-  <section id="glaciers" class="white-section" style="background-color: #000; color: #fff;">
-    <div class="text-block">
-      <h2>Таяние ледников</h2>
-      <p>
-        Потепление климата усиливает таяние ледников, особенно в Арктике и горных районах. Это влияет на уровень моря, разрушает экосистемы и угрожает пресноводным источникам. NASA использует спутники и инструменты для отслеживания этих изменений.
-      </p>
-      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
-    </div>
-    <div class="video-block">
-      <video autoplay muted loop playsinline>
-        <source src="https://cdn.pixabay.com/video/2023/03/14/154726-808562497_large.mp4" type="video/mp4">
-      </video>
-      <div class="loading-spinner"></div>
-    </div>
-  </section>
+  </div>
+
+  <!-- Загрузка остальных стилей после основного контента -->
+  <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
 
   <script>
-    // Скрипт для скрытия индикатора загрузки при начале воспроизведения видео
-    document.addEventListener('DOMContentLoaded', function() {
-      const videos = document.querySelectorAll('video');
-      
-      videos.forEach(video => {
-        video.addEventListener('playing', function() {
-          const spinner = this.parentElement.querySelector('.loading-spinner');
-          if (spinner) spinner.style.display = 'none';
+    // 1. Управление загрузкой первого видео
+    const mainVideo = document.getElementById('main-video');
+    const mainSpinner = document.getElementById('main-spinner');
+    const content = document.getElementById('content');
+
+    // 2. Показываем контент после загрузки первого видео
+    mainVideo.addEventListener('loadeddata', function() {
+      content.style.display = 'block';
+      mainSpinner.style.display = 'none';
+      loadAdditionalResources();
+    });
+
+    // 3. Функция для загрузки остальных ресурсов
+    function loadAdditionalResources() {
+      // Ленивая загрузка видео
+      const lazyVideos = document.querySelectorAll('.lazy-video');
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const video = entry.target;
+            const sources = video.parentElement.querySelectorAll('source');
+            
+            // Загружаем видео с низким приоритетом
+            if (video.dataset.src) {
+              video.src = video.dataset.src;
+              video.load();
+              
+              // Скрываем спиннер при успешной загрузке
+              video.addEventListener('loadeddata', () => {
+                video.parentElement.querySelector('.loading-spinner').style.display = 'none';
+              });
+            }
+            
+            observer.unobserve(video);
+          }
         });
-        
-        // Для видео, которые уже играют (автозапуск)
-        if (video.readyState > 2) {
-          const spinner = video.parentElement.querySelector('.loading-spinner');
-          if (spinner) spinner.style.display = 'none';
-        }
+      }, {
+        rootMargin: '300px',
+        threshold: 0.1
       });
+
+      lazyVideos.forEach(video => {
+        observer.observe(video);
+      });
+
+      // Адаптация для медленных соединений
+      if (navigator.connection) {
+        const connection = navigator.connection;
+        
+        // Если медленное соединение
+        if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.saveData) {
+          document.querySelectorAll('video').forEach(v => {
+            v.autoplay = false;
+            v.controls = true;
+            v.preload = 'metadata';
+          });
+          
+          // Загружаем видео по одному
+          const videoQueue = Array.from(document.querySelectorAll('.lazy-video'));
+          loadVideoSequentially(videoQueue);
+        }
+      }
+    }
+
+    // 4. Последовательная загрузка для медленных соединений
+    function loadVideoSequentially(videos, index = 0) {
+      if (index >= videos.length) return;
+      
+      const video = videos[index];
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            video.src = video.dataset.src;
+            video.load();
+            
+            video.addEventListener('loadeddata', () => {
+              video.parentElement.querySelector('.loading-spinner').style.display = 'none';
+              // Загружаем следующее видео после текущего
+              setTimeout(() => loadVideoSequentially(videos, index + 1), 1000);
+            });
+            
+            observer.unobserve(video);
+          }
+        });
+      }, {threshold: 0.1});
+      
+      observer.observe(video);
+    }
+
+    // 5. Предзагрузка видео при наведении
+    document.querySelectorAll('[data-video-preload]').forEach(el => {
+      el.addEventListener('mouseenter', function() {
+        const videoUrl = this.dataset.videoPreload;
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'video';
+        link.href = videoUrl;
+        document.head.appendChild(link);
+      }, {once: true});
     });
   </script>
+</body>
+</html>
 </body>
 </html>
   </div>
