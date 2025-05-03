@@ -264,9 +264,9 @@
         <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
 
         <div class="image-container">
-            <!-- Только первое изображение загружается сразу, остальные будут подгружаться динамически -->
+            <!-- Первое изображение загружается сразу -->
             <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955" loading="eager">
-            <!-- Остальные изображения будут созданы динамически -->
+            <!-- Остальные будут добавлены динамически -->
         </div>
 
         <div class="slider-container">
@@ -329,6 +329,20 @@
         const imageCache = {};
         const imageContainer = document.querySelector('.image-container');
         
+        // Получение пути к изображению по году
+        function getImagePath(year) {
+            const index = year - 1955;
+            let folder = 'img6';
+            let num = index.toString().padStart(5, '0');
+            
+            if (year >= 2018) {
+                folder = 'img5';
+                num = (index).toString().padStart(5, '0');
+            }
+            
+            return `${folder}/Map_${num}.png`; // Формат PNG (можно изменить на .webp)
+        }
+
         // Предзагрузка соседних изображений
         function preloadAdjacentImages(currentIndex) {
             const preloadRange = 3; // Сколько изображений загружать вокруг текущего
@@ -348,29 +362,10 @@
                     img.id = `ocean-${year}`;
                     
                     imageCache[year] = img;
-                    
-                    // Добавляем в DOM только когда нужно
-                    if (i === currentIndex) {
-                        imageContainer.appendChild(img);
-                    }
                 }
             }
         }
         
-        // Получение пути к изображению по году
-        function getImagePath(year) {
-            const index = year - 1955;
-            let folder = 'img6';
-            let num = index.toString().padStart(5, '0');
-            
-            if (year >= 2018) {
-                folder = 'img5';
-                num = (index).toString().padStart(5, '0');
-            }
-            
-            return `${folder}/Map_${num}.webp`;
-        }
-
         // Функция для обновления года
         function updateYear(index) {
             index = parseInt(index);
@@ -393,6 +388,11 @@
                 activeImage.className = 'ocean-image';
                 activeImage.id = `ocean-${data.year}`;
                 imageCache[data.year] = activeImage;
+                imageContainer.appendChild(activeImage);
+            }
+            
+            // Если изображение еще не в DOM, добавляем его
+            if (!activeImage.parentNode) {
                 imageContainer.appendChild(activeImage);
             }
             
@@ -466,12 +466,12 @@
             }
         });
 
-        // Инициализация
+        // Инициализация - загружаем первое изображение и предзагружаем следующие
         updateYear(0);
         
-        // Предзагрузка первых нескольких изображений после загрузки страницы
+        // После загрузки страницы предзагружаем несколько следующих изображений
         window.addEventListener('load', () => {
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const img = new Image();
                 img.src = getImagePath(heatData[i].year);
                 imageCache[heatData[i].year] = img;
