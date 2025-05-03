@@ -3,23 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Изменение климата</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* Основные стили */
+    /* Стили — без изменений */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #001a33;
+      background-color: black;
       color: white;
-      line-height: 1.6;
     }
-    
+
     a {
       text-decoration: none;
-      color: #4fc3f7;
     }
-    
-    /* Шапка */
+
     .top-bar {
       background-color: #000;
       padding: 12px 40px;
@@ -28,29 +25,35 @@
       align-items: center;
       border-bottom: 1px solid #333;
     }
-    
+
     .logo {
       font-size: 24px;
       font-weight: bold;
     }
-    
+
+    .logo a {
+      color: white;
+    }
+
+    .logo a:hover {
+      color: #ccc;
+    }
+
     .main-nav {
       display: flex;
       gap: 30px;
     }
-    
+
     .main-nav a {
       font-size: 16px;
       color: white;
       font-weight: bold;
-      transition: color 0.3s;
     }
-    
+
     .main-nav a:hover {
-      color: #4fc3f7;
+      color: #ccc;
     }
-    
-    /* Подменю */
+
     .submenu {
       background: #222;
       display: flex;
@@ -58,35 +61,27 @@
       padding: 12px 0;
       gap: 30px;
       border-bottom: 1px solid #333;
-      flex-wrap: wrap;
     }
-    
+
     .submenu a {
       font-size: 16px;
       font-weight: bold;
       color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      transition: background 0.3s;
     }
-    
+
     .submenu a:hover {
-      background: #333;
+      color: #ccc;
     }
-    
-    /* Герой-секция */
+
     .hero {
       position: relative;
-      height: 70vh;
-      min-height: 500px;
+      height: 650px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 20px;
+      padding: 0 60px;
       overflow: hidden;
     }
-    
+
     .hero-video {
       position: absolute;
       top: 0;
@@ -96,340 +91,295 @@
       object-fit: cover;
       z-index: -1;
     }
-    
-    .hero-content {
-      max-width: 800px;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 10px;
-    }
-    
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-    
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-    }
-    
-    /* Секция с анимацией */
-    .animation-section {
-      padding: 60px 20px;
-      background: #002b57;
-    }
-    
-    .section-title {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      color: #4fc3f7;
-    }
-    
-    .animation-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      background: rgba(0,0,0,0.5);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    
-    .frame-container {
+
+    .hero-text {
+      max-width: 600px;
       position: relative;
-      height: 500px;
-      overflow: hidden;
-      border-radius: 8px;
-      background: #000;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
-    
-    .animation-frame {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    
-    .animation-frame.active {
-      opacity: 1;
-    }
-    
-    .animation-controls {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    .control-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    
-    .control-btn {
-      padding: 10px 20px;
-      background: #0077cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+
+    .hero-text h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
       font-weight: bold;
-      transition: background 0.3s;
     }
-    
-    .control-btn:hover {
-      background: #005fa3;
+
+    .hero-text p {
+      font-size: 18px;
+      line-height: 1.5;
     }
-    
-    .frame-slider {
-      width: 100%;
-    }
-    
-    .frame-info {
+
+    .stats {
       display: flex;
-      justify-content: space-between;
-      margin-top: 5px;
+      justify-content: space-around;
+      padding: 30px 40px;
+      flex-wrap: wrap;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
     }
-    
-    /* Адаптивность */
+
+    .stat {
+      text-align: center;
+      margin: 15px;
+      min-width: 160px;
+    }
+
+    .stat .title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      color: red;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .stat .desc {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .white-section {
+      background-color: #ffffff;
+      color: #000;
+      padding: 80px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .text-block {
+      flex: 1 1 500px;
+      padding: 20px 40px;
+    }
+
+    .text-block h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .text-block p {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .video-block {
+      flex: 1 1 600px;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .video-block video {
+      width: 100%;
+      max-width: 700px;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .sim-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 28px;
+      background-color: #0077cc;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: background 0.3s ease;
+    }
+
+    .sim-button:hover {
+      background-color: #005fa3;
+    }
+
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
+      .white-section {
+        flex-direction: column;
+        padding: 40px 20px;
       }
-      
-      .hero p {
-        font-size: 1rem;
-      }
-      
-      .section-title {
-        font-size: 2rem;
-      }
-      
-      .frame-container {
-        height: 300px;
-      }
-      
-      .main-nav {
-        gap: 15px;
-      }
-      
-      .submenu {
-        gap: 10px;
-        padding: 8px 0;
+
+      .text-block {
+        padding: 0 20px 40px 20px;
+        text-align: center;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Шапка -->
+  <!-- Верхняя панель -->
   <div class="top-bar">
-    <div class="logo"><a href="index.html">Климатические изменения</a></div>
+    <div class="logo"><a href="index.html">Главная</a></div>
     <nav class="main-nav">
-      <a href="map.html">Карта</a>
-      <a href="graphs.html">Графики</a>
-      <a href="sources.html">Источники</a>
+      <a href="primer.html">Карта</a>
+      <a href="kr.html">Диаграммы</a>
+      <a href="primer.html">Источники</a>
     </nav>
   </div>
 
   <!-- Подменю -->
   <nav class="submenu">
-    <a href="global-warming.html">Глобальное потепление</a>
-    <a href="sea-level.html">Уровень моря</a>
-    <a href="ocean-warming.html">Потепление океана</a>
+    <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+    <a href="море.html">Уровень моря</a>
+    <a href="тепл море.html">Потепление океана</a>
     <a href="co2.html">Углекислый газ</a>
-    <a href="ice.html">Ледяные щиты</a>
+    <a href="лед.html">Ледяные щиты</a>
   </nav>
 
-  <!-- Герой-секция -->
+  <!-- Герой секция с видео-фоном -->
   <section class="hero">
-    <video class="hero-video" autoplay muted loop playsinline>
-      <source src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4" type="video/mp4">
+    <video class="hero-video" autoplay muted loop preload="auto" playsinline>
+      <source src="https://cdn.pixabay.com/video/2016/02/10/2118-155244104_large.mp4" type="video/mp4">
     </video>
-    <div class="hero-content">
-      <h1>Изменение климата в реальном времени</h1>
-      <p>Исследуйте динамику климатических изменений через интерактивные визуализации</p>
+    <div class="hero-text">
+      <h1>Изменение климата</h1>
+      <p>Климат играет ключевую роль в нашей жизни и оказывает влияние на множество природных и социальных процессов</p>
     </div>
   </section>
 
-  <!-- Секция с анимацией -->
-  <section class="animation-section">
-    <h2 class="section-title">Динамика изменения температуры океана</h2>
-    
-    <div class="animation-container">
-      <div class="frame-container">
-        <!-- Первый кадр загружается сразу -->
-        <img src="frames/frame1.png" class="animation-frame active" loading="eager" alt="Кадр 1">
-        <!-- Остальные кадры добавляются динамически -->
-      </div>
-      
-      <div class="animation-controls">
-        <div class="control-buttons">
-          <button class="control-btn" id="playBtn">▶ Воспроизвести</button>
-          <button class="control-btn" id="pauseBtn">⏸ Пауза</button>
-          <button class="control-btn" id="resetBtn">⏮ Сброс</button>
-        </div>
-        
-        <input type="range" class="frame-slider" id="frameSlider" min="1" max="60" value="1">
-        
-        <div class="frame-info">
-          <span>Кадр: <span id="currentFrame">1</span>/<span id="totalFrames">60</span></span>
-          <span id="frameDate">Январь 1955</span>
-        </div>
-      </div>
+  <!-- Статистика -->
+  <section class="stats">
+    <div class="stat">
+      <div class="title">Глобальное потепление</div>
+      <div class="value">+1.2°C</div>
+      <div class="desc">с 1880 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Углекислый газ</div>
+      <div class="value">+93 ppm</div>
+      <div class="desc">с 2002 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Уровень моря</div>
+      <div class="value">+4 M</div>
+      <div class="desc">с 1993 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Потепление океана</div>
+      <div class="value">+372 ZJ</div>
+      <div class="desc">с 1955 года</div>
+    </div>
+    <div class="stat">
+      <div class="title">Ледяные щиты</div>
+      <div class="value">-403 млрд т</div>
+      <div class="desc">в год</div>
     </div>
   </section>
 
-  <script>
-    // Конфигурация анимации
-    const animationConfig = {
-      frameCount: 60,
-      framePrefix: 'frames/frame',
-      frameExtension: '.png',
-      fps: 24,
-      startYear: 1955,
-      months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-               'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
-    };
-    
-    // Элементы управления
-    const frameContainer = document.querySelector('.frame-container');
-    const playBtn = document.getElementById('playBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const frameSlider = document.getElementById('frameSlider');
-    const currentFrameEl = document.getElementById('currentFrame');
-    const totalFramesEl = document.getElementById('totalFrames');
-    const frameDateEl = document.getElementById('frameDate');
-    
-    // Состояние анимации
-    let currentFrame = 1;
-    let isPlaying = false;
-    let animationInterval;
-    
-    // Инициализация
-    function initAnimation() {
-      totalFramesEl.textContent = animationConfig.frameCount;
-      frameSlider.max = animationConfig.frameCount;
-      updateFrameInfo();
-      
-      // Предзагрузка первых 5 кадров
-      for (let i = 2; i <= 5; i++) {
-        preloadFrame(i);
-      }
-      
-      // Настройка событий
-      playBtn.addEventListener('click', playAnimation);
-      pauseBtn.addEventListener('click', pauseAnimation);
-      resetBtn.addEventListener('click', resetAnimation);
-      frameSlider.addEventListener('input', onSliderChange);
-    }
-    
-    // Предзагрузка кадра
-    function preloadFrame(frameNumber) {
-      const img = new Image();
-      img.src = getFramePath(frameNumber);
-    }
-    
-    // Получение пути к кадру
-    function getFramePath(frameNumber) {
-      return `${animationConfig.framePrefix}${frameNumber}${animationConfig.frameExtension}`;
-    }
-    
-    // Показ текущего кадра
-    function showFrame(frameNumber) {
-      // Проверяем границы
-      frameNumber = Math.max(1, Math.min(frameNumber, animationConfig.frameCount));
-      
-      // Обновляем текущий кадр
-      currentFrame = frameNumber;
-      
-      // Находим или создаем элемент кадра
-      let frameElement = document.getElementById(`frame-${frameNumber}`);
-      
-      if (!frameElement) {
-        frameElement = document.createElement('img');
-        frameElement.src = getFramePath(frameNumber);
-        frameElement.className = 'animation-frame';
-        frameElement.id = `frame-${frameNumber}`;
-        frameElement.alt = `Кадр ${frameNumber}`;
-        frameElement.loading = 'lazy';
-        
-        frameContainer.appendChild(frameElement);
-        
-        // Предзагружаем соседние кадры
-        if (frameNumber < animationConfig.frameCount) {
-          preloadFrame(frameNumber + 1);
-        }
-        if (frameNumber > 1) {
-          preloadFrame(frameNumber - 1);
-        }
-      }
-      
-      // Скрываем все кадры и показываем текущий
-      document.querySelectorAll('.animation-frame').forEach(frame => {
-        frame.classList.remove('active');
-      });
-      
-      frameElement.classList.add('active');
-      
-      // Обновляем UI
-      frameSlider.value = frameNumber;
-      currentFrameEl.textContent = frameNumber;
-      updateFrameInfo();
-    }
-    
-    // Обновление информации о кадре
-    function updateFrameInfo() {
-      const year = animationConfig.startYear + Math.floor((currentFrame - 1) / 12);
-      const month = animationConfig.months[(currentFrame - 1) % 12];
-      frameDateEl.textContent = `${month} ${year}`;
-    }
-    
-    // Воспроизведение анимации
-    function playAnimation() {
-      if (isPlaying) return;
-      
-      isPlaying = true;
-      playBtn.disabled = true;
-      pauseBtn.disabled = false;
-      
-      animationInterval = setInterval(() => {
-        let nextFrame = currentFrame + 1;
-        if (nextFrame > animationConfig.frameCount) {
-          nextFrame = 1;
-        }
-        showFrame(nextFrame);
-      }, 1000 / animationConfig.fps);
-    }
-    
-    // Пауза анимации
-    function pauseAnimation() {
-      isPlaying = false;
-      clearInterval(animationInterval);
-      playBtn.disabled = false;
-      pauseBtn.disabled = true;
-    }
-    
-    // Сброс анимации
-    function resetAnimation() {
-      pauseAnimation();
-      showFrame(1);
-    }
-    
-    // Обработчик изменения слайдера
-    function onSliderChange() {
-      pauseAnimation();
-      showFrame(parseInt(frameSlider.value));
-    }
-    
-    // Запускаем инициализацию после загрузки страницы
-    window.addEventListener('load', initAnimation);
-  </script>
+  <!-- 1. Секция: Глобальное потепление (белый фон) -->
+  <section id="global-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
+    <div class="text-block">
+      <h2>Глобальное потепление</h2>
+      <p>
+        Средняя температура Земли растёт с конца 19 века. Основной причиной считается деятельность человека — выбросы парниковых газов. Последствия включают засухи, пожары, изменение климата и ухудшение условий жизни.
+      </p>
+      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
+    </div>
+    <div class="video-block">
+      <video autoplay muted loop preload="auto" playsinline>
+        <source src="https://cdn.pixabay.com/video/2023/04/25/160401-821086405_large.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+    </div>
+  </section>
+
+  <!-- 2. Секция: Выбросы CO₂ (чёрный фон) -->
+  <section class="white-section" style="background-color: #000; color: #fff;">
+    <div class="text-block">
+      <h2>Выбросы углекислого газа</h2>
+      <p>
+        Выбросы CO₂, вызванные деятельностью человека, усиливают парниковый эффект, способствуя глобальному потеплению. Основные источники — сжигание ископаемого топлива, промышленность и вырубка лесов.
+        Мониторинг выбросов помогает учёным и политикам разрабатывать эффективные меры по борьбе с изменением климата.
+      </p>
+      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
+    </div>
+    <div class="video-block">
+      <video autoplay muted loop preload="auto" playsinline>
+        <source src="https://cdn.pixabay.com/video/2019/07/29/25608-350962918_large.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+    </div>
+  </section>
+
+  <!-- Секция: Поднятие уровня моря (текст выше анимации) -->
+  <section id="sea-level-rise" style="background-color: #f3f3f3; padding: 60px 20px 20px;">
+    <h2 style="text-align: center; font-size: 36px; margin-bottom: 20px; color: #000; font-family: 'Arial', sans-serif; font-weight: bold;">
+      Поднятие уровня моря
+    </h2>
+    <p style="text-align: center; font-size: 20px; max-width: 900px; margin: 0 auto; color: #000; font-family: 'Verdana', sans-serif; line-height: 1.6;">
+      Изменение климата вызывает повышение уровня моря, что угрожает прибрежным регионам. Таяние ледников, усиление штормов и наводнений - всё это последствия глобального потепления, которое ускоряет этот процесс. Это может привести к затоплению значительных территорий.
+    </p>
+  </section>
+
+  <!-- Секция: Видео-анимация -->
+  <section id="global-warming-video" style="position: relative; background-color: #000; padding: 0; margin: 0; overflow: hidden; height: 600px;">
+    <video autoplay muted playsinline loop preload="auto" style="
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    ">
+      <source src="https://cdn.pixabay.com/video/2018/11/16/19368-301525727_large.mp4" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+    <a href="simulator.html" style="
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #0077cc;
+      color: white;
+      font-weight: bold;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 18px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    " onmouseover="this.style.backgroundColor='#005fa3'" onmouseout="this.style.backgroundColor='#0077cc'">
+      Перейти к симулятору
+    </a>
+  </section>
+
+  <!-- 3. Секция: Потепление океана (белый фон) -->
+  <section id="ocean-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
+    <div class="text-block">
+      <h2>Потепление океана</h2>
+      <p>
+        Океаны поглощают большую часть тепла, вызванного глобальным потеплением. Это ведёт к повышению температуры воды, угрожая морским экосистемам, таким как коралловые рифы, и способствуя более сильным ураганам.
+      </p>
+      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
+    </div>
+    <div class="video-block">
+      <video autoplay muted loop preload="auto" playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/01/18/31377-386628887_large.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+    </div>
+  </section>
+
+  <!-- 4. Секция: Таяние ледников (чёрный фон) -->
+  <section id="glaciers" class="white-section" style="background-color: #000; color: #fff;">
+    <div class="text-block">
+      <h2>Таяние ледников</h2>
+      <p>
+        Потепление климата усиливает таяние ледников, особенно в Арктике и горных районах. Это влияет на уровень моря, разрушает экосистемы и угрожает пресноводным источникам. NASA использует спутники и инструменты для отслеживания этих изменений.
+      </p>
+      <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
+    </div>
+    <div class="video-block">
+      <video autoplay muted loop preload="auto" playsinline>
+        <source src="https://cdn.pixabay.com/video/2023/03/14/154726-808562497_large.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+      </video>
+    </div>
+  </section>
 </body>
 </html>
