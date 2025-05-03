@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Симулятор уровня CO₂</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* === ОБЩИЕ СТИЛИ === */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -17,7 +19,61 @@
             align-items: center;
             text-align: center;
         }
-        
+
+        a {
+            text-decoration: none;
+        }
+
+        /* === ВЕРХНЯЯ ПАНЕЛЬ === */
+        .top-bar {
+            background-color: #000;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo a {
+            color: white;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .main-nav a {
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* === ПОДМЕНЮ === */
+        .submenu {
+            background: #222;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            gap: 30px;
+            border-bottom: 1px solid #333;
+            width: 100%;
+        }
+
+        .submenu a {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* === ОСНОВНОЙ КОНТЕНТ === */
         .container {
             max-width: 900px;
             width: 90%;
@@ -29,19 +85,19 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         h1 {
             color: #4fc3f7;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
+
         .subtitle {
             color: #b3e5fc;
             margin-bottom: 30px;
             font-size: 1.1em;
         }
-        
+
         .image-container {
             margin: 20px 0;
             min-height: 400px;
@@ -52,7 +108,7 @@
             border-radius: 10px;
             padding: 20px;
         }
-        
+
         #co2Image {
             max-width: 100%;
             max-height: 500px;
@@ -60,12 +116,12 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             transition: opacity 0.5s;
         }
-        
+
         .slider-container {
             width: 100%;
             margin: 30px 0;
         }
-        
+
         .date-display {
             font-size: 28px;
             font-weight: bold;
@@ -76,21 +132,21 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .co2-level {
             font-size: 16px;
             color: #b3e5fc;
             display: flex;
             gap: 20px;
         }
-        
+
         .co2-level span {
             background: rgba(0, 60, 120, 0.3);
             padding: 5px 10px;
             border-radius: 5px;
             border-left: 2px solid #2196f3;
         }
-        
+
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -101,11 +157,11 @@
             opacity: 0.9;
             transition: opacity .2s;
         }
-        
+
         input[type="range"]:hover {
             opacity: 1;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -117,11 +173,11 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: transform .1s;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.1);
         }
-        
+
         .year-labels {
             display: flex;
             justify-content: space-between;
@@ -129,7 +185,7 @@
             color: #b3e5fc;
             font-size: 14px;
         }
-        
+
         .info-panel {
             margin-top: 30px;
             padding: 15px;
@@ -138,13 +194,24 @@
             border-left: 4px solid #2196f3;
         }
         
+        .data-highlight {
+            color: #fc3d21;
+            font-weight: bold;
+        }
+        
+        canvas {
+            margin-top: 40px;
+            background: #fff;
+            border-radius: 12px;
+        }
+
         @media (max-width: 768px) {
             .date-display {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
-            
+
             .co2-level {
                 flex-direction: column;
                 gap: 5px;
@@ -154,6 +221,26 @@
     </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <div class="logo"><a href="index.html">Главная</a></div>
+        <nav class="main-nav">
+            <a href="primer.html">Карта</a>
+            <a href="primer.html">Диаграммы</a>
+            <a href="primer.html">Источники</a>
+        </nav>
+    </div>
+
+    <!-- Подменю -->
+    <nav class="submenu">
+        <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+        <a href="море.html">Уровень моря</a>
+        <a href="тепл море.html">Потепление океана</a>
+        <a href="co2.html">Углекислый газ</a>
+        <a href="лед.html">Ледяные щиты</a>
+    </nav>
+
+    <!-- Основной контейнер -->
     <div class="container">
         <h1>Симулятор уровня CO₂</h1>
         <div class="subtitle">Наблюдайте за глобальными изменениями концентрации CO₂ с сентября 2002 по ноябрь 2022 года (данные NASA)</div>
@@ -186,8 +273,18 @@
             </div>
         </div>
         
+        <!-- График CO₂ -->
+        <canvas id="co2Chart" width="800" height="300"></canvas>
+        
+        <!-- Блок ключевых фактов -->
         <div class="info-panel">
-            <p>Этот симулятор показывает данные NASA о глобальной концентрации углекислого газа (CO₂) в атмосфере. Цвета представляют концентрацию CO₂ в частях на миллион (ppm). Данные: NASA AIRS Project.</p>
+            <h3>Ключевые факты о CO₂:</h3>
+            <p>• <span class="data-highlight">2023 год</span>: Концентрация CO₂ достигла <span class="data-highlight">419 ppm</span> - самого высокого уровня за 2 миллиона лет</p>
+            <p>• <span class="data-highlight">Скорость роста</span>: Уровень CO₂ увеличивается на ~2.5 ppm ежегодно</p>
+            <p>• <span class="data-highlight">Доиндустриальный уровень</span>: ~280 ppm (до 1750 года)</p>
+            <p>• <span class="data-highlight">Основные источники</span>: Сжигание ископаемого топлива (87%), вырубка лесов (13%)</p>
+            <p>• <span class="data-highlight">Эффект потепления</span>: CO₂ ответственен за ~50% парникового эффекта</p>
+            <p>Данные: NASA Global Climate Change, NOAA, Scripps Institution of Oceanography</p>
         </div>
     </div>
 
@@ -258,6 +355,75 @@
         
         // Инициализация
         updateDate(1);
+        
+        // Данные для графика CO₂ (примерные данные по годам)
+        const co2HistoricalData = [
+            {year: 1958, co2: 315}, {year: 1965, co2: 320}, {year: 1970, co2: 325},
+            {year: 1975, co2: 331}, {year: 1980, co2: 338}, {year: 1985, co2: 345},
+            {year: 1990, co2: 354}, {year: 1995, co2: 360}, {year: 2000, co2: 369},
+            {year: 2005, co2: 379}, {year: 2010, co2: 389}, {year: 2015, co2: 400},
+            {year: 2020, co2: 412}, {year: 2023, co2: 419}
+        ];
+        
+        // Создание графика
+        const ctx = document.getElementById('co2Chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: co2HistoricalData.map(item => item.year),
+                datasets: [{
+                    label: 'Концентрация CO₂ (ppm)',
+                    data: co2HistoricalData.map(item => item.co2),
+                    borderColor: '#4fc3f7',
+                    backgroundColor: 'rgba(79, 195, 247, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Глобальная концентрация CO₂ в атмосфере (1958-2023)',
+                        color: '#222',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            color: '#222'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Год',
+                            color: '#222'
+                        },
+                        ticks: {
+                            color: '#222'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Концентрация CO₂ (ppm)',
+                            color: '#222'
+                        },
+                        min: 300,
+                        max: 450,
+                        ticks: {
+                            color: '#222'
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
