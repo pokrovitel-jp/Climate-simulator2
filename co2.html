@@ -6,7 +6,6 @@
     <title>Симулятор уровня CO₂</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* === ОБЩИЕ СТИЛИ === */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -19,12 +18,7 @@
             align-items: center;
             text-align: center;
         }
-
-        a {
-            text-decoration: none;
-        }
-
-        /* === ВЕРХНЯЯ ПАНЕЛЬ === */
+        a { text-decoration: none; }
         .top-bar {
             background-color: #000;
             padding: 12px 40px;
@@ -35,28 +29,10 @@
             width: 100%;
             box-sizing: border-box;
         }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .logo a {
-            color: white;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 30px;
-        }
-
-        .main-nav a {
-            font-size: 16px;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* === ПОДМЕНЮ === */
+        .logo { font-size: 24px; font-weight: bold; }
+        .logo a { color: white; }
+        .main-nav { display: flex; gap: 30px; }
+        .main-nav a { font-size: 16px; color: white; font-weight: bold; }
         .submenu {
             background: #222;
             display: flex;
@@ -66,14 +42,7 @@
             border-bottom: 1px solid #333;
             width: 100%;
         }
-
-        .submenu a {
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-        }
-
-        /* === ОСНОВНОЙ КОНТЕНТ === */
+        .submenu a { font-size: 16px; font-weight: bold; color: white; }
         .container {
             max-width: 900px;
             width: 90%;
@@ -85,19 +54,8 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        h1 {
-            color: #4fc3f7;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .subtitle {
-            color: #b3e5fc;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-
+        h1 { color: #4fc3f7; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { color: #b3e5fc; margin-bottom: 30px; font-size: 1.1em; }
         .image-container {
             margin: 20px 0;
             min-height: 400px;
@@ -109,26 +67,33 @@
             padding: 20px;
             position: relative;
         }
-
         #co2Image {
             max-width: 100%;
             max-height: 500px;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }
-
         .loading {
             position: absolute;
             color: #b3e5fc;
             font-size: 18px;
         }
-
-        .slider-container {
+        .preload-progress {
             width: 100%;
-            margin: 30px 0;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            margin-top: 10px;
+            border-radius: 2px;
+            overflow: hidden;
         }
-
+        .preload-progress-bar {
+            height: 100%;
+            background: #4fc3f7;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .slider-container { width: 100%; margin: 30px 0; }
         .date-display {
             font-size: 28px;
             font-weight: bold;
@@ -139,21 +104,18 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .co2-level {
             font-size: 16px;
             color: #b3e5fc;
             display: flex;
             gap: 20px;
         }
-
         .co2-level span {
             background: rgba(0, 60, 120, 0.3);
             padding: 5px 10px;
             border-radius: 5px;
             border-left: 2px solid #2196f3;
         }
-
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -164,11 +126,7 @@
             opacity: 0.9;
             transition: opacity .2s;
         }
-
-        input[type="range"]:hover {
-            opacity: 1;
-        }
-
+        input[type="range"]:hover { opacity: 1; }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -180,11 +138,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: transform .1s;
         }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
         .year-labels {
             display: flex;
             justify-content: space-between;
@@ -192,7 +146,6 @@
             color: #b3e5fc;
             font-size: 14px;
         }
-
         .info-panel {
             margin-top: 30px;
             padding: 15px;
@@ -200,35 +153,19 @@
             border-radius: 8px;
             border-left: 4px solid #2196f3;
         }
-        
-        .data-highlight {
-            color: #fc3d21;
-            font-weight: bold;
-        }
-        
+        .data-highlight { color: #fc3d21; font-weight: bold; }
         canvas {
             margin-top: 40px;
             background: #fff;
             border-radius: 12px;
         }
-
         @media (max-width: 768px) {
-            .date-display {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .co2-level {
-                flex-direction: column;
-                gap: 5px;
-                align-items: flex-start;
-            }
+            .date-display { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .co2-level { flex-direction: column; gap: 5px; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
-    <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="logo"><a href="index.html">Главная</a></div>
         <nav class="main-nav">
@@ -238,7 +175,6 @@
         </nav>
     </div>
 
-    <!-- Подменю -->
     <nav class="submenu">
         <a href="ПОТЕПЛ.html">Глобальное потепление</a>
         <a href="море.html">Уровень моря</a>
@@ -247,13 +183,17 @@
         <a href="лед.html">Ледяные щиты</a>
     </nav>
 
-    <!-- Основной контейнер -->
     <div class="container">
         <h1>Симулятор уровня CO₂</h1>
         <div class="subtitle">Наблюдайте за глобальными изменениями концентрации CO₂ с сентября 2002 по ноябрь 2022 года (данные NASA)</div>
         
         <div class="image-container">
-            <div class="loading" id="loadingIndicator">Загрузка изображений...</div>
+            <div class="loading" id="loadingIndicator">
+                Оптимизированная загрузка...
+                <div class="preload-progress">
+                    <div class="preload-progress-bar" id="preloadProgressBar"></div>
+                </div>
+            </div>
             <img id="co2Image" src="img3/co2_2002_9_0001_720x360.jpg" alt="Карта концентрации CO₂" style="opacity: 0;">
         </div>
         
@@ -282,10 +222,8 @@
             </div>
         </div>
         
-        <!-- График CO₂ -->
         <canvas id="co2Chart" width="800" height="300"></canvas>
         
-        <!-- Блок ключевых фактов -->
         <div class="info-panel">
             <h3>Ключевые факты о CO₂:</h3>
             <p>• <span class="data-highlight">2023 год</span>: Концентрация CO₂ достигла <span class="data-highlight">419 ppm</span> - самого высокого уровня за 2 миллиона лет</p>
@@ -298,179 +236,232 @@
     </div>
 
     <script>
-        // Генерация данных с сентября 2002 по ноябрь 2022 (243 месяца)
-        function generateDateData() {
-            const dateData = [];
+        // 1. Конфигурация загрузки
+        const CONFIG = {
+            INITIAL_BATCH_SIZE: 15,    // Первые изображения для немедленной загрузки
+            PARALLEL_LOAD_LIMIT: 8,    // Максимальное количество параллельных загрузок
+            LOAD_BATCH_SIZE: 20,       // Размер пакетов для последующей загрузки
+            PRIORITY_RANGE: 10         // Приоритетная загрузка вокруг текущего положения
+        };
+
+        // 2. Генерация данных
+        const dateData = (function() {
             const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
                           'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-            
             let index = 0;
-            const startYear = 2002;
-            const endYear = 2022;
-            const startCO2 = 370;
-            const endCO2 = 417;
-            const co2Step = (endCO2 - startCO2) / 242;
+            const data = [];
             
-            for (let year = startYear; year <= endYear; year++) {
-                const startMonth = year === 2002 ? 8 : 0; // Начинаем с сентября (8) для 2002 года
-                const endMonth = year === 2022 ? 10 : 11; // Заканчиваем ноябрем (10) для 2022 года
+            for (let year = 2002; year <= 2022; year++) {
+                const startMonth = year === 2002 ? 8 : 0;
+                const endMonth = year === 2022 ? 10 : 11;
                 
                 for (let monthIdx = startMonth; monthIdx <= endMonth; monthIdx++) {
                     index++;
                     const imgNum = String(index).padStart(4, '0');
+                    const folder = index <= 100 ? 'img3' : index <= 200 ? 'img4' : 'img5';
+                    const co2 = 370 + (417 - 370) * (index - 1) / 242;
                     
-                    // Определяем путь к изображению
-                    let imgPath;
-                    if (index <= 100) {
-                        imgPath = `img3/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    } else if (index <= 200) {
-                        imgPath = `img4/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    } else {
-                        imgPath = `img5/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`;
-                    }
-                    
-                    // Расчет уровня CO₂ (можно заменить на реальные данные)
-                    const co2 = Math.round(startCO2 + (co2Step * (index - 1)) * 10) / 10;
-                    
-                    dateData.push({
+                    data.push({
                         year: year,
                         month: months[monthIdx],
-                        co2: co2,
-                        imgPath: imgPath,
+                        co2: Math.round(co2 * 10) / 10,
+                        imgPath: `${folder}/co2_${year}_${monthIdx+1}_${imgNum}_720x360.jpg`,
                         index: index
                     });
                 }
             }
-            
-            return dateData;
-        }
-        
-        const dateData = generateDateData();
-        const startCO2 = dateData[0].co2;
-        const imageCache = {};
-        let isPreloading = false;
-        let currentImageIndex = 1;
-        
-        // Функция для предзагрузки изображений
-        function preloadImages() {
-            if (isPreloading) return;
-            
-            isPreloading = true;
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const totalImages = dateData.length;
-            let loadedCount = 0;
-            
-            loadingIndicator.textContent = `Загрузка изображений: 0/${totalImages}`;
-            
-            dateData.forEach(data => {
-                const img = new Image();
-                img.src = data.imgPath;
-                
-                img.onload = () => {
-                    imageCache[data.index] = img;
-                    loadedCount++;
-                    loadingIndicator.textContent = `Загрузка изображений: ${loadedCount}/${totalImages}`;
-                    
-                    // Когда все изображения загружены
-                    if (loadedCount === totalImages) {
-                        loadingIndicator.style.display = 'none';
-                        document.getElementById('co2Image').style.opacity = '1';
-                        document.getElementById('dateSlider').disabled = false;
-                        
-                        // Показать первое изображение
-                        updateDate(1);
-                    }
-                };
-                
-                img.onerror = () => {
-                    console.error('Ошибка загрузки изображения:', data.imgPath);
-                    loadedCount++;
-                    if (loadedCount === totalImages) {
-                        loadingIndicator.style.display = 'none';
-                        document.getElementById('co2Image').style.opacity = '1';
-                        document.getElementById('dateSlider').disabled = false;
-                        updateDate(1);
-                    }
-                };
-            });
-        }
-        
-        function updateDate(index) {
-            index = parseInt(index);
-            currentImageIndex = index;
-            const data = dateData.find(item => item.index === index) || dateData[0];
-            
-            // Обновляем дату и уровень CO₂
-            document.getElementById('dateValue').textContent = `${data.month} ${data.year}`;
-            document.getElementById('co2Value').textContent = `Уровень CO₂: ${data.co2} ppm`;
-            document.getElementById('changeFromStart').textContent = 
-                `Δ с 2002 года: +${(data.co2 - startCO2).toFixed(1)} ppm`;
-            
-            // Если изображение уже в кэше
-            if (imageCache[index]) {
-                const imgElement = document.getElementById('co2Image');
-                imgElement.style.opacity = '0';
-                
-                setTimeout(() => {
-                    imgElement.src = imageCache[index].src;
-                    imgElement.style.opacity = '1';
-                }, 50);
-            } else {
-                // Если изображение еще не загружено (например, при быстром переключении)
-                const img = new Image();
-                img.src = data.imgPath;
-                
-                img.onload = () => {
-                    imageCache[index] = img;
-                    if (currentImageIndex === index) { // Проверяем, что ползунок не переместился дальше
-                        const imgElement = document.getElementById('co2Image');
-                        imgElement.style.opacity = '0';
-                        
-                        setTimeout(() => {
-                            imgElement.src = img.src;
-                            imgElement.style.opacity = '1';
-                        }, 50);
-                    }
-                };
-            }
-        }
-        
-        // Инициализация при загрузке страницы
-        window.onload = function() {
-            // Начать предзагрузку изображений
-            preloadImages();
-            
-            // Показать первое изображение сразу
-            const firstImg = new Image();
-            firstImg.src = dateData[0].imgPath;
-            firstImg.onload = function() {
-                document.getElementById('co2Image').src = this.src;
-                document.getElementById('co2Image').style.opacity = '1';
-            };
+            return data;
+        })();
+
+        // 3. Состояние приложения
+        const state = {
+            imageCache: {},
+            currentIndex: 1,
+            loadingQueue: [],
+            activeLoads: 0,
+            totalLoaded: 0,
+            isReady: false
+        };
+
+        // 4. Элементы DOM
+        const dom = {
+            image: document.getElementById('co2Image'),
+            slider: document.getElementById('dateSlider'),
+            dateValue: document.getElementById('dateValue'),
+            co2Value: document.getElementById('co2Value'),
+            changeFromStart: document.getElementById('changeFromStart'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            progressBar: document.getElementById('preloadProgressBar')
+        };
+
+        // 5. Основные функции
+        function initialize() {
+            // Предзагрузка в оптимальной последовательности
+            preloadInitialImages();
             
             // Инициализация графика
             initChart();
-        };
-        
-        // Данные для графика CO₂ (примерные данные по годам)
-        function initChart() {
-            const co2HistoricalData = [
-                {year: 1958, co2: 315}, {year: 1965, co2: 320}, {year: 1970, co2: 325},
-                {year: 1975, co2: 331}, {year: 1980, co2: 338}, {year: 1985, co2: 345},
-                {year: 1990, co2: 354}, {year: 1995, co2: 360}, {year: 2000, co2: 369},
-                {year: 2005, co2: 379}, {year: 2010, co2: 389}, {year: 2015, co2: 400},
-                {year: 2020, co2: 412}, {year: 2023, co2: 419}
-            ];
             
-            // Создание графика
+            // Показать первое изображение
+            loadFirstImage();
+        }
+
+        function preloadInitialImages() {
+            // 1. Загружаем первые изображения немедленно
+            const initialBatch = dateData.slice(0, CONFIG.INITIAL_BATCH_SIZE);
+            loadBatch(initialBatch);
+            
+            // 2. Загружаем остальные изображения стратегически
+            const remainingImages = dateData.slice(CONFIG.INITIAL_BATCH_SIZE);
+            
+            // Разбиваем на пакеты с задержкой между ними
+            for (let i = 0; i < remainingImages.length; i += CONFIG.LOAD_BATCH_SIZE) {
+                setTimeout(() => {
+                    const batch = remainingImages.slice(i, i + CONFIG.LOAD_BATCH_SIZE);
+                    addToLoadingQueue(batch);
+                }, i * 30);
+            }
+        }
+
+        function loadBatch(images) {
+            images.forEach(data => {
+                if (state.imageCache[data.index]) return;
+                
+                const img = new Image();
+                img.onload = img.onerror = () => {
+                    state.totalLoaded++;
+                    state.activeLoads--;
+                    state.imageCache[data.index] = img;
+                    updateProgress();
+                    processLoadingQueue();
+                };
+                
+                state.activeLoads++;
+                img.src = data.imgPath;
+            });
+        }
+
+        function addToLoadingQueue(images) {
+            state.loadingQueue.push(...images);
+            processLoadingQueue();
+        }
+
+        function processLoadingQueue() {
+            while (state.loadingQueue.length > 0 && state.activeLoads < CONFIG.PARALLEL_LOAD_LIMIT) {
+                const data = state.loadingQueue.shift();
+                if (!state.imageCache[data.index]) {
+                    const img = new Image();
+                    img.onload = img.onerror = () => {
+                        state.totalLoaded++;
+                        state.activeLoads--;
+                        state.imageCache[data.index] = img;
+                        updateProgress();
+                        processLoadingQueue();
+                    };
+                    state.activeLoads++;
+                    img.src = data.imgPath;
+                }
+            }
+        }
+
+        function updateProgress() {
+            const percent = Math.round((state.totalLoaded / dateData.length) * 100);
+            dom.progressBar.style.width = `${percent}%`;
+            dom.loadingIndicator.textContent = `Загружено: ${state.totalLoaded}/${dateData.length}`;
+            
+            if (state.totalLoaded >= CONFIG.INITIAL_BATCH_SIZE && !state.isReady) {
+                state.isReady = true;
+                dom.slider.disabled = false;
+                dom.loadingIndicator.style.opacity = '0';
+                setTimeout(() => {
+                    dom.loadingIndicator.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        function loadFirstImage() {
+            const firstData = dateData[0];
+            const img = new Image();
+            img.onload = () => {
+                dom.image.src = img.src;
+                dom.image.style.opacity = '1';
+                state.imageCache[1] = img;
+            };
+            img.src = firstData.imgPath;
+        }
+
+        function updateDate(index) {
+            index = parseInt(index);
+            state.currentIndex = index;
+            const data = dateData[index - 1];
+            
+            // Обновляем текст
+            dom.dateValue.textContent = `${data.month} ${data.year}`;
+            dom.co2Value.textContent = `Уровень CO₂: ${data.co2} ppm`;
+            dom.changeFromStart.textContent = `Δ с 2002 года: +${(data.co2 - 370).toFixed(1)} ppm`;
+            
+            // Загружаем изображение с приоритетом
+            loadImageWithPriority(index);
+            
+            // Предзагружаем соседние изображения
+            preloadAdjacentImages(index);
+        }
+
+        function loadImageWithPriority(index) {
+            const data = dateData[index - 1];
+            
+            if (state.imageCache[index]) {
+                // Если изображение в кэше - показываем сразу
+                dom.image.style.opacity = '0';
+                setTimeout(() => {
+                    dom.image.src = state.imageCache[index].src;
+                    dom.image.style.opacity = '1';
+                }, 50);
+            } else {
+                // Если нет - загружаем с высоким приоритетом
+                const img = new Image();
+                img.onload = () => {
+                    state.imageCache[index] = img;
+                    if (state.currentIndex === index) {
+                        dom.image.style.opacity = '0';
+                        setTimeout(() => {
+                            dom.image.src = img.src;
+                            dom.image.style.opacity = '1';
+                        }, 50);
+                    }
+                };
+                img.src = data.imgPath;
+            }
+        }
+
+        function preloadAdjacentImages(currentIndex) {
+            const start = Math.max(1, currentIndex - CONFIG.PRIORITY_RANGE);
+            const end = Math.min(dateData.length, currentIndex + CONFIG.PRIORITY_RANGE);
+            
+            for (let i = start; i <= end; i++) {
+                if (!state.imageCache[i] && !isImageLoading(i)) {
+                    const img = new Image();
+                    img.src = dateData[i - 1].imgPath;
+                    img.onload = img.onerror = () => {
+                        state.imageCache[i] = img;
+                    };
+                }
+            }
+        }
+
+        function isImageLoading(index) {
+            return false; // Упрощенная проверка (можно усложнить при необходимости)
+        }
+
+        function initChart() {
             const ctx = document.getElementById('co2Chart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: co2HistoricalData.map(item => item.year),
+                    labels: [1958, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2023],
                     datasets: [{
                         label: 'Концентрация CO₂ (ppm)',
-                        data: co2HistoricalData.map(item => item.co2),
+                        data: [315, 320, 325, 331, 338, 345, 354, 360, 369, 379, 389, 400, 412, 419],
                         borderColor: '#4fc3f7',
                         backgroundColor: 'rgba(79, 195, 247, 0.2)',
                         borderWidth: 2,
@@ -485,43 +476,27 @@
                             display: true,
                             text: 'Глобальная концентрация CO₂ в атмосфере (1958-2023)',
                             color: '#222',
-                            font: {
-                                size: 16
-                            }
+                            font: { size: 16 }
                         },
-                        legend: {
-                            labels: {
-                                color: '#222'
-                            }
-                        }
+                        legend: { labels: { color: '#222' } }
                     },
                     scales: {
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Год',
-                                color: '#222'
-                            },
-                            ticks: {
-                                color: '#222'
-                            }
+                            title: { display: true, text: 'Год', color: '#222' },
+                            ticks: { color: '#222' }
                         },
                         y: {
-                            title: {
-                                display: true,
-                                text: 'Концентрация CO₂ (ppm)',
-                                color: '#222'
-                            },
-                            min: 300,
-                            max: 450,
-                            ticks: {
-                                color: '#222'
-                            }
+                            title: { display: true, text: 'Концентрация CO₂ (ppm)', color: '#222' },
+                            min: 300, max: 450,
+                            ticks: { color: '#222' }
                         }
                     }
                 }
             });
         }
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
