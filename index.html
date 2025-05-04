@@ -348,7 +348,7 @@
     </a>
   </section>
 
- <!-- 3. Секция: Потепление океана (белый фон) -->
+<!-- 3. Секция: Потепление океана (белый фон) -->
 <section id="ocean-warming" class="white-section" style="background-color: #f3f3f3; color: #000;">
   <div class="text-block">
     <h2>Потепление океана</h2>
@@ -358,12 +358,15 @@
     <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
   </div>
   <div class="video-block">
-    <video autoplay muted loop playsinline preload="metadata" 
-           poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-           style="background-color: #000;">
+    <video autoplay muted loop playsinline preload="auto"
+           poster="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+           style="background-color: #000; width: 100%; height: auto;"
+           onerror="fallbackVideo(this)">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-1166-large.mp4" type="video/mp4">
+      <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4" fallback>
       <!-- Fallback если видео не загрузилось -->
       <img src="https://media.giphy.com/media/3o7TKsrf0g3J3nJdFS/giphy.gif" alt="Потепление океана" style="width: 100%;">
+      <p style="color: white; text-align: center;">Ваш браузер не поддерживает видео. Обновите браузер.</p>
     </video>
   </div>
 </section>
@@ -378,15 +381,49 @@
     <a class="sim-button" href="simulator.html">Перейти к симулятору</a>
   </div>
   <div class="video-block">
-    <video autoplay muted loop playsinline preload="metadata"
-           poster="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-           style="background-color: #000;">
+    <video autoplay muted loop playsinline preload="auto"
+           poster="https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+           style="background-color: #000; width: 100%; height: auto;"
+           onerror="fallbackVideo(this)">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-icebergs-in-the-ocean-1187-large.mp4" type="video/mp4">
+      <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4" fallback>
       <!-- Fallback если видео не загрузилось -->
       <img src="https://media.giphy.com/media/3o7TKsrf0g3J3nJdFS/giphy.gif" alt="Таяние ледников" style="width: 100%;">
+      <p style="color: white; text-align: center;">Ваш браузер не поддерживает видео. Обновите браузер.</p>
     </video>
   </div>
 </section>
-  </section>
-</body>
-</html>
+
+<script>
+  // Функция для обработки ошибок загрузки видео
+  function fallbackVideo(videoElement) {
+    const container = videoElement.parentElement;
+    const fallbackImage = videoElement.querySelector('img');
+    const fallbackText = videoElement.querySelector('p');
+    
+    // Показываем fallback-контент
+    if (fallbackImage) fallbackImage.style.display = 'block';
+    if (fallbackText) fallbackText.style.display = 'block';
+    
+    // Пытаемся использовать резервный источник
+    const fallbackSource = videoElement.querySelector('source[fallback]');
+    if (fallbackSource && !videoElement.hasAttribute('data-fallback-used')) {
+      videoElement.setAttribute('data-fallback-used', 'true');
+      videoElement.src = fallbackSource.src;
+      videoElement.load();
+      videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+    }
+  }
+  
+  // Проверяем поддержку видео форматов
+  document.addEventListener('DOMContentLoaded', function() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      // Пытаемся запустить видео, если autoplay не сработал
+      video.play().catch(e => {
+        console.log('Autoplay blocked, showing poster:', e);
+        video.controls = true; // Добавляем controls если autoplay заблокирован
+      });
+    });
+  });
+</script>
