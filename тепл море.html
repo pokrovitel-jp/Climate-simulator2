@@ -260,11 +260,11 @@
 
     <!-- Основной контейнер -->
     <div class="container">
-        <h1>Потепление мирового океана (1955-2020)</h1>
+        <h1>Потепление мирового океана (1955-2016)</h1>
         <div class="subtitle">Визуализация изменения теплосодержания верхних слоев океана (0-2000 метров)<br>по данным спутниковых наблюдений NASA и NOAA</div>
 
         <div class="image-container">
-            <!-- Изображения теплосодержания океана по годам -->
+            <!-- Изображения теплосодержания океана по годам в обратном порядке -->
             <img id="ocean-1955" class="ocean-image active" src="img6/Map_00000.png" alt="Теплосодержание океана 1955">
             <img id="ocean-1956" class="ocean-image" src="img6/Map_00001.png" alt="Теплосодержание океана 1956">
             <img id="ocean-1957" class="ocean-image" src="img6/Map_00002.png" alt="Теплосодержание океана 1957">
@@ -327,10 +327,6 @@
             <img id="ocean-2014" class="ocean-image" src="img6/Map_00059.png" alt="Теплосодержание океана 2014">
             <img id="ocean-2015" class="ocean-image" src="img6/Map_00060.png" alt="Теплосодержание океана 2015">
             <img id="ocean-2016" class="ocean-image" src="img6/Map_00061.png" alt="Теплосодержание океана 2016">
-            <img id="ocean-2017" class="ocean-image" src="img5/Map_00062.png" alt="Теплосодержание океана 2017">
-            <img id="ocean-2018" class="ocean-image" src="img5/Map_00063.png" alt="Теплосодержание океана 2018">
-            <img id="ocean-2019" class="ocean-image" src="img5/Map_00064.png" alt="Теплосодержание океана 2019">
-            <img id="ocean-2020" class="ocean-image" src="img5/Map_00065.png" alt="Теплосодержание океана 2020">
         </div>
 
         <div class="slider-container">
@@ -342,9 +338,9 @@
                 </div>
             </div>
 
-            <input type="range" id="yearSlider" min="0" max="65" value="0" step="1" oninput="updateYear(this.value)">
+            <input type="range" id="yearSlider" min="0" max="61" value="0" step="1" oninput="updateYear(this.value)">
             <div class="year-labels">
-                <span>1955</span><span>2020</span>
+                <span>1955</span><span>2016</span>
             </div>
         </div>
 
@@ -354,9 +350,9 @@
         <!-- Блок ключевых фактов -->
         <div class="info-panel">
             <h3>Ключевые факты о потеплении океана:</h3>
-            <p>• <span class="data-highlight">1955-2020</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
+            <p>• <span class="data-highlight">1955-2016</span>: Мировой океан поглощает более <span class="data-highlight">90%</span> избыточного тепла от глобального потепления</p>
             <p>• <span class="data-highlight">Скорость потепления</span>: Океан нагревается со скоростью <span class="data-highlight">0.58 ± 0.08 Вт/м²</span> (1955-2010)</p>
-            <p>• <span class="data-highlight">Рекордный год</span>: В 2020 году зафиксировано теплосодержание - <span class="data-highlight">0.62 ×10²² Дж</span></p>
+            <p>• <span class="data-highlight">Рекордный год</span>: В 2016 году зафиксировано теплосодержание - <span class="data-highlight">0.58 ×10²² Дж</span></p>
             <p>• <span class="data-highlight">Последствия</span>: Повышение уровня моря, усиление ураганов, гибель коралловых рифов</p>
             <p>Данные: NASA Earth Observatory, NOAA (Национальное управление океанических и атмосферных исследований)</p>
         </div>
@@ -385,8 +381,7 @@
             {year: 2006, heat: 0.48}, {year: 2007, heat: 0.49}, {year: 2008, heat: 0.50},
             {year: 2009, heat: 0.51}, {year: 2010, heat: 0.52}, {year: 2011, heat: 0.53},
             {year: 2012, heat: 0.54}, {year: 2013, heat: 0.55}, {year: 2014, heat: 0.56},
-            {year: 2015, heat: 0.57}, {year: 2016, heat: 0.58}, {year: 2017, heat: 0.59},
-            {year: 2018, heat: 0.60}, {year: 2019, heat: 0.61}, {year: 2020, heat: 0.62}
+            {year: 2015, heat: 0.57}, {year: 2016, heat: 0.58}
         ];
 
         // Функция для обновления года
@@ -399,7 +394,12 @@
             document.querySelectorAll('.ocean-image').forEach(img => {
                 img.classList.remove('active');
             });
-            const activeImage = document.getElementById(`ocean-${data.year}`);
+            
+            // Находим изображение в обратном порядке (2016 = Map_00061, 2015 = Map_00060 и т.д.)
+            const imageIndex = 61 - index;
+            const imageId = `ocean-${data.year}`;
+            const activeImage = document.getElementById(imageId);
+            
             if (activeImage) {
                 activeImage.classList.add('active');
             }
@@ -435,7 +435,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Изменение теплосодержания океана (1955-2020)',
+                        text: 'Изменение теплосодержания океана (1955-2016)',
                         color: '#222',
                         font: {
                             size: 16
