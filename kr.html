@@ -1,49 +1,44 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Симулятор климата Кыргызстана</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #cfefff, #e0f2f1);
-      background-attachment: fixed;
+    /* === ОБЩИЕ СТИЛИ === */
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      font-family: 'Arial', sans-serif; 
       color: #333;
+      background: linear-gradient(to bottom, #f0f9ff, #e0f7fa);
     }
-
+    
     /* === ВЕРХНЕЕ МЕНЮ === */
     .top-bar {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(0, 0, 0, 0.7);
       padding: 12px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #333;
       width: 100%;
       box-sizing: border-box;
       backdrop-filter: blur(5px);
       position: fixed;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .logo {
       font-size: 24px;
       font-weight: bold;
-      color: #2c3e50;
     }
 
     .logo a {
-      color: #2c3e50;
+      color: white;
     }
 
     .main-nav {
@@ -53,45 +48,39 @@
 
     .main-nav a {
       font-size: 16px;
-      color: #2c3e50;
+      color: white;
       font-weight: bold;
-      transition: color 0.3s;
-    }
-
-    .main-nav a:hover {
-      color: #3498db;
     }
 
     /* === ПОДМЕНЮ === */
     .submenu {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(34, 34, 34, 0.7);
       display: flex;
       justify-content: center;
       padding: 12px 0;
       gap: 30px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #333;
       width: 100%;
       backdrop-filter: blur(5px);
       position: fixed;
       top: 60px;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .submenu a {
       font-size: 16px;
       font-weight: bold;
-      color: #2c3e50;
-      transition: color 0.3s;
+      color: white;
     }
 
-    .submenu a:hover {
-      color: #3498db;
+    /* === ОСНОВНОЕ СОДЕРЖИМОЕ === */
+    .content {
+      padding-top: 120px;
     }
 
     h1 {
       text-align: center;
-      padding: 120px 10px 20px;
+      padding: 20px 10px;
       font-size: 26px;
       color: #003366;
       margin: 0;
@@ -103,11 +92,10 @@
       grid-template-rows: 1fr 1fr;
       gap: 15px;
       padding: 10px 15px;
-      margin-top: 20px;
     }
 
     .chart-wrapper {
-      background: #ffffffcc;
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 10px;
       padding: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -130,7 +118,7 @@
     }
 
     .slider-block {
-      background: #ffffffcc;
+      background: rgba(255, 255, 255, 0.9);
       padding: 15px;
       border-radius: 10px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
@@ -150,12 +138,18 @@
     }
 
     .slider-container label {
-      flex: 0 0 110px;
+      flex: 0 0 150px;
       font-size: 14px;
     }
 
     .slider-container input {
       flex: 1;
+    }
+
+    .slider-container .value {
+      flex: 0 0 50px;
+      text-align: right;
+      font-size: 14px;
     }
 
     @media (max-width: 768px) {
@@ -172,6 +166,10 @@
         flex-wrap: wrap;
         gap: 15px;
         padding: 8px 0;
+      }
+      
+      .slider-container label {
+        flex: 0 0 120px;
       }
     }
   </style>
@@ -196,72 +194,96 @@
     <a href="#water">Водные ресурсы</a>
   </nav>
 
-  <h1>Симулятор изменения климата в Кыргызстане</h1>
+  <div class="content">
+    <h1>Симулятор изменения климата в Кыргызстане</h1>
 
-  <div class="charts">
-    <div class="chart-wrapper"><canvas id="tempChart"></canvas></div>
-    <div class="chart-wrapper"><canvas id="co2Chart"></canvas></div>
-    <div class="chart-wrapper"><canvas id="glacierChart"></canvas></div>
-    <div class="chart-wrapper"><canvas id="airChart"></canvas></div>
-  </div>
-
-  <div class="sliders">
-    <div class="slider-block">
-      <h3>Климат</h3>
-      <div class="slider-container">
-        <label>Темп. (°C)</label>
-        <input type="range" min="-5" max="10" value="0" id="temp" step="0.1">
-      </div>
-      <div class="slider-container">
-        <label>Осадки</label>
-        <input type="range" min="100" max="1000" value="400" id="rain">
-      </div>
-      <div class="slider-container">
-        <label>Влажность</label>
-        <input type="range" min="10" max="90" value="50" id="humidity">
-      </div>
+    <div class="charts">
+      <div class="chart-wrapper"><canvas id="tempChart"></canvas></div>
+      <div class="chart-wrapper"><canvas id="co2Chart"></canvas></div>
+      <div class="chart-wrapper"><canvas id="glacierChart"></canvas></div>
+      <div class="chart-wrapper"><canvas id="airChart"></canvas></div>
     </div>
 
-    <div class="slider-block">
-      <h3>Человеческий фактор</h3>
-      <div class="slider-container">
-        <label>CO₂</label>
-        <input type="range" min="0" max="100" value="50" id="co2">
+    <div class="sliders">
+      <div class="slider-block">
+        <h3>Климатические факторы</h3>
+        <div class="slider-container">
+          <label>Температура (°C):</label>
+          <input type="range" min="-5" max="10" value="0" id="temp" step="0.1">
+          <span class="value" id="tempValue">0.0</span>
+        </div>
+        <div class="slider-container">
+          <label>Осадки (мм/год):</label>
+          <input type="range" min="100" max="1000" value="400" id="rain">
+          <span class="value" id="rainValue">400</span>
+        </div>
+        <div class="slider-container">
+          <label>Влажность (%):</label>
+          <input type="range" min="10" max="90" value="50" id="humidity">
+          <span class="value" id="humidityValue">50</span>
+        </div>
+        <div class="slider-container">
+          <label>Солнечная активность:</label>
+          <input type="range" min="80" max="120" value="100" id="solar">
+          <span class="value" id="solarValue">100</span>
+        </div>
       </div>
-      <div class="slider-container">
-        <label>Урбанизация</label>
-        <input type="range" min="0" max="100" value="40" id="urban">
-      </div>
-      <div class="slider-container">
-        <label>Лесистость</label>
-        <input type="range" min="0" max="100" value="30" id="forest">
-      </div>
-    </div>
 
-    <div class="slider-block">
-      <h3>Доп. факторы</h3>
-      <div class="slider-container">
-        <label>Транспорт</label>
-        <input type="range" min="0" max="100" value="50" id="transport">
+      <div class="slider-block">
+        <h3>Антропогенные факторы</h3>
+        <div class="slider-container">
+          <label>Выбросы CO₂ (ppm):</label>
+          <input type="range" min="300" max="1000" value="420" id="co2">
+          <span class="value" id="co2Value">420</span>
+        </div>
+        <div class="slider-container">
+          <label>Урбанизация (%):</label>
+          <input type="range" min="0" max="100" value="40" id="urban">
+          <span class="value" id="urbanValue">40</span>
+        </div>
+        <div class="slider-container">
+          <label>Лесистость (%):</label>
+          <input type="range" min="0" max="100" value="30" id="forest">
+          <span class="value" id="forestValue">30</span>
+        </div>
+        <div class="slider-container">
+          <label>Сельское хозяйство:</label>
+          <input type="range" min="0" max="100" value="50" id="agriculture">
+          <span class="value" id="agricultureValue">50</span>
+        </div>
       </div>
-      <div class="slider-container">
-        <label>Промышлен.</label>
-        <input type="range" min="0" max="100" value="50" id="industry">
-      </div>
-      <div class="slider-container">
-        <label>Зелень</label>
-        <input type="range" min="0" max="100" value="40" id="green">
-      </div>
-      <div class="slider-container">
-        <label>Уголь</label>
-        <input type="range" min="0" max="100" value="60" id="coal">
+
+      <div class="slider-block">
+        <h3>Загрязнение окружающей среды</h3>
+        <div class="slider-container">
+          <label>Транспортная нагрузка:</label>
+          <input type="range" min="0" max="100" value="50" id="transport">
+          <span class="value" id="transportValue">50</span>
+        </div>
+        <div class="slider-container">
+          <label>Промышленность:</label>
+          <input type="range" min="0" max="100" value="50" id="industry">
+          <span class="value" id="industryValue">50</span>
+        </div>
+        <div class="slider-container">
+          <label>Зеленые насаждения:</label>
+          <input type="range" min="0" max="100" value="40" id="green">
+          <span class="value" id="greenValue">40</span>
+        </div>
+        <div class="slider-container">
+          <label>Использование угля:</label>
+          <input type="range" min="0" max="100" value="60" id="coal">
+          <span class="value" id="coalValue">60</span>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    // Инициализация данных
     const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
     
+    // Функция создания графиков с заливкой
     const createChart = (ctx, label, color, minY, maxY) => {
       return new Chart(ctx, {
         type: 'line',
@@ -271,7 +293,7 @@
             label,
             data: Array(years.length).fill(0),
             borderColor: color,
-            backgroundColor: color + '20',
+            backgroundColor: color.replace(')', ', 0.2)').replace('rgb', 'rgba'),
             fill: true,
             tension: 0.3,
             borderWidth: 2
@@ -321,27 +343,27 @@
       });
     };
 
-    // Создаем графики с заданными диапазонами Y
+    // Создание графиков
     const tempChart = createChart(
       document.getElementById('tempChart').getContext('2d'), 
       'Температура (°C)', 
-      'crimson', 
+      'rgb(220, 53, 69)', 
       -5, 
       15
     );
     
     const co2Chart = createChart(
       document.getElementById('co2Chart').getContext('2d'), 
-      'Выбросы CO₂ (ppm)', 
-      '#555', 
-      0, 
-      200
+      'Концентрация CO₂ (ppm)', 
+      'rgb(108, 117, 125)', 
+      300, 
+      1000
     );
     
     const glacierChart = createChart(
       document.getElementById('glacierChart').getContext('2d'), 
-      'Ледники (% от 2020)', 
-      '#0077be', 
+      'Объем ледников (% от 2020)', 
+      'rgb(13, 110, 253)', 
       0, 
       100
     );
@@ -349,72 +371,157 @@
     const airChart = createChart(
       document.getElementById('airChart').getContext('2d'), 
       'Загрязнение воздуха (PM2.5)', 
-      'darkgreen', 
+      'rgb(25, 135, 84)', 
       0, 
       150
     );
 
+    // Обновление значений ползунков
     const sliders = document.querySelectorAll('input[type="range"]');
-    sliders.forEach(slider => slider.addEventListener('input', updateCharts));
+    sliders.forEach(slider => {
+      const valueElement = document.getElementById(`${slider.id}Value`);
+      valueElement.textContent = slider.value;
+      
+      slider.addEventListener('input', function() {
+        valueElement.textContent = this.value;
+        updateCharts();
+      });
+    });
 
+    // Функция обновления графиков с более точными вычислениями
     function updateCharts() {
-      const temp = +document.getElementById('temp').value;
-      const co2 = +document.getElementById('co2').value;
-      const forest = +document.getElementById('forest').value;
-      const rain = +document.getElementById('rain').value;
-      const humidity = +document.getElementById('humidity').value;
-      const urban = +document.getElementById('urban').value;
-      const transport = +document.getElementById('transport').value;
-      const industry = +document.getElementById('industry').value;
-      const green = +document.getElementById('green').value;
-      const coal = +document.getElementById('coal').value;
+      // Получаем текущие значения ползунков
+      const temp = parseFloat(document.getElementById('temp').value);
+      const rain = parseInt(document.getElementById('rain').value);
+      const humidity = parseInt(document.getElementById('humidity').value);
+      const solar = parseInt(document.getElementById('solar').value);
+      const co2 = parseInt(document.getElementById('co2').value);
+      const urban = parseInt(document.getElementById('urban').value);
+      const forest = parseInt(document.getElementById('forest').value);
+      const agriculture = parseInt(document.getElementById('agriculture').value);
+      const transport = parseInt(document.getElementById('transport').value);
+      const industry = parseInt(document.getElementById('industry').value);
+      const green = parseInt(document.getElementById('green').value);
+      const coal = parseInt(document.getElementById('coal').value);
 
-      // Обновляем данные графиков с более сложными формулами
-      tempChart.data.datasets[0].data = years.map((year, i) => {
-        const base = temp + (i * 0.15); // Базовый рост
-        const co2Effect = co2 * 0.03 * Math.log(i + 1); // Эффект CO2
-        const forestEffect = -forest * 0.008 * Math.sqrt(i); // Эффект лесов
-        return base + co2Effect + forestEffect;
+      // Коэффициенты влияния
+      const co2TempCoeff = 0.008; // Влияние CO2 на температуру
+      const urbanTempCoeff = 0.005; // Влияние урбанизации на температуру
+      const solarTempCoeff = 0.01; // Влияние солнечной активности на температуру
+      const forestTempCoeff = -0.007; // Влияние лесов на температуру (охлаждение)
+      
+      const tempGlacierCoeff = -1.2; // Влияние температуры на ледники
+      const co2GlacierCoeff = -0.15; // Влияние CO2 на ледники
+      const rainGlacierCoeff = 0.05; // Влияние осадков на ледники
+      
+      const transportAirCoeff = 0.3; // Влияние транспорта на воздух
+      const industryAirCoeff = 0.4; // Влияние промышленности на воздух
+      const coalAirCoeff = 0.5; // Влияние угля на воздух
+      const greenAirCoeff = -0.35; // Влияние зелени на воздух (очищение)
+
+      // Обновляем данные графиков с более точными вычислениями
+      tempChart.data.datasets[0].data = years.map((_, i) => {
+        // Базовый рост температуры
+        let baseTemp = temp + (i * 0.12);
+        
+        // Влияние CO2 (логарифмическое)
+        baseTemp += Math.log(co2 / 300) * 3.5;
+        
+        // Влияние урбанизации
+        baseTemp += (urban / 100) * 1.8;
+        
+        // Влияние солнечной активности
+        baseTemp += ((solar - 100) / 100) * 2;
+        
+        // Влияние лесов (охлаждение)
+        baseTemp -= ((100 - forest) / 100) * 1.2;
+        
+        // Случайные колебания (±0.3°C)
+        baseTemp += (Math.random() * 0.6 - 0.3);
+        
+        return parseFloat(baseTemp.toFixed(1));
       });
 
       co2Chart.data.datasets[0].data = years.map((_, i) => {
-        const base = 50 + (i * 1.5); // Базовый рост
-        const urbanEffect = urban * 0.3;
-        const industryEffect = industry * 0.4;
-        const greenEffect = -green * 0.3;
-        return base + urbanEffect + industryEffect + greenEffect;
+        // Базовый рост CO2
+        let baseCO2 = co2 + (i * 5);
+        
+        // Влияние промышленности
+        baseCO2 += industry * 0.8;
+        
+        // Влияние транспорта
+        baseCO2 += transport * 0.6;
+        
+        // Влияние угля
+        baseCO2 += coal * 0.9;
+        
+        // Влияние сельского хозяйства
+        baseCO2 += agriculture * 0.5;
+        
+        // Влияние лесов (поглощение CO2)
+        baseCO2 -= forest * 0.7;
+        
+        // Случайные колебания (±5 ppm)
+        baseCO2 += (Math.random() * 10 - 5);
+        
+        return Math.max(300, Math.min(1000, Math.round(baseCO2)));
       });
 
       glacierChart.data.datasets[0].data = years.map((_, i) => {
-        const base = 100 - (i * (1.5 + temp * 0.08)); // Базовое таяние
-        const co2Effect = -co2 * 0.15;
-        const forestEffect = forest * 0.1;
-        return Math.max(0, base + co2Effect + forestEffect);
+        // Базовое таяние
+        let glaciers = 100 - (i * 1.1);
+        
+        // Влияние температуры
+        glaciers += temp * tempGlacierCoeff * (i / 5);
+        
+        // Влияние CO2
+        glaciers += (co2 - 420) * co2GlacierCoeff * 0.1;
+        
+        // Влияние осадков
+        glaciers += ((rain - 400) / 100) * rainGlacierCoeff * i;
+        
+        // Влияние солнечной активности
+        glaciers -= ((solar - 100) / 100) * 0.5 * i;
+        
+        // Случайные колебания (±1%)
+        glaciers += (Math.random() * 2 - 1);
+        
+        return Math.max(0, Math.min(100, parseFloat(glaciers.toFixed(1))));
       });
 
-      // Улучшенная модель загрязнения воздуха с прогрессией
       airChart.data.datasets[0].data = years.map((_, i) => {
-        const base = 30 + (i * 1.2); // Базовый рост
-        const transportEffect = transport * 0.25 * (1 + i/20);
-        const industryEffect = industry * 0.35 * (1 + i/15);
-        const coalEffect = coal * 0.45 * (1 + i/10);
-        const greenEffect = -green * 0.4 * Math.sqrt(i + 1);
-        const forestEffect = -forest * 0.3 * Math.sqrt(i + 1);
+        // Базовый уровень загрязнения
+        let pollution = 30 + (i * 1.1);
         
-        let pollution = base + transportEffect + industryEffect + coalEffect + greenEffect + forestEffect;
+        // Влияние транспорта (нелинейное)
+        pollution += transport * transportAirCoeff * Math.sqrt(i + 1);
         
-        // Добавляем случайные колебания для реалистичности
-        pollution += (Math.random() * 5 - 2.5);
+        // Влияние промышленности
+        pollution += industry * industryAirCoeff * (1 + i/10);
         
-        return Math.max(5, Math.min(150, pollution));
+        // Влияние угля
+        pollution += coal * coalAirCoeff * (1 + i/8);
+        
+        // Влияние зелени (очищение)
+        pollution += green * greenAirCoeff * Math.sqrt(i + 1);
+        
+        // Влияние урбанизации
+        pollution += urban * 0.15;
+        
+        // Случайные колебания (±3 единицы)
+        pollution += (Math.random() * 6 - 3);
+        
+        return Math.max(5, Math.min(150, parseFloat(pollution.toFixed(1))));
       });
 
+      // Обновляем графики
       tempChart.update();
       co2Chart.update();
       glacierChart.update();
       airChart.update();
     }
 
+    // Инициализация при загрузке
     window.addEventListener('load', updateCharts);
   </script>
 </body>
