@@ -17,19 +17,7 @@
       padding: 0; 
       height: 100%; 
       font-family: Arial, sans-serif; 
-      color: white;
-    }
-    
-    /* Видео на заднем плане */
-    .video-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      opacity: 0.8;
+      color: #333;
     }
     
     a {
@@ -38,27 +26,29 @@
 
     /* === ВЕРХНЕЕ МЕНЮ === */
     .top-bar {
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: rgba(255, 255, 255, 0.9);
       padding: 12px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #ddd;
       width: 100%;
       box-sizing: border-box;
       backdrop-filter: blur(5px);
       position: fixed;
       top: 0;
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .logo {
       font-size: 24px;
       font-weight: bold;
+      color: #2c3e50;
     }
 
     .logo a {
-      color: white;
+      color: #2c3e50;
     }
 
     .main-nav {
@@ -68,29 +58,40 @@
 
     .main-nav a {
       font-size: 16px;
-      color: white;
+      color: #2c3e50;
       font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .main-nav a:hover {
+      color: #3498db;
     }
 
     /* === ПОДМЕНЮ === */
     .submenu {
-      background: rgba(34, 34, 34, 0.7);
+      background: rgba(255, 255, 255, 0.9);
       display: flex;
       justify-content: center;
       padding: 12px 0;
       gap: 30px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid #ddd;
       width: 100%;
       backdrop-filter: blur(5px);
       position: fixed;
       top: 60px;
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .submenu a {
       font-size: 16px;
       font-weight: bold;
-      color: white;
+      color: #2c3e50;
+      transition: color 0.3s;
+    }
+
+    .submenu a:hover {
+      color: #3498db;
     }
 
     /* === КАРТА === */
@@ -113,11 +114,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Видео на заднем плане -->
-  <video class="video-background" autoplay muted loop>
-    <source src="https://cdn.pixabay.com/video/2024/12/24/248452_large.mp4" type="video/mp4">
-  </video>
 
   <!-- Верхняя панель -->
   <div class="top-bar">
@@ -158,7 +154,7 @@
       script.defer = true;
       script.onerror = function() {
         console.error('Failed to load Google Maps API');
-        document.getElementById('map').innerHTML = '<p style="padding:20px;color:white;">Error loading map. Please check your connection.</p>';
+        document.getElementById('map').innerHTML = '<p style="padding:20px;color:#333;">Ошибка загрузки карты. Пожалуйста, проверьте соединение.</p>';
       };
       document.head.appendChild(script);
     }
@@ -185,9 +181,11 @@
         elevationService = new google.maps.ElevationService();
         
       } catch (error) {
-        console.error("Map initialization error:", error);
+        console.error("Ошибка инициализации карты:", error);
       }
     }
   </script>
+</body>
+</html>
 </body>
 </html>
