@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flood Map Simulation</title>
+  <title>Карта затоплений</title>
   <!-- Preconnect для улучшения производительности -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="https://maps.googleapis.com">
@@ -11,28 +11,136 @@
   <link rel="dns-prefetch" href="https://maps.googleapis.com">
   
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
-    #map { height: 100%; width: 100%; }
-    #sliderContainer {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      font-family: Arial, sans-serif;
+    /* === ОБЩИЕ СТИЛИ === */
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      font-family: Arial, sans-serif; 
+      color: white;
+    }
+    
+    /* Видео на заднем плане */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      opacity: 0.8;
+    }
+    
+    a {
+      text-decoration: none;
+    }
+
+    /* === ВЕРХНЕЕ МЕНЮ === */
+    .top-bar {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 12px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      width: 100%;
+      box-sizing: border-box;
+      backdrop-filter: blur(5px);
+      position: fixed;
+      top: 0;
       z-index: 1000;
     }
-    #waterLevel { width: 300px; }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .logo a {
+      color: white;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .main-nav a {
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* === ПОДМЕНЮ === */
+    .submenu {
+      background: rgba(34, 34, 34, 0.7);
+      display: flex;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 30px;
+      border-bottom: 1px solid #333;
+      width: 100%;
+      backdrop-filter: blur(5px);
+      position: fixed;
+      top: 60px;
+      z-index: 1000;
+    }
+
+    .submenu a {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+    }
+
+    /* === КАРТА === */
+    #map { 
+      height: 100%; 
+      width: 100%; 
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    /* === КОНТЕЙНЕР КАРТЫ === */
+    .map-container {
+      position: absolute;
+      top: 120px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
   </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="sliderContainer">
-    Water level: <span id="levelText">0</span> meters
-    <input type="range" id="waterLevel" min="0" max="100" value="0" step="1">
+
+  <!-- Видео на заднем плане -->
+  <video class="video-background" autoplay muted loop>
+    <source src="https://cdn.pixabay.com/video/2024/12/24/248452_large.mp4" type="video/mp4">
+  </video>
+
+  <!-- Верхняя панель -->
+  <div class="top-bar">
+    <div class="logo"><a href="index.html">Главная</a></div>
+    <nav class="main-nav">
+      <a href="primer.html">Карта</a>
+      <a href="primer.html">Диаграммы</a>
+      <a href="primer.html">Источники</a>
+    </nav>
+  </div>
+
+  <!-- Подменю -->
+  <nav class="submenu">
+    <a href="ПОТЕПЛ.html">Глобальное потепление</a>
+    <a href="море.html">Уровень моря</a>
+    <a href="тепл море.html">Потепление океана</a>
+    <a href="co2.html">Углекислый газ</a>
+    <a href="лед.html">Ледяные щиты</a>
+  </nav>
+
+  <!-- Контейнер карты -->
+  <div class="map-container">
+    <div id="map"></div>
   </div>
 
   <script>
@@ -50,12 +158,11 @@
       script.defer = true;
       script.onerror = function() {
         console.error('Failed to load Google Maps API');
-        document.getElementById('map').innerHTML = '<p style="padding:20px;">Error loading map. Please check your connection.</p>';
+        document.getElementById('map').innerHTML = '<p style="padding:20px;color:white;">Error loading map. Please check your connection.</p>';
       };
       document.head.appendChild(script);
     }
 
-    // Остальной код остается таким же, как в предыдущем исправленном варианте
     let map;
     let floodOverlay;
     let currentWaterLevel = 0;
@@ -75,18 +182,12 @@
           mapTypeControl: false
         });
 
-        // ... остальной код инициализации карты ...
+        elevationService = new google.maps.ElevationService();
         
       } catch (error) {
         console.error("Map initialization error:", error);
       }
     }
-
-    // ... остальные функции из предыдущего исправленного кода ...
   </script>
 </body>
 </html>
-  </script>
-</body>
-</html>
-
