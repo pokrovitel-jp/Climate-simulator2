@@ -16,13 +16,85 @@
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #cfefff, #e0f2f1);
       background-attachment: fixed;
+      color: #333;
+    }
+
+    /* === ВЕРХНЕЕ МЕНЮ === */
+    .top-bar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 12px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      width: 100%;
+      box-sizing: border-box;
+      backdrop-filter: blur(5px);
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .logo a {
+      color: #2c3e50;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    .main-nav a {
+      font-size: 16px;
+      color: #2c3e50;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .main-nav a:hover {
+      color: #3498db;
+    }
+
+    /* === ПОДМЕНЮ === */
+    .submenu {
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      justify-content: center;
+      padding: 12px 0;
+      gap: 30px;
+      border-bottom: 1px solid #ddd;
+      width: 100%;
+      backdrop-filter: blur(5px);
+      position: fixed;
+      top: 60px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .submenu a {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+      transition: color 0.3s;
+    }
+
+    .submenu a:hover {
+      color: #3498db;
     }
 
     h1 {
       text-align: center;
-      padding: 20px 10px 10px;
+      padding: 120px 10px 20px;
       font-size: 26px;
       color: #003366;
+      margin: 0;
     }
 
     .charts {
@@ -31,6 +103,7 @@
       grid-template-rows: 1fr 1fr;
       gap: 15px;
       padding: 10px 15px;
+      margin-top: 20px;
     }
 
     .chart-wrapper {
@@ -94,10 +167,35 @@
       .sliders {
         flex-direction: column;
       }
+      
+      .submenu {
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 8px 0;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Верхняя панель -->
+  <div class="top-bar">
+    <div class="logo"><a href="index.html">Климат Кыргызстана</a></div>
+    <nav class="main-nav">
+      <a href="simulator.html">Симулятор</a>
+      <a href="data.html">Данные</a>
+      <a href="sources.html">Источники</a>
+    </nav>
+  </div>
+
+  <!-- Подменю -->
+  <nav class="submenu">
+    <a href="#temperature">Температура</a>
+    <a href="#glaciers">Ледники</a>
+    <a href="#air-quality">Качество воздуха</a>
+    <a href="#co2">Выбросы CO₂</a>
+    <a href="#water">Водные ресурсы</a>
+  </nav>
+
   <h1>Симулятор изменения климата в Кыргызстане</h1>
 
   <div class="charts">
@@ -163,7 +261,8 @@
 
   <script>
     const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
-    const createChart = (ctx, label, color) => {
+    
+    const createChart = (ctx, label, color, minY, maxY) => {
       return new Chart(ctx, {
         type: 'line',
         data: {
@@ -172,21 +271,49 @@
             label,
             data: Array(years.length).fill(0),
             borderColor: color,
-            fill: false,
-            tension: 0.3
+            backgroundColor: color + '20',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top' }
+            legend: { 
+              position: 'top',
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
           },
           scales: {
             x: {
               ticks: {
                 maxRotation: 45,
-                minRotation: 45
+                minRotation: 45,
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              min: minY,
+              max: maxY,
+              ticks: {
+                font: {
+                  size: 12
+                }
               }
             }
           }
@@ -194,10 +321,38 @@
       });
     };
 
-    const tempChart = createChart(document.getElementById('tempChart').getContext('2d'), 'Температура (°C)', 'crimson');
-    const co2Chart = createChart(document.getElementById('co2Chart').getContext('2d'), 'Выбросы CO₂', '#555');
-    const glacierChart = createChart(document.getElementById('glacierChart').getContext('2d'), 'Ледники (% от 2020)', '#0077be');
-    const airChart = createChart(document.getElementById('airChart').getContext('2d'), 'Качество воздуха (PM2.5)', 'darkgreen');
+    // Создаем графики с заданными диапазонами Y
+    const tempChart = createChart(
+      document.getElementById('tempChart').getContext('2d'), 
+      'Температура (°C)', 
+      'crimson', 
+      -5, 
+      15
+    );
+    
+    const co2Chart = createChart(
+      document.getElementById('co2Chart').getContext('2d'), 
+      'Выбросы CO₂ (ppm)', 
+      '#555', 
+      0, 
+      200
+    );
+    
+    const glacierChart = createChart(
+      document.getElementById('glacierChart').getContext('2d'), 
+      'Ледники (% от 2020)', 
+      '#0077be', 
+      0, 
+      100
+    );
+    
+    const airChart = createChart(
+      document.getElementById('airChart').getContext('2d'), 
+      'Загрязнение воздуха (PM2.5)', 
+      'darkgreen', 
+      0, 
+      150
+    );
 
     const sliders = document.querySelectorAll('input[type="range"]');
     sliders.forEach(slider => slider.addEventListener('input', updateCharts));
@@ -214,21 +369,45 @@
       const green = +document.getElementById('green').value;
       const coal = +document.getElementById('coal').value;
 
-      tempChart.data.datasets[0].data = years.map((year, i) =>
-        temp + Math.log(i + 1) * 0.5 + co2 * 0.01 - forest * 0.005
-      );
+      // Обновляем данные графиков с более сложными формулами
+      tempChart.data.datasets[0].data = years.map((year, i) => {
+        const base = temp + (i * 0.15); // Базовый рост
+        const co2Effect = co2 * 0.03 * Math.log(i + 1); // Эффект CO2
+        const forestEffect = -forest * 0.008 * Math.sqrt(i); // Эффект лесов
+        return base + co2Effect + forestEffect;
+      });
 
-      co2Chart.data.datasets[0].data = years.map((_, i) =>
-        co2 + industry * 0.3 + urban * 0.2 + i * 0.5 - green * 0.4
-      );
+      co2Chart.data.datasets[0].data = years.map((_, i) => {
+        const base = 50 + (i * 1.5); // Базовый рост
+        const urbanEffect = urban * 0.3;
+        const industryEffect = industry * 0.4;
+        const greenEffect = -green * 0.3;
+        return base + urbanEffect + industryEffect + greenEffect;
+      });
 
-      glacierChart.data.datasets[0].data = years.map((_, i) =>
-        Math.max(0, 100 - i * (0.8 + temp * 0.1) - co2 * 0.2 + forest * 0.1)
-      );
+      glacierChart.data.datasets[0].data = years.map((_, i) => {
+        const base = 100 - (i * (1.5 + temp * 0.08)); // Базовое таяние
+        const co2Effect = -co2 * 0.15;
+        const forestEffect = forest * 0.1;
+        return Math.max(0, base + co2Effect + forestEffect);
+      });
 
-      airChart.data.datasets[0].data = years.map((_, i) =>
-        30 + transport * 0.25 + industry * 0.3 + coal * 0.4 - forest * 0.3 - green * 0.4
-      );
+      // Улучшенная модель загрязнения воздуха с прогрессией
+      airChart.data.datasets[0].data = years.map((_, i) => {
+        const base = 30 + (i * 1.2); // Базовый рост
+        const transportEffect = transport * 0.25 * (1 + i/20);
+        const industryEffect = industry * 0.35 * (1 + i/15);
+        const coalEffect = coal * 0.45 * (1 + i/10);
+        const greenEffect = -green * 0.4 * Math.sqrt(i + 1);
+        const forestEffect = -forest * 0.3 * Math.sqrt(i + 1);
+        
+        let pollution = base + transportEffect + industryEffect + coalEffect + greenEffect + forestEffect;
+        
+        // Добавляем случайные колебания для реалистичности
+        pollution += (Math.random() * 5 - 2.5);
+        
+        return Math.max(5, Math.min(150, pollution));
+      });
 
       tempChart.update();
       co2Chart.update();
@@ -237,10 +416,6 @@
     }
 
     window.addEventListener('load', updateCharts);
-  </script>
-</body>
-</html>
-
   </script>
 </body>
 </html>
